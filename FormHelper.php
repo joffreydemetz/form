@@ -1,0 +1,383 @@
+<?php
+/**
+ * (c) Joffrey Demetz <joffrey.demetz@gmail.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+namespace JDZ\Form;
+
+use JDZ\Form\Exception\FormException;
+use JDZ\Form\Field\Field;
+use JDZ\Filesystem\File;
+use JDZ\Filesystem\Path;
+use SimpleXMLElement;
+
+/**
+ * Form Helper
+ * 
+ * @author Joffrey Demetz <joffrey.demetz@gmail.com>
+ */
+abstract class FormHelper 
+{
+  use \JDZ\Utilities\Traits\Translatable;
+  
+  /**
+   * Loaded fields instances
+   * 
+   * @var   array
+   */
+  protected static $fields;
+  
+	/**
+	 * Load, setup and return a FormField object based on field data.
+   * 
+	 * @param 	Form              $form       The parent form.
+	 * @param 	SimpleXMLElement  $element    The XML element object representation of the form field.
+	 * @param 	string            $group      The optional dot-separated form group path on which to find the field.
+	 * @param 	mixed             $value      The optional value to use as the default for the field.
+	 * @return 	Field 
+	 * @throws 	FormException
+	 */
+	public static function loadField(Form $form, SimpleXMLElement $element, $group=null, $value=null)
+	{
+    if ( !isset(self::$fields) ){
+      self::$fields = [];
+    }
+    
+    if ( (string)$element['type'] === '' ){
+      $element['type'] = 'text';
+    }
+    
+		$type = (string) $element['type'];
+		$name = (string) $element['name'];
+    
+    $key = $type.'_'.$name.'_'.$group;
+    
+    if ( !isset(self::$fields[$key]) ){
+      if ( $value === null ){
+        $value = $form->getValue($name, $group);
+      }
+      
+      self::$fields[$key] = Field::getInstance($type);
+      self::$fields[$key]->init($form, $element, $group, $value);
+    }
+    
+    return self::$fields[$key];
+	}
+  
+	/**
+	 * Get form element template
+   *
+	 * @param 	string    $name             Template name
+	 * @param 	string    $indent           HTML indent
+	 * @return 	string HTML content
+	 */
+  /* public static function getTemplate($template, $indent, array $vars=[])
+  {
+    static $templates;
+    
+    if ( !isset($templates) ){
+      $templates = [];
+    }
+    
+    $key = md5(serialize([$template,$indent,$vars]));
+    
+    if ( !isset($templates[$key]) ){
+      foreach($vars as $key => $value){
+        $$key = $value;
+      }
+      
+      $app = Callisto();
+      
+      if ( $filepath = $app->getLayoutFile('form/'.$template) ){
+        ob_start();
+        include $filepath;
+        $templates[$key] = ob_get_contents();
+        ob_end_clean();
+      }
+      else {
+        throw new \RuntimeException('Error loading layout file for form/'.$template);
+        $templates[$key] = '';
+      }
+    }
+    
+    return $templates[$key];
+  } */
+  
+	/**
+	 * Format a select/option
+   * 
+   * @return 	object
+	 */
+	public static function formatOption($value, $text, $disabled=false)
+	{
+    $option = new \stdClass;
+    $option->value    = $value;
+    $option->text     = trim($text);
+    $option->disabled = $disabled;
+		return $option;
+	}  
+  
+	/**
+	 * Clean field value for readonly input
+   * 
+   * @return 	string
+	 */
+	public static function formatStaticValue($value)
+	{
+    if ( is_array($value) ){
+      $value = implode('<br />', $value);
+    }
+    
+    $value = (string)$value;
+    
+    // $value = strip_tags($value);
+    // $value = preg_replace("/\s+/", " ", $value);
+    return trim($value);
+	}  
+  
+	/**
+	 * Clean field value for hidden input
+   * 
+   * @return 	string
+	 */
+	public static function formatHiddenValue($value)
+	{
+    if ( is_array($value) ){
+      $value = implode(',', $value);
+    }
+    
+    $value = (string)$value;
+    
+    $value = strip_tags($value);
+    $value = preg_replace("/\s+/", " ", $value);
+    return trim($value);
+	}  
+  
+  /**
+	 * Get field label 
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    Defaults to $name if not found
+	 */
+  public static function getFieldLabel($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_LABEL') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('FIELD_'.$name.'_LABEL') ){
+      return $str;
+    }
+    /* if ( $str = self::getTranslation($name) ){
+      return $str;
+    } */
+    return $name;
+    // return '[-L-]'.$name;
+  }
+  
+  /**
+	 * Get field title for table header  
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    Defaults to $name if not found
+	 */
+  public static function getFieldHeader($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    
+    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_HEADER') ){
+      return $str;
+    }
+    
+    if ( $str = self::getTranslation('FIELD_'.$name.'_HEADER') ){
+      return $str;
+    }
+    
+    // return '[-H-]'.$name;
+    return self::getFieldLabel($value, $ns, $name);
+  }
+  
+  /**
+	 * Get field label 
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    Defaults to empty string if not found
+	 */
+  public static function getFieldPlaceholder($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_PLACEHOLDER') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('FIELD_'.$name.'_PLACEHOLDER') ){
+      return $str;
+    }
+    return '';
+  }
+  
+  /**
+	 * Get field description 
+   * 
+	 * @param 	string    $value      Specified value
+	 * @param 	string    $ns         Namespace
+	 * @param 	string    $name       Field name
+	 * @param 	bool      $suffix     Key suffix (DESC or DESC_UPDATE)
+	 * @return 	string    Defaults to empty string if not found
+	 */
+  public static function getFieldDescription($value, $ns, $name, $suffix)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    
+    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_'.$suffix) ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('FIELD_'.$name.'_'.$suffix) ){
+      return $str;
+    }
+    
+    return '';
+  }
+  
+  /**
+	 * Get fieldset label 
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    Defaults to $name if not found
+	 */
+  public static function getFieldsetLabel($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    if ( $str = self::getTranslation('FIELDSET_'.$ns.'_'.$name.'_LEGEND') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('FIELDSET_'.$name.'_LEGEND') ){
+      return $str;
+    }
+    // if ( $str = self::getTranslation($name) ){
+      // return $str;
+    // }
+    return '[-F-]'.$name;
+  }
+  
+  /**
+	 * Get fieldset description 
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    Defaults to empty string if not found
+	 */
+  public static function getFieldsetDescription($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    if ( $str = self::getTranslation('FIELDSET_'.$ns.'_'.$name.'_DESC') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('FIELDSET_'.$name.'_DESC') ){
+      return $str;
+    }
+    
+    return '';
+  }
+  
+  /**
+	 * Get required error message
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    (defaults to ERROR_FORM_FIELD_REQUIRED if not found)
+	 */
+  public static function getRequiredError($value, $ns, $name)
+  {
+    $value = (string) $value;
+    if ( $value !== '' ){
+      if ( $str = self::getTranslation($value) ){
+        return $str;
+      }
+      return $value;
+    }
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$ns.'_'.$name.'_REQUIRED') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$name.'_REQUIRED') ){
+      return $str;
+    }
+    
+    $fieldLabel = self::getFieldLabel('', $ns, $name);
+    return self::getTranslation('ERROR_FORM_FIELD_REQUIRED').' : '.$fieldLabel;
+  }
+  
+  /**
+	 * Get rule error message
+   * 
+	 * @param 	string    $value  Specified value
+	 * @param 	string    $ns     Namespace
+	 * @param 	string    $name   Field name
+	 * @return 	string    (defaults to ERROR_FORM_FIELD_VALIDATE if not found)
+	 */
+  public static function getRuleError($value, $ns, $name, $rule)
+  {
+    $value = (string) $value;
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$ns.'_'.$name.'_'.$rule.'_VALIDATE') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$name.'_'.$rule.'_VALIDATE') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$ns.'_'.$name.'_VALIDATE') ){
+      return $str;
+    }
+    if ( $str = self::getTranslation('ERROR_FORM_FIELD_'.$name.'_VALIDATE') ){
+      return $str;
+    }
+    $fieldLabel = self::getFieldLabel('', $ns, $name);
+    return self::getTranslation('ERROR_FORM_FIELD_VALIDATE').' : '.$fieldLabel;
+  }
+}
