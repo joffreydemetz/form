@@ -17,69 +17,69 @@ class Fieldset
   use \JDZ\Utilities\Traits\Get,
       \JDZ\Utilities\Traits\Set;
   
-	/**
+  /**
    * Fieldset id attribute
    * 
-	 * @var    Form   
-	 */
-	protected $id;
+   * @var    Form   
+   */
+  protected $id;
   
-	/**
+  /**
    * Form active controller
    * 
-	 * @var    string   
-	 */
-	protected $controller;
+   * @var    string   
+   */
+  protected $controller;
   
-	/**
+  /**
    * Fieldset group
    * 
-	 * @var    string   
-	 */
-	protected $group;
+   * @var    string   
+   */
+  protected $group;
   
-	/**
+  /**
    * Is active tab (only for tab/accordion mode)
    * 
-	 * @var    string   
-	 */
-	protected $active;
+   * @var    string   
+   */
+  protected $active;
   
-	/**
+  /**
    * Fieldset name
    * 
-	 * @var    string   
-	 */
-	protected $name;
+   * @var    string   
+   */
+  protected $name;
   
-	/**
+  /**
    * Fieldset legend
    * 
-	 * @var    string   
-	 */
-	protected $legend;
+   * @var    string   
+   */
+  protected $legend;
   
-	/**
+  /**
    * Fieldset description
    * 
-	 * @var    string   
-	 */
-	protected $description;
+   * @var    string   
+   */
+  protected $description;
   
-	/**
+  /**
    * Fieldset fields
    * 
-	 * @var    array   
-	 */
-	protected $fields;
+   * @var    array   
+   */
+  protected $fields;
   
-	/**
-	 * Constructor
+  /**
+   * Constructor
    * 
-	 * @param 	array   $properties     Key/Value pairs of the fieldset properties
-	 */
-	public function __construct(array $properties)
-	{
+   * @param   array   $properties     Key/Value pairs of the fieldset properties
+   */
+  public function __construct(array $properties)
+  {
     $this->controller  = (string) $properties['controller'];
     $this->group       = (string) $properties['group'];
     $this->active      = (bool) $properties['active'];
@@ -88,5 +88,5 @@ class Fieldset
     $this->description = (string) $properties['description'];
     $this->fields      = (array) $properties['fields'];
     $this->id          = 'tab-'.($this->group !== '' ? $this->group.'-'.$this->name : $this->name);
-	}
+  }
 }

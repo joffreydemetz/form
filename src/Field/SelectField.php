@@ -14,37 +14,37 @@ namespace JDZ\Form\Field;
  */
 abstract class SelectField extends Field
 {
-	/**
+  /**
    * Field size attribute
    * 
-	 * @var    int   
-	 */
-	protected $size;
+   * @var    int   
+   */
+  protected $size;
   
-	/**
+  /**
    * Field multiple attribute
    * 
-	 * @var    bool   
-	 */
+   * @var    bool   
+   */
   protected $multiple;
   
-	/**
+  /**
    * Add a default option
    * 
-	 * @var    bool   
-	 */
+   * @var    bool   
+   */
   protected $defaultOption;
   
-	/**
+  /**
    * Current selection
    * 
-	 * @var    array   
-	 */
+   * @var    array   
+   */
   protected $selection;
   
-	/**
-	 * {@inheritcdoc}
-	 */
+  /**
+   * {@inheritcdoc}
+   */
   public function getFieldAttributes(array $attrs=[])
   {
     $attrs = parent::getFieldAttributes($attrs);
@@ -52,61 +52,61 @@ abstract class SelectField extends Field
     if ( $this->size > 0 ){
       $attrs['size'] = $this->size;
     }
-		
+    
     if ( $this->multiple === true ){
       $attrs['multiple'] = 'multiple';
     }
-		
+    
     return $attrs;
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function isEmpty()
   {
     return ( count($this->selection) === 0 );
   }
   
-	/**
-	 * Check if a value in in the selection dataset
+  /**
+   * Check if a value in in the selection dataset
    * 
-   * @return 	bool
-	 */
+   * @return   bool
+   */
   public function isSelected($testValue)
   {
     return ( in_array($testValue, $this->selection) );
   }
   
   /**
-	 * {@inheritcdoc}
-	 */
-	protected function initDefinition()
-	{
+   * {@inheritcdoc}
+   */
+  protected function initDefinition()
+  {
     parent::initDefinition();
     
     $this->defAttribute('size', '0', 'int');
     $this->defAttribute('multiple', 'false', 'bool');
     $this->defAttribute('defaultOption', 'true', 'bool');
-	}
+  }
   
-	/**
-	 * {@inheritcdoc}
-	 */
-	protected function initObject()
-	{
+  /**
+   * {@inheritcdoc}
+   */
+  protected function initObject()
+  {
     parent::initObject();
 
     $this->size           = (int) $this->element['size'];
     $this->multiple       = ( (string) $this->element['multiple'] === 'true' );
     $this->defaultOption  = ( (string) $this->element['defaultOption'] === 'true' );
-	}
+  }
   
   /**
-	 * {@inheritcdoc}
-	 */
-	protected function checkValue()
-	{
+   * {@inheritcdoc}
+   */
+  protected function checkValue()
+  {
     if ( is_array($this->value) ){
       $this->value = implode(',', $this->value);
     }
@@ -122,5 +122,5 @@ abstract class SelectField extends Field
     elseif ( $this->value !== '' ) {
       $this->selection[] = $this->value;
     }
-	}
+  }
 }

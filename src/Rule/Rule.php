@@ -21,36 +21,36 @@ abstract class Rule implements RuleInterface
 {
   use \JDZ\Utilities\Traits\Ns;
   
-	/**
+  /**
    * The regular expression to use in testing a form field value
    * 
-	 * @var    string   
-	 */
-	protected $regex;
+   * @var    string   
+   */
+  protected $regex;
 
-	/**
+  /**
    * The regular expression modifiers to use when testing a form field value
    * 
-	 * @var    string   
-	 */
-	protected $modifiers;
+   * @var    string   
+   */
+  protected $modifiers;
   
   /**
    * Instances
    * 
-	 * @var    array   
-	 */
+   * @var    array   
+   */
   protected static $instances;
   
-	/**
-	 * Get a field instance
+  /**
+   * Get a field instance
    * 
-	 * @param 	string  $name  The field type
-	 * @return 	Rule    Rule instance clone
-	 * @throws 	RuntimeException
-	 */
-	public static function getInstance($type)
-	{
+   * @param   string  $name  The field type
+   * @return   Rule    Rule instance clone
+   * @throws   RuntimeException
+   */
+  public static function getInstance($type)
+  {
     if ( !isset(self::$NS) ){
       self::$NS = '\\Form\\Rule\\';
     }
@@ -63,7 +63,7 @@ abstract class Rule implements RuleInterface
       throw new RuntimeException('Missing rule type');
     }
     
-		if ( !isset(self::$instances[$type]) ){
+    if ( !isset(self::$instances[$type]) ){
       $Class = self::$NS.ucfirst($type);
       
       if ( !class_exists($Class) ){
@@ -74,16 +74,16 @@ abstract class Rule implements RuleInterface
     }
     
     return clone self::$instances[$type];
-	}  
+  }  
   
-	/**
-	 * {@inheritDoc}
-	 */
-	public function test(SimpleXMLElement &$element, $value, $group=null, Registry &$input=null, Form &$form=null)
-	{
-		if ( empty($this->regex) ){
+  /**
+   * {@inheritDoc}
+   */
+  public function test(SimpleXMLElement &$element, $value, $group=null, Registry &$input=null, Form &$form=null)
+  {
+    if ( empty($this->regex) ){
       throw new RuntimeException('Invalid rule ['.get_class($this).']');
-		}
+    }
     
     /**
      * UNICODE
@@ -92,12 +92,12 @@ abstract class Rule implements RuleInterface
      * @see https://hsivonen.fi/php-utf8/
      * Detect if we have full UTF-8 and unicode PCRE support.
      */
-		if ( @preg_match('/\pL/u', 'a') ){
+    if ( @preg_match('/\pL/u', 'a') ){
       if ( strpos($this->modifiers, 'u') === false ){
         $this->modifiers .= 'u';
       }
-		}
+    }
     
-    return ( preg_match('/'.$this->regex.'/'.$this->modifiers, $value, $m) === 1 );
+    return preg_match('/'.$this->regex.'/'.$this->modifiers, $value, $m);
   }
 }

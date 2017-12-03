@@ -14,11 +14,11 @@ namespace JDZ\Form\Exception;
  */
 class FormException extends \Exception
 {
-	/**
-	 * Magic method to get the string representation of this object
+  /**
+   * Magic method to get the string representation of this object
    * 
-	 * @return 	string
-	 */
+   * @return   string
+   */
   public function __toString()
   {
     return $this->getMessage();

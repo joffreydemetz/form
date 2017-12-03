@@ -19,61 +19,61 @@ use JDZ\Helpers\AttributesHelper;
  */
 abstract class InputField extends Field
 {
-	/**
+  /**
    * Field type attribute
    * 
-	 * @var    string   
-	 */
-	protected $type;
+   * @var    string   
+   */
+  protected $type;
   
-	/**
+  /**
    * Field size attribute
    * 
-	 * @var    int   
-	 */
-	protected $size;
+   * @var    int   
+   */
+  protected $size;
   
-	/**
+  /**
    * Field maxlength attribute
    * 
-	 * @var    int   
-	 */
-	protected $maxlength;
+   * @var    int   
+   */
+  protected $maxlength;
   
-	/**
+  /**
    * Field autocomplete attribute
    * 
-	 * @var    bool   
-	 */
+   * @var    bool   
+   */
   protected $autocomplete;
   
-	/**
+  /**
    * Field placeholder attribute
    * 
-	 * @var    string   
-	 */
+   * @var    string   
+   */
   protected $placeholder;
   
-	/**
+  /**
    * Field pattern attribute
    * 
-	 * @var    string   
-	 */
-	protected $pattern;
+   * @var    string   
+   */
+  protected $pattern;
   
-	/**
-	 * Check if field is a hidden input 
+  /**
+   * Check if field is a hidden input 
    * 
-   * @return 	bool
-	 */
-	public function isHidden()
-	{
+   * @return   bool
+   */
+  public function isHidden()
+  {
     return ( $this->type === 'hidden' );
   }
   
-	/**
-	 * {@inheritcdoc}
-	 */
+  /**
+   * {@inheritcdoc}
+   */
   public function getFieldAttributes(array $attrs=[])
   {
     $attrs = parent::getFieldAttributes($attrs);
@@ -83,20 +83,20 @@ abstract class InputField extends Field
     if ( $this->size > 0 ){
       $attrs['size'] = $this->size;
     }
-		
-		if ( $this->maxlength > 0 ){
+    
+    if ( $this->maxlength > 0 ){
       $attrs['maxlength'] = $this->maxlength;
     }
     
-		if ( $this->pattern !== '' ){
+    if ( $this->pattern !== '' ){
       $attrs['pattern'] = $this->pattern;
     }
     
-		if ( $this->autocomplete === false ){
+    if ( $this->autocomplete === false ){
       $attrs['autocomplete'] = 'off';
     }
     
-		if ( $this->placeholder !== '' ){
+    if ( $this->placeholder !== '' ){
       $attrs['placeholder'] = $this->placeholder;
     }
     
@@ -106,9 +106,9 @@ abstract class InputField extends Field
     return $attrs;
   }
   
-	/**
+  /**
    * {@inheritDoc}
-	 */
+   */
   public function getStaticValue()
   {
     $this->bsInputgroupPrefix = trim($this->bsInputgroupPrefix);
@@ -124,10 +124,10 @@ abstract class InputField extends Field
   }
   
   /**
-	 * {@inheritcdoc}
-	 */
-	protected function initDefinition()
-	{
+   * {@inheritcdoc}
+   */
+  protected function initDefinition()
+  {
     parent::initDefinition();
     
     $this->setAttribute('type', 'text');
@@ -138,13 +138,13 @@ abstract class InputField extends Field
     $this->defAttribute('autocomplete', 'true', 'bool');
     $this->defAttribute('placeholder', '');
     $this->defAttribute('pattern', '');
-	}
+  }
   
-	/**
-	 * {@inheritcdoc}
-	 */
-	protected function initObject()
-	{
+  /**
+   * {@inheritcdoc}
+   */
+  protected function initObject()
+  {
     parent::initObject();
 
     $this->type         = (string) $this->element['type'];
@@ -153,16 +153,16 @@ abstract class InputField extends Field
     $this->autocomplete = ( (string) $this->element['autocomplete'] === 'true' );
     $this->placeholder  = (string) $this->element['placeholder'];
     $this->pattern      = (string) $this->element['pattern'];
-	}
+  }
   
-	/**
-	 * {@inheritcdoc}
-	 */
-	protected function renderField(array $attrs=[])
-	{
+  /**
+   * {@inheritcdoc}
+   */
+  protected function renderField(array $attrs=[])
+  {
     return [
       'type' => 'input',
       'attrs' => $this->getFieldAttributes($attrs),
     ];
-	}
+  }
 }

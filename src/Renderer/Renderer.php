@@ -19,43 +19,43 @@ use JDZ\Helpers\AttributesHelper;
  */
 class Renderer 
 {
-	/**
+  /**
    * Form instance
    * 
-	 * @var    Form
-	 */
+   * @var    Form
+   */
   protected $form;
   
-	/**
-	 * Constructor
+  /**
+   * Constructor
    * 
-	 * @param 	Form      $form       Form instance
-	 * @param 	string    $indent     HTML indent
-	 */
+   * @param   Form      $form       Form instance
+   * @param   string    $indent     HTML indent
+   */
   public function __construct(Form &$form)
   {
     $this->setForm($form);
   }
   
-	/**
-	 * Set the form singleton
+  /**
+   * Set the form singleton
    * 
-	 * @param 	Form      $form       Form instance
-	 * @return 	void
-	 */
+   * @param   Form      $form       Form instance
+   * @return   void
+   */
   public function setForm(Form &$form)
   {
     $this->form =& $form;
   }
   
-	/**
-	 * Render tabs
+  /**
+   * Render tabs
    * 
-	 * @param 	string    $name             Fieldset name
-	 * @return 	string    HTML
-	 */
+   * @param   string    $name             Fieldset name
+   * @return   string    HTML
+   */
   public function tabs($name)
-	{
+  {
     $form_fieldsets = $this->form->getFieldsets();
     
     $_fieldsets = [];
@@ -127,32 +127,32 @@ class Renderer
       'tabs' => $tabs,
       'contents' => $contents,
     ];
-	}
+  }
   
-	/**
-	 * Render a fieldset
+  /**
+   * Render a fieldset
    * 
-	 * @param 	string    $name             Fieldset name
-	 * @return 	string    HTML
-	 */
+   * @param   string    $name             Fieldset name
+   * @return   string    HTML
+   */
   public function fieldsets(array $names)
-	{
+  {
     $fieldsets = [];
     foreach($names as $name){
       $fieldsets[] = $this->fieldset($name);
     }
     
     return $fieldsets;
-	}
+  }
   
-	/**
-	 * Render a fieldset
+  /**
+   * Render a fieldset
    * 
-	 * @param 	string    $name             Fieldset name
-	 * @return 	string    HTML
-	 */
+   * @param   string    $name             Fieldset name
+   * @return   string    HTML
+   */
   public function fieldset($name)
-	{
+  {
     $form_fieldset_fields = $this->form->getFieldset($name);
     
     $fields = [];
@@ -166,16 +166,16 @@ class Renderer
       'name' => $name,
       'fields' => $fields,
     ];
-	}
+  }
   
-	/**
-	 * Render form buttons
+  /**
+   * Render form buttons
    *
-	 * @param 	string    $itemController   The item task controller
-   * @return 	string  HTML 
-	 */
+   * @param   string    $itemController   The item task controller
+   * @return   string  HTML 
+   */
   public function buttons($itemController)
-	{
+  {
     $buttons = [];
     
     if ( $actions = $this->form->getOption('buttons') ){
@@ -218,17 +218,17 @@ class Renderer
     }
     
     return $buttons;
-	}
+  }
   
   /**
-	 * Render form accordion
+   * Render form accordion
    * 
-	 * @param 	string    $name             Fieldset name
-	 * @return 	string    HTML
+   * @param   string    $name             Fieldset name
+   * @return   string    HTML
    * @deprecated
-	 */
+   */
   public function accordion($name)
-	{
+  {
     $form_fieldsets = $this->form->getFieldsets();
     
     $_fieldsets = [];
@@ -283,15 +283,15 @@ class Renderer
       'id' => $group,
       'panels' => $panels,
     ];
-	}
+  }
   
-	/**
-	 * Render panel
+  /**
+   * Render panel
    * 
-	 * @param 	Fieldset   $tab  Panel object
-   * @return 	string  HTML 
+   * @param   Fieldset   $tab  Panel object
+   * @return   string  HTML 
    * @deprecated
-	 */
+   */
   protected function tabTab(Fieldset $tab)
   {
     return [
@@ -303,12 +303,12 @@ class Renderer
     return (string) $html;
   }
   
-	/**
-	 * Render tab fieldset
+  /**
+   * Render tab fieldset
    * 
-	 * @param 	Field   $field  Field object
-   * @return 	string  HTML 
-	 */
+   * @param   Field   $field  Field object
+   * @return   string  HTML 
+   */
   protected function tabContent(Fieldset $tab)
   {
     $fields = [];
@@ -331,21 +331,21 @@ class Renderer
     ];
   }
   
-	/**
-	 * Render form field.
+  /**
+   * Render form field.
    * 
-	 * @param 	Field   $field  Field object
-   * @return 	string  HTML 
-	 */
-	protected function field(Field $field)
-	{
+   * @param   Field   $field  Field object
+   * @return   string  HTML 
+   */
+  protected function field(Field $field)
+  {
     $field->cleanForRender();
     
-		if ( $field->get('hidden') ){
+    if ( $field->get('hidden') ){
       return false;
     }
     
-		if ( $field->isHidden() ){
+    if ( $field->isHidden() ){
       return $this->fieldHiddenInput($field);
     }
     
@@ -375,14 +375,14 @@ class Renderer
   }
 
   /**
-	 * Render a form field label.
+   * Render a form field label.
    * 
-	 * @param 	Field   $field  Field object
-   * @return 	string  HTML 
-	 */
-	protected function fieldLabel(Field $field)
-	{
-		if ( !$field->get('hidden') && !$field->get('labelHide') ){
+   * @param   Field   $field  Field object
+   * @return   string  HTML 
+   */
+  protected function fieldLabel(Field $field)
+  {
+    if ( !$field->get('hidden') && !$field->get('labelHide') ){
       $id = $field->get('id');
       
       $attrs = [];
@@ -410,16 +410,16 @@ class Renderer
     }
     
     return false;
-	}
+  }
   
-	/**
-	 * Render a form field as an hidden input.
+  /**
+   * Render a form field as an hidden input.
    * 
-	 * @param 	Field   $field  Field object
-   * @return 	string  HTML 
-	 */
-	protected function fieldHiddenInput(Field $field)
-	{
+   * @param   Field   $field  Field object
+   * @return   string  HTML 
+   */
+  protected function fieldHiddenInput(Field $field)
+  {
     $attrs['name']  = $field->get('name');
     $attrs['type']  = 'hidden';
     $attrs['value'] = $field->getHiddenValue();
@@ -430,14 +430,14 @@ class Renderer
     ];
   }
   
-	/**
-	 * Format a bootstrap input-group
+  /**
+   * Format a bootstrap input-group
    * 
-	 * @param 	Field   $field  Field object
-   * @return 	string  HTML 
-	 */
-	protected function fieldInputGroup(Field $field)
-	{
+   * @param   Field   $field  Field object
+   * @return   string  HTML 
+   */
+  protected function fieldInputGroup(Field $field)
+  {
     return [
       'type'     => 'inputgroup',
       'bsClass'  => $field->get('bsInputgroupClass'),
@@ -447,28 +447,28 @@ class Renderer
         'aria-describedby' => 'bsigroup-'.$field->get('id'),
       ]),
     ];
-	}
+  }
   
-	/**
-	 * Render a form field as static
+  /**
+   * Render a form field as static
    * 
-	 * @param 	Field     $field            Field object
-	 * @return 	string    HTML
-	 */
-	protected function fieldStatic(Field $field)
-	{
+   * @param   Field     $field            Field object
+   * @return   string    HTML
+   */
+  protected function fieldStatic(Field $field)
+  {
     return [
       'type'  => 'static',
       'value' => $field->getStaticValue(),
     ];
   }
   
-	/**
-	 * Render a form field helper
+  /**
+   * Render a form field helper
    * 
-	 * @param 	Field     $field            Field object
-	 * @return 	string    HTML
-	 */
+   * @param   Field     $field            Field object
+   * @return   string    HTML
+   */
   protected function fieldDescription(Field $field)
   {
     $element = $field->get('element');
@@ -478,14 +478,14 @@ class Renderer
     
     return FormHelper::getFieldDescription($field->get('description'), $ns, $name, $suffix);
   }
-	
-	/**
-	 * Render panel
+  
+  /**
+   * Render panel
    * 
-	 * @param 	Fieldset  $panel            Panel fields
-	 * @return 	string    HTML
+   * @param   Fieldset  $panel            Panel fields
+   * @return   string    HTML
    * @deprecated
-	 */
+   */
   protected function panel(Fieldset $panel)
   {
     $content = [];

@@ -23,225 +23,225 @@ abstract class Field implements FieldInterface
       \JDZ\Utilities\Traits\Set,
       \JDZ\Utilities\Traits\Ns;
   
-	/**
+  /**
    * Form 
    * 
-	 * @var    Form   
-	 */
-	protected $form;
+   * @var    Form   
+   */
+  protected $form;
   
-	/**
+  /**
    * Field XML definition
    * 
-	 * @var    SimpleXMLElement   
-	 */
-	protected $element;
+   * @var    SimpleXMLElement   
+   */
+  protected $element;
   
-	/**
+  /**
    * Field value
    * 
-	 * @var    string   
-	 */
-	protected $value;
+   * @var    string   
+   */
+  protected $value;
   
-	/**
+  /**
    * Field group
    * 
-	 * @var    string   
-	 */
-	protected $group;
+   * @var    string   
+   */
+  protected $group;
   
-	/**
+  /**
    * Field is static
    * 
-	 * @var    bool
-	 */
-	protected $static;
+   * @var    bool
+   */
+  protected $static;
   
-	/**
+  /**
    * Field is hidden
    * 
-	 * @var    bool   
-	 */
-	protected $hidden;
+   * @var    bool   
+   */
+  protected $hidden;
   
-	/**
+  /**
    * Field id attribute
    * 
-	 * @var    string   
-	 */
+   * @var    string   
+   */
   protected $id;
   
-	/**
+  /**
    * Field name attribute
    * 
-	 * @var    string   
-	 */
-	protected $name;
+   * @var    string   
+   */
+  protected $name;
   
-	/**
+  /**
    * Field required attribute
    * 
-	 * @var    bool   
-	 */
-	protected $required;
+   * @var    bool   
+   */
+  protected $required;
   
-	/**
+  /**
    * Field readonly attribute
    * 
-	 * @var    bool   
-	 */
-	protected $readonly;
+   * @var    bool   
+   */
+  protected $readonly;
   
-	/**
+  /**
    * Field disabled attribute
    * 
-	 * @var    bool   
-	 */
-	protected $disabled;
+   * @var    bool   
+   */
+  protected $disabled;
   
-	/**
+  /**
    * Field multiple attribute
    * 
-	 * @var    bool   
-	 */
-	protected $multiple;
+   * @var    bool   
+   */
+  protected $multiple;
   
-	/**
+  /**
    * Field autofocus attribute
    * 
-	 * @var    bool   
-	 */
-	protected $autofocus;
+   * @var    bool   
+   */
+  protected $autofocus;
   
-	/**
+  /**
    * Field width attribute
    * 
-	 * @var    int   
-	 */
-	protected $width;
+   * @var    int   
+   */
+  protected $width;
   
-	/**
+  /**
    * Field class value
    * 
-	 * @var    string   
-	 */
-	protected $class;
+   * @var    string   
+   */
+  protected $class;
   
-	/**
+  /**
    * Field default value
    * 
-	 * @var    string   
-	 */
-	protected $default;
+   * @var    string   
+   */
+  protected $default;
   
-	/**
+  /**
    * Field description value
    * 
-	 * @var    string   
-	 */
-	protected $description;
+   * @var    string   
+   */
+  protected $description;
   
-	/**
+  /**
    * Field validation filter
    * 
-	 * @var    string   
-	 */
-	protected $filter;
+   * @var    string   
+   */
+  protected $filter;
   
-	/**
+  /**
    * Hide field when empty value
    * 
-	 * @var    bool   
-	 */
-	protected $hideWhenEmpty;
+   * @var    bool   
+   */
+  protected $hideWhenEmpty;
   
-	/**
+  /**
    * Field can be rendered as static 
    * 
-	 * @var    bool   
-	 */
-	protected $canBeStatic;
+   * @var    bool   
+   */
+  protected $canBeStatic;
   
-	/**
+  /**
    * The field container class
    * 
-	 * @var    string
-	 */
-	protected $containerClass;
+   * @var    string
+   */
+  protected $containerClass;
   
-	/**
+  /**
    * The field label class
    * 
-	 * @var    string
-	 */
-	protected $labelClass;
+   * @var    string
+   */
+  protected $labelClass;
   
-	/**
+  /**
    * The field label text
    * 
-	 * @var    string
-	 */
-	protected $labelText;
+   * @var    string
+   */
+  protected $labelText;
   
-	/**
+  /**
    * Hide field label
    * 
-	 * @var    bool   
-	 */
+   * @var    bool   
+   */
   protected $labelHide;
   
-	/**
+  /**
    * Validate methods
    * 
-	 * @var    string   
-	 */
-	protected $validate;
+   * @var    string   
+   */
+  protected $validate;
   
-	/**
+  /**
    * Required field message
    * 
-	 * @var    string   
-	 */
-	protected $message;
+   * @var    string   
+   */
+  protected $message;
   
-	/**
+  /**
    * Boostrap3 inputgroup prefix
    * 
-	 * @var    string   
-	 */
-	protected $bsInputgroupPrefix;
+   * @var    string   
+   */
+  protected $bsInputgroupPrefix;
   
-	/**
+  /**
    * Boostrap3 inputgroup suffix
    * 
-	 * @var    string   
-	 */
-	protected $bsInputgroupSuffix;
+   * @var    string   
+   */
+  protected $bsInputgroupSuffix;
   
-	/**
+  /**
    * Boostrap3 inputgroup class
    * 
-	 * @var    string   
-	 */
-	protected $bsInputgroupClass;
-	
-	/**
+   * @var    string   
+   */
+  protected $bsInputgroupClass;
+  
+  /**
    * Field instances
    * 
-	 * @var    array   
-	 */
+   * @var    array   
+   */
   protected static $instances;
   
-	/**
-	 * Get a field instance
+  /**
+   * Get a field instance
    * 
-	 * @param 	string            $type   The field type
-	 * @return 	FieldInterface    Field instance clone
-	 * @throws 	RuntimeException 
-	 */
-	public static function getInstance($type)
-	{
+   * @param   string            $type   The field type
+   * @return   FieldInterface    Field instance clone
+   * @throws   RuntimeException 
+   */
+  public static function getInstance($type)
+  {
     if ( !isset(self::$NS) ){
       self::$NS = '\\Form\\Field\\';
     }
@@ -256,7 +256,7 @@ abstract class Field implements FieldInterface
     
     $type = str_replace('-', '', $type);
     
-		if ( !isset(self::$instances[$type]) ){
+    if ( !isset(self::$instances[$type]) ){
       $Class = self::$NS.ucfirst($type);
       
       if ( !class_exists($Class) ){
@@ -267,45 +267,45 @@ abstract class Field implements FieldInterface
     }
     
     return clone self::$instances[$type];
-	}
+  }
   
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
+  /**
+   * Constructor
+   */
+  public function __construct()
+  {
     $this->multiple = false;
     $this->static   = false;
-	}
+  }
   
-	/**
-	 * {@inheritDoc}
-	 */
-	public function init(Form &$form, SimpleXMLElement &$element, $group=null, $value=null)
-	{
+  /**
+   * {@inheritDoc}
+   */
+  public function init(Form &$form, SimpleXMLElement &$element, $group=null, $value=null)
+  {
     $this->setForm($form);
     $this->setElement($element);
     $this->setGroup($group);
     $this->initDefinition();
     $this->initObject();
-		$this->buildId();
-		$this->buildName();
+    $this->buildId();
+    $this->buildName();
     $this->onReady();
     $this->checkValidate();
     $this->setValue($value);
-	}
+  }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function setAttribute($attribute, $value='', $type='string')
   {
     $this->element[$attribute] = $value;
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function defAttribute($attribute, $default=null, $type='string')
   {
     $attrs = $this->element->attributes();
@@ -334,59 +334,59 @@ abstract class Field implements FieldInterface
     $this->setAttribute($attribute, $value);
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
-	public function cleanForRender()
-	{
+  /**
+   * {@inheritDoc}
+   */
+  public function cleanForRender()
+  {
     $this->checkValue();
     $this->checkValidate();
     $this->checkState();
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
-	public function getFieldHtml(array $attrs=[])
+  /**
+   * {@inheritDoc}
+   */
+  public function getFieldHtml(array $attrs=[])
   {
     return $this->renderField($attrs);
   }
-	
-	/**
-	 * {@inheritDoc}
-	 */
+  
+  /**
+   * {@inheritDoc}
+   */
   public function getStaticValue()
   {
     return FormHelper::formatStaticValue($this->value);
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function getHiddenValue()
   {
     return FormHelper::formatHiddenValue($this->value);
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function isEmpty()
   {
     return ( $this->value === '' );
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
-	public function isHidden()
-	{
+  /**
+   * {@inheritDoc}
+   */
+  public function isHidden()
+  {
     return false;
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function getFieldAttributes(array $attrs=[])
   {
     $attrs['id']    = $this->id;
@@ -405,20 +405,20 @@ abstract class Field implements FieldInterface
       // $attrs['required'] = 'required';
     // }
     
-		if ( $this->autofocus === true ){
+    if ( $this->autofocus === true ){
       $attrs['autofocus'] = 'autofocus';
     }
     
-		if ( $this->width > 0 ){
+    if ( $this->width > 0 ){
       $attrs['width'] = $this->width;
     }
     
     return $attrs;
   }
-	
-	/**
-	 * {@inheritDoc}
-	 */
+  
+  /**
+   * {@inheritDoc}
+   */
   public function getContainerClass()
   {
     $classes = [];
@@ -448,9 +448,9 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function getLabelClass()
   {
     $classes = [];
@@ -481,22 +481,22 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-	/**
-	 * {@inheritDoc}
-	 */
+  /**
+   * {@inheritDoc}
+   */
   public function getFieldClass()
   {
     $classes = [];
     $classes[] = 'form-control';
-		
+    
     if ( $this->class !== '' ){
       $_classes = explode(' ', $this->class);
       $classes  = array_merge($classes, $_classes);
-		}
-		
+    }
+    
     if ( $this->required === true ){
       $classes[] = 'required';
-		}
+    }
     
     if ( $this->readonly === true ){
       $classes[] = 'readonly';
@@ -509,23 +509,23 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-	/**
-	 * Set the form singleton
+  /**
+   * Set the form singleton
    * 
-   * @param 	Form    $form   Reference to the parent form
-   * @return 	void
-	 */
-	protected function setForm(Form &$form)
-	{
-		$this->form =& $form;
-	}
+   * @param   Form    $form   Reference to the parent form
+   * @return   void
+   */
+  protected function setForm(Form &$form)
+  {
+    $this->form =& $form;
+  }
   
-	/**
-	 * Set the value
+  /**
+   * Set the value
    * 
-   * @param 	mixed    $value   The field value
-   * @return 	void
-	 */
+   * @param   mixed    $value   The field value
+   * @return   void
+   */
   protected function setElement(SimpleXMLElement &$element)
   {
     if ( empty($element['name']) ){
@@ -535,22 +535,22 @@ abstract class Field implements FieldInterface
     $this->element =& $element;
   }
   
-	/**
-	 * Set the group
+  /**
+   * Set the group
    * 
-   * @param 	mixed    $value   The field group
-   * @return 	void
-	 */
+   * @param   mixed    $value   The field group
+   * @return   void
+   */
   protected function setGroup($group=null)
   {
     $this->group = $group;
   }
   
-	/**
-	 * Prepare the xml definition data
+  /**
+   * Prepare the xml definition data
    *
-   * @return 	void
-	 */
+   * @return   void
+   */
   protected function initDefinition()
   {
     // $attrs = $this->element->attributes();
@@ -582,141 +582,141 @@ abstract class Field implements FieldInterface
     $this->defAttribute('bsInputgroupClass', '');
   }
   
-	/**
-	 * Get the id used for the field input tag.
+  /**
+   * Get the id used for the field input tag.
    * 
-	 * @param 	string  $fieldId    The field element id.
-	 * @param 	string  $fieldName  The field element name.
-	 * @return 	string  The id to be used for the field input tag.
-	 */
-	protected function buildId()
-	{
-		$fieldid = (string) $this->element['id'];
+   * @param   string  $fieldId    The field element id.
+   * @param   string  $fieldName  The field element name.
+   * @return   string  The id to be used for the field input tag.
+   */
+  protected function buildId()
+  {
+    $fieldid = (string) $this->element['id'];
     
     if ( empty($fieldid) ){
       $fieldid = (string) $this->element['name'];
     }
     
-		$this->id = '';
+    $this->id = '';
     
-		if ( $control = $this->form->getOption('control') ){
-			$this->id .= $control;
-		}
+    if ( $control = $this->form->getOption('control') ){
+      $this->id .= $control;
+    }
     
-		// If the field is in a group add the group control to the field id.
-		if ( $this->group ){
-			// If we already have an id segment add the group control as another level.
-			if ( $this->id !== '' ){
-				$this->id .= '_'.str_replace('.', '_', $this->group);
-			}
-			else {
-				$this->id .= str_replace('.', '_', $this->group);
-			}
-		}
+    // If the field is in a group add the group control to the field id.
+    if ( $this->group ){
+      // If we already have an id segment add the group control as another level.
+      if ( $this->id !== '' ){
+        $this->id .= '_'.str_replace('.', '_', $this->group);
+      }
+      else {
+        $this->id .= str_replace('.', '_', $this->group);
+      }
+    }
 
-		// If we already have an id segment add the field id as another level.
-		if ( $this->id !== '' ){
-			$this->id .= '_'.$fieldid;
-		}
-		else {
-			$this->id .= $fieldid;
-		}
+    // If we already have an id segment add the field id as another level.
+    if ( $this->id !== '' ){
+      $this->id .= '_'.$fieldid;
+    }
+    else {
+      $this->id .= $fieldid;
+    }
     
-		// Clean up any invalid characters.
-		$this->id = preg_replace('#\W#', '_', $this->id);
-	}
+    // Clean up any invalid characters.
+    $this->id = preg_replace('#\W#', '_', $this->id);
+  }
   
-	/**
-	 * Get the name used for the field input tag.
-   * 
-	 * @param 	string  $fieldName  The field element name.
-	 * @return 	string  The name to be used for the field input tag.
-	 */
-	protected function buildName()
-	{
-		$fieldname = (string) $this->element['name'];
-    
-		$this->name = '';
-
-		if ( $control = $this->form->getOption('control') ){
-			$this->name .= $control;
-		}
-    
-		if ( $this->group ){
-			// If we already have a name segment add the group control as another level.
-			$groups = explode('.', $this->group);
-			if ( $this->name !== '' ){
-				foreach($groups as $group){
-					$this->name .= '['.$group.']';
-				}
-			}
-			else {
-				$this->name .= array_shift($groups);
-				foreach($groups as $group){
-					$this->name .= '['.$group.']';
-				}
-			}
-		}
-    
-		if ( $this->name !== '' ){
-			$this->name .= '['.$fieldname.']';
-		}
-		else {
-			$this->name .= $fieldname;
-		}
-    
-		if ( $this->multiple === true ){
-			$this->name .= '[]';
-		}
-	}
-	
   /**
-	 * Setup the field data
+   * Get the name used for the field input tag.
+   * 
+   * @param   string  $fieldName  The field element name.
+   * @return   string  The name to be used for the field input tag.
+   */
+  protected function buildName()
+  {
+    $fieldname = (string) $this->element['name'];
+    
+    $this->name = '';
+
+    if ( $control = $this->form->getOption('control') ){
+      $this->name .= $control;
+    }
+    
+    if ( $this->group ){
+      // If we already have a name segment add the group control as another level.
+      $groups = explode('.', $this->group);
+      if ( $this->name !== '' ){
+        foreach($groups as $group){
+          $this->name .= '['.$group.']';
+        }
+      }
+      else {
+        $this->name .= array_shift($groups);
+        foreach($groups as $group){
+          $this->name .= '['.$group.']';
+        }
+      }
+    }
+    
+    if ( $this->name !== '' ){
+      $this->name .= '['.$fieldname.']';
+    }
+    else {
+      $this->name .= $fieldname;
+    }
+    
+    if ( $this->multiple === true ){
+      $this->name .= '[]';
+    }
+  }
+  
+  /**
+   * Setup the field data
    *
-   * @return 	void
-	 */
-	protected function initObject()
-	{
+   * @return   void
+   */
+  protected function initObject()
+  {
     $this->required       = ( (string) $this->element['required'] === 'true' );
-		$this->readonly       = ( (string) $this->element['readonly'] === 'true' );
-		$this->disabled       = ( (string) $this->element['disabled'] === 'true' );
+    $this->readonly       = ( (string) $this->element['readonly'] === 'true' );
+    $this->disabled       = ( (string) $this->element['disabled'] === 'true' );
     $this->autofocus      = ( (string) $this->element['autofocus'] === 'true' );
     $this->hidden         = ( (string) $this->element['hidden'] === 'true' );
-		$this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
-		$this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
-		$this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
-		
+    $this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
+    $this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
+    $this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
+    
     $this->width          = (int) $this->element['width'];
     
-		$this->default        = (string) $this->element['default'];
-		$this->description    = (string) $this->element['description'];
-		$this->filter         = (string) $this->element['filter'];
-		$this->validate       = (string) $this->element['validate'];
+    $this->default        = (string) $this->element['default'];
+    $this->description    = (string) $this->element['description'];
+    $this->filter         = (string) $this->element['filter'];
+    $this->validate       = (string) $this->element['validate'];
     $this->class          = (string) $this->element['class'];
     $this->containerClass = (string) $this->element['containerClass'];
     $this->labelClass     = (string) $this->element['labelClass'];
-		$this->labelText      = (string) $this->element['labelText'];
+    $this->labelText      = (string) $this->element['labelText'];
     
     $this->bsInputgroupPrefix = (string) $this->element['bsInputgroupPrefix'];
     $this->bsInputgroupSuffix = (string) $this->element['bsInputgroupSuffix'];
     $this->bsInputgroupClass  = (string) $this->element['bsInputgroupClass'];
-	}
+  }
   
   /**
-	 * When properties are ready to use
+   * When properties are ready to use
    *
-   * @return 	void
-	 */
-	protected function onReady()
-	{
-	}
+   * @return   void
+   */
+  protected function onReady()
+  {
+  }
   
-	/**
-	 * Set the value
+  /**
+   * Set the value
    * 
-   * @param 	mixed    $value   The field value
-   * @return 	void
-	 */
+   * @param   mixed    $value   The field value
+   * @return   void
+   */
   protected function setValue($value=null)
   {
     $this->value = $value === null ? '' : $value;
@@ -724,13 +724,13 @@ abstract class Field implements FieldInterface
     $this->checkValue();
   }
   
-	/**
-	 * Check the field value
+  /**
+   * Check the field value
    *
-   * @return 	void
-	 */
-	protected function checkValue()
-	{
+   * @return   void
+   */
+  protected function checkValue()
+  {
     if ( $this->filter === 'int' ){
       if ( $this->value !== '' ){
         if ( intval($this->value) === 0 ){
@@ -757,13 +757,13 @@ abstract class Field implements FieldInterface
     }
   }
   
-	/**
-	 * Check the field validate parameters 
+  /**
+   * Check the field validate parameters 
    *
-   * @return 	void
-	 */
-	protected function checkValidate()
-	{
+   * @return   void
+   */
+  protected function checkValidate()
+  {
     if ( is_array($this->validate) ){
       $this->validate = implode('|', $this->validate);
     }
@@ -778,13 +778,13 @@ abstract class Field implements FieldInterface
     }
   }
   
-	/**
-	 * Check the field static & readonly state
+  /**
+   * Check the field static & readonly state
    *
-   * @return 	void
-	 */
-	protected function checkState()
-	{
+   * @return   void
+   */
+  protected function checkState()
+  {
     if ( $this->canBeStatic === true ){
       if ( $this->readonly === true ){
         if ( $this->hideWhenEmpty === true && $this->isEmpty() ){
@@ -797,11 +797,11 @@ abstract class Field implements FieldInterface
     }
   }
   
-	/**
-	 * Render the field
+  /**
+   * Render the field
    * 
-	 * @param 	string  $indent  HTML indent
-	 * @return 	string  HTML
-	 */
-	abstract protected function renderField(array $attrs=[]);
+   * @param   string  $indent  HTML indent
+   * @return   string  HTML
+   */
+  abstract protected function renderField(array $attrs=[]);
 }

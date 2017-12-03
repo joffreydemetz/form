@@ -29,18 +29,18 @@ abstract class FormHelper
    */
   protected static $fields;
   
-	/**
-	 * Load, setup and return a FormField object based on field data.
+  /**
+   * Load, setup and return a FormField object based on field data.
    * 
-	 * @param 	Form              $form       The parent form.
-	 * @param 	SimpleXMLElement  $element    The XML element object representation of the form field.
-	 * @param 	string            $group      The optional dot-separated form group path on which to find the field.
-	 * @param 	mixed             $value      The optional value to use as the default for the field.
-	 * @return 	Field 
-	 * @throws 	FormException
-	 */
-	public static function loadField(Form $form, SimpleXMLElement $element, $group=null, $value=null)
-	{
+   * @param   Form              $form       The parent form.
+   * @param   SimpleXMLElement  $element    The XML element object representation of the form field.
+   * @param   string            $group      The optional dot-separated form group path on which to find the field.
+   * @param   mixed             $value      The optional value to use as the default for the field.
+   * @return   Field 
+   * @throws   FormException
+   */
+  public static function loadField(Form $form, SimpleXMLElement $element, $group=null, $value=null)
+  {
     if ( !isset(self::$fields) ){
       self::$fields = [];
     }
@@ -49,8 +49,8 @@ abstract class FormHelper
       $element['type'] = 'text';
     }
     
-		$type = (string) $element['type'];
-		$name = (string) $element['name'];
+    $type = (string) $element['type'];
+    $name = (string) $element['name'];
     
     $key = $type.'_'.$name.'_'.$group;
     
@@ -64,15 +64,15 @@ abstract class FormHelper
     }
     
     return self::$fields[$key];
-	}
+  }
   
-	/**
-	 * Get form element template
+  /**
+   * Get form element template
    *
-	 * @param 	string    $name             Template name
-	 * @param 	string    $indent           HTML indent
-	 * @return 	string HTML content
-	 */
+   * @param   string    $name             Template name
+   * @param   string    $indent           HTML indent
+   * @return   string HTML content
+   */
   /* public static function getTemplate($template, $indent, array $vars=[])
   {
     static $templates;
@@ -105,27 +105,27 @@ abstract class FormHelper
     return $templates[$key];
   } */
   
-	/**
-	 * Format a select/option
+  /**
+   * Format a select/option
    * 
-   * @return 	object
-	 */
-	public static function formatOption($value, $text, $disabled=false)
-	{
+   * @return   object
+   */
+  public static function formatOption($value, $text, $disabled=false)
+  {
     $option = new \stdClass;
     $option->value    = $value;
     $option->text     = trim($text);
     $option->disabled = $disabled;
-		return $option;
-	}  
+    return $option;
+  }  
   
-	/**
-	 * Clean field value for readonly input
+  /**
+   * Clean field value for readonly input
    * 
-   * @return 	string
-	 */
-	public static function formatStaticValue($value)
-	{
+   * @return   string
+   */
+  public static function formatStaticValue($value)
+  {
     if ( is_array($value) ){
       $value = implode('<br />', $value);
     }
@@ -135,15 +135,15 @@ abstract class FormHelper
     // $value = strip_tags($value);
     // $value = preg_replace("/\s+/", " ", $value);
     return trim($value);
-	}  
+  }  
   
-	/**
-	 * Clean field value for hidden input
+  /**
+   * Clean field value for hidden input
    * 
-   * @return 	string
-	 */
-	public static function formatHiddenValue($value)
-	{
+   * @return   string
+   */
+  public static function formatHiddenValue($value)
+  {
     if ( is_array($value) ){
       $value = implode(',', $value);
     }
@@ -153,16 +153,16 @@ abstract class FormHelper
     $value = strip_tags($value);
     $value = preg_replace("/\s+/", " ", $value);
     return trim($value);
-	}  
+  }  
   
   /**
-	 * Get field label 
+   * Get field label 
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    Defaults to $name if not found
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    Defaults to $name if not found
+   */
   public static function getFieldLabel($value, $ns, $name)
   {
     $value = (string) $value;
@@ -186,13 +186,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get field title for table header  
+   * Get field title for table header  
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    Defaults to $name if not found
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    Defaults to $name if not found
+   */
   public static function getFieldHeader($value, $ns, $name)
   {
     $value = (string) $value;
@@ -216,13 +216,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get field label 
+   * Get field label 
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    Defaults to empty string if not found
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    Defaults to empty string if not found
+   */
   public static function getFieldPlaceholder($value, $ns, $name)
   {
     $value = (string) $value;
@@ -242,14 +242,14 @@ abstract class FormHelper
   }
   
   /**
-	 * Get field description 
+   * Get field description 
    * 
-	 * @param 	string    $value      Specified value
-	 * @param 	string    $ns         Namespace
-	 * @param 	string    $name       Field name
-	 * @param 	bool      $suffix     Key suffix (DESC or DESC_UPDATE)
-	 * @return 	string    Defaults to empty string if not found
-	 */
+   * @param   string    $value      Specified value
+   * @param   string    $ns         Namespace
+   * @param   string    $name       Field name
+   * @param   bool      $suffix     Key suffix (DESC or DESC_UPDATE)
+   * @return   string    Defaults to empty string if not found
+   */
   public static function getFieldDescription($value, $ns, $name, $suffix)
   {
     $value = (string) $value;
@@ -271,13 +271,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get fieldset label 
+   * Get fieldset label 
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    Defaults to $name if not found
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    Defaults to $name if not found
+   */
   public static function getFieldsetLabel($value, $ns, $name)
   {
     $value = (string) $value;
@@ -300,13 +300,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get fieldset description 
+   * Get fieldset description 
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    Defaults to empty string if not found
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    Defaults to empty string if not found
+   */
   public static function getFieldsetDescription($value, $ns, $name)
   {
     $value = (string) $value;
@@ -327,13 +327,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get required error message
+   * Get required error message
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    (defaults to ERROR_FORM_FIELD_REQUIRED if not found)
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    (defaults to ERROR_FORM_FIELD_REQUIRED if not found)
+   */
   public static function getRequiredError($value, $ns, $name)
   {
     $value = (string) $value;
@@ -355,13 +355,13 @@ abstract class FormHelper
   }
   
   /**
-	 * Get rule error message
+   * Get rule error message
    * 
-	 * @param 	string    $value  Specified value
-	 * @param 	string    $ns     Namespace
-	 * @param 	string    $name   Field name
-	 * @return 	string    (defaults to ERROR_FORM_FIELD_VALIDATE if not found)
-	 */
+   * @param   string    $value  Specified value
+   * @param   string    $ns     Namespace
+   * @param   string    $name   Field name
+   * @return   string    (defaults to ERROR_FORM_FIELD_VALIDATE if not found)
+   */
   public static function getRuleError($value, $ns, $name, $rule)
   {
     $value = (string) $value;
