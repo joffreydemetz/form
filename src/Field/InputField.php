@@ -100,7 +100,6 @@ abstract class InputField extends Field
       $attrs['placeholder'] = $this->placeholder;
     }
     
-    
     $attrs['value'] = htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8');
     
     return $attrs;
@@ -114,12 +113,15 @@ abstract class InputField extends Field
     $this->bsInputgroupPrefix = trim($this->bsInputgroupPrefix);
     
     $value = FormHelper::formatStaticValue($this->value);
+    
     if ( $this->bsInputgroupPrefix === '' ){
       return $value;
     }
+    
     if ( $this->bsInputgroupSuffix === '' ){
       return $value;
     }
+    
     return '['.$this->bsInputgroupPrefix.'] '.$value;
   }
   

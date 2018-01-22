@@ -7,12 +7,14 @@
  */
 namespace JDZ\Form\Exception;
 
+use Exception;
+
 /**
  * Form exception
  *
  * @author Joffrey Demetz <joffrey.demetz@gmail.com>
  */
-class FormException extends \Exception
+class FormException extends Exception
 {
   /**
    * Magic method to get the string representation of this object

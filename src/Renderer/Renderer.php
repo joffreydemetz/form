@@ -312,7 +312,6 @@ class Renderer
   protected function tabContent(Fieldset $tab)
   {
     $fields = [];
-    
     foreach((array)$tab->get('fields') as $field){
       if ( $_field = $this->field($field) ){
         $fields[] = $_field;
@@ -351,9 +350,9 @@ class Renderer
     
     $contained = ( $field->get('form')->getOption('type') === 'horizontal' );
     
-    if ( $field->get('static') === true ){
+    if ( $field->get('static') ){
       $fieldData = $this->fieldStatic($field);
-    }
+    } 
     elseif ( $field->get('bsInputgroupPrefix') !== '' || $field->get('bsInputgroupSuffix') !== '' ){
       $fieldData = $this->fieldInputGroup($field);
     }

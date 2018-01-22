@@ -11,6 +11,7 @@ use JDZ\Form\Field\FieldInterface;
 use JDZ\Form\Renderer\Renderer;
 use JDZ\Form\Validator\Validator;
 use SimpleXMLElement;
+use Exception;
 
 /**
  * Form interface
@@ -19,22 +20,6 @@ use SimpleXMLElement;
  */
 interface FormInterface
 {
-  /**
-   * Get an option value
-   * 
-   * @param   string  $property   Option property
-   * @return   mixed   The property value or false if not set
-   */
-  public function getFormOption($property);
-  
-  /**
-   * Get a config option 
-   * 
-   * @param   string  $key  The config option key
-   * @return   string  The form config option value
-   */
-  public function getOption($key, $default='');
-  
   /**
    * Load the form description from an SimpleXMLElement object
    * 
@@ -79,7 +64,7 @@ interface FormInterface
   /**
    * Validate form data.
    * Validation warnings will be pushed with Form::setError and should be
-   * retrieved with Form::getErrors() when validate returns boolean false
+   * retrieved with Form::getErrors() when validate returns bool false
    * 
    * @param   array   $data   An array of field values to validate.
    * @param   string  $group  The optional dot-separated form group path on which to filter the
@@ -89,12 +74,13 @@ interface FormInterface
   public function validate($data, $group=null);
   
   /**
-   * Add an error message.
+   * Add an error message
    *
-   * @param   string|Exception  $error  Error message
-   * @return   void
+   * @param   Exception       $e      Exception
+   * @param   FieldInterface  $field  Field name
+   * @return  void
    */
-  public function setError($error);
+  public function setError(Exception $error, FieldInterface $field);
   
   /**
    * Set an attribute value for a field XML element.
@@ -145,6 +131,37 @@ interface FormInterface
    * @return   bool    True on success
    */
   public function setField(&$element, $group=null, $replace=true);
+  
+  /**
+   * Get an option value
+   * 
+   * @param   string  $property   Option property
+   * @return   mixed   The property value or false if not set
+   */
+  public function getFormOption($property);
+  
+  /**
+   * Get a config option 
+   * 
+   * @param   string  $key  The config option key
+   * @return   string  The form config option value
+   */
+  public function getOption($key, $default='');
+  
+  /**
+   * Return all errors, if any, as a unique string
+   * 
+   * @param   string   $separator   The separator
+   * @return  string   String containing all the errors separated by the specified sequence
+   */
+  public function getErrorsAsString($separator='<br />');
+  
+  /**
+   * Return all errors, if any.
+   * 
+   * @return   array  Array of error messages or Exception instances.
+   */
+  public function getErrors();
   
   /**
    * Get the form validator object
@@ -208,7 +225,7 @@ interface FormInterface
    * @param   string  $name   The name of the form field
    * @param   string  $group  The optional dot-separated form group path on which to find the field
    * @param   mixed   $value  The optional value to use as the default for the field
-   * @return   mixed   The field object for the field or boolean false on error
+   * @return   mixed   The field object for the field or bool false on error
    */
   public function getField($name, $group=null, $value=null);
   
@@ -222,6 +239,24 @@ interface FormInterface
    * @return   mixed  The attribute value for the field.
    */
   public function getFieldAttribute($name, $attribute, $default=null, $group=null);
+  
+  /**
+   * Get an array of FormField objects in a given fieldset by name.  If no name is
+   * given then all fields are returned
+   * 
+   * @param   string            $set    The optional name of the fieldset
+   * @return   FieldInterface[]  The array of field objects in the fieldset
+   */
+  public function getFieldset($set=null);
+  
+  /**
+   * Get an error message
+   *
+   * @param   int  $i         Option error index
+   * @param   bool  $toString  Indicates if Exception instances should return the error message or the exception object
+   * @return  string   Error message
+   */
+  public function getError($i=null, $toString=true);
   
   /**
    * Remove a field from the form definition
@@ -240,15 +275,6 @@ interface FormInterface
    */
   public function removeGroup($group);
 
-  /**
-   * Get an array of FormField objects in a given fieldset by name.  If no name is
-   * given then all fields are returned
-   * 
-   * @param   string            $set    The optional name of the fieldset
-   * @return   FieldInterface[]  The array of field objects in the fieldset
-   */
-  public function getFieldset($set=null);
-  
   /**
    * Get an array of <field /> elements from the form XML document which are
    * in a control group by name.

@@ -87,14 +87,15 @@ class Validator implements ValidatorInterface
    */
   protected function check(Field $field, $group=null, $value=null, $input=null)
   {
+    $form    = $field->get('form');
     $element = $field->get('element');
-    $ns      = $field->get('form')->getContext();
+    $ns      = $form->getContext();
     $name    = (string)$element['name'];
     
     if ( $required = $field->get('required') ){
       if ( $field->isEmpty() ){
         $message = FormHelper::getRequiredError($field->get('message'), $ns, $name);
-        $field->get('form')->setError( new RequiredException($message) );
+        $form->setError( new RequiredException($message), $field );
         return false;
       }
     }
@@ -107,12 +108,11 @@ class Validator implements ValidatorInterface
           throw new RuntimeException('Missing field rule ('.$type.') ['.get_class($this).']');
         }
         
-        $form  = $field->get('form');
         $valid = $rule->test($element, $value, $group, $input, $form);
         
         if ( $valid === false ){
           $message = FormHelper::getRuleError('', $ns, $name, $type);
-          $field->get('form')->setError( new InvalidException($message) );
+          $form->setError( new InvalidException($message), $field );
           return false;
         }        
       }

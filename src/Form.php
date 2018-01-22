@@ -10,12 +10,15 @@ namespace JDZ\Form;
 use JDZ\Form\Renderer\Renderer;
 use JDZ\Form\Validator\Validator;
 use JDZ\Form\Field\FieldInterface;
+use JDZ\Form\Exception\RequiredException;
+use JDZ\Form\Exception\InvalidException;
 use JDZ\Helpers\ArrayHelper;
 use JDZ\Registry\Registry;
 use JDZ\Utilities\DataObject;
 use JDZ\Utilities\Date as DateObject;
 use SimpleXMLElement;
 use RuntimeException;
+use Exception;
  
 /**
  * Form
@@ -28,8 +31,6 @@ use RuntimeException;
  */
 class Form implements FormInterface
 {
-  use \JDZ\Utilities\Traits\Error;
-  
   /**
    * The boostrap3 class for label html display
    * 
@@ -92,6 +93,13 @@ class Form implements FormInterface
    * @var    string 
    */
   protected $currentIndent;
+  
+  /** 
+   * An array of error messages or Exception objects
+   * 
+   * @var   array 
+   */ 
+  protected $errors = [];
   
   /**
    * Form instances
@@ -210,35 +218,6 @@ class Form implements FormInterface
     $this->options['fieldCols'] = isset($options['fieldCols']) ? $options['fieldCols'] : Form::BS_COL_FIELD;
     $this->options['buttons']   = isset($options['buttons'])   ? $options['buttons']   : '';
     $this->options['update']    = isset($options['update'])    ? (bool)$options['update'] : false;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public function getFormOption($property)
-  {
-    if ( isset($this->options[$property]) ){
-      return $this->options[$property];
-    }
-    
-    return false;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public function getOption($key, $default='')
-  {
-    switch($key){
-      case 'labelCols':
-      case 'fieldCols':
-        if ( $this->getOption('type') !== 'horizontal' ){
-          return $default;
-        }
-        break;
-    }
-    
-    return (string) $this->options[$key];
   }
   
   /**
@@ -395,9 +374,21 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
-  public function setError($error)
+  public function setError(Exception $e, FieldInterface $field)
   {
-    array_push($this->errors, $error);
+    $error = [];
+    $error['type']    = 'error';
+    $error['field']   = $field;
+    $error['message'] = $e->getMessage();
+    
+    if ( $e instanceof RequiredException ){
+      $error['type'] = 'required';
+    }
+    elseif ( $e instanceof InvalidException ){
+      $error['type'] = 'invalid';
+    }
+    
+    $this->errors[] = (object)$error;
   }
   
   /**
@@ -496,6 +487,57 @@ class Form implements FormInterface
     $this->syncPaths();
     
     return true;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function getFormOption($property)
+  {
+    if ( isset($this->options[$property]) ){
+      return $this->options[$property];
+    }
+    
+    return false;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function getOption($key, $default='')
+  {
+    switch($key){
+      case 'labelCols':
+      case 'fieldCols':
+        if ( $this->getOption('type') !== 'horizontal' ){
+          return $default;
+        }
+        break;
+    }
+    
+    return (string) $this->options[$key];
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function getErrorsAsString($separator='<br />')
+  {
+    $errors = [];
+    
+    foreach($this->errors as &$error){
+      $errors[] = $error->message;
+    }
+    
+    return implode($separator, $errors);
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function getErrors()
+  {
+    return $this->errors;
   }
   
   /**
@@ -670,34 +712,6 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
-  public function removeField($name, $group=null)
-  {
-    $element = $this->findField($name, $group);
-    
-    if ( $element instanceof SimpleXMLElement ){
-      $dom = dom_import_simplexml($element);
-      $dom->parentNode->removeChild($dom);
-    }
-    
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function removeGroup($group)
-  {
-    $elements =& $this->findGroup($group);
-    foreach($elements as &$element){
-      $dom = dom_import_simplexml($element);
-      $dom->parentNode->removeChild($dom);
-    }
-    return true;
-  }
-
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldset($set=null)
   {
     $fields = [];
@@ -726,6 +740,57 @@ class Form implements FormInterface
     return $fields;
   }
 
+  /**
+   * {@inheritDoc}
+   */
+  public function getError($i=null, $toString=true)
+  {
+    if ( $i === null ){
+      $error = end($this->errors);
+    }
+    else {
+      if ( !array_key_exists($i, $this->errors) ){
+        return false;
+      }
+      
+      $error = $this->errors[$i];
+    }
+    
+    if ( $error instanceof Exception ){
+      return $error->getMessage();
+    }
+    
+    return $error;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function removeField($name, $group=null)
+  {
+    $element = $this->findField($name, $group);
+    
+    if ( $element instanceof SimpleXMLElement ){
+      $dom = dom_import_simplexml($element);
+      $dom->parentNode->removeChild($dom);
+    }
+    
+    return true;
+  }
+
+  /**
+   * {@inheritDoc}
+   */
+  public function removeGroup($group)
+  {
+    $elements =& $this->findGroup($group);
+    foreach($elements as &$element){
+      $dom = dom_import_simplexml($element);
+      $dom->parentNode->removeChild($dom);
+    }
+    return true;
+  }
+  
   /**
    * {@inheritDoc}
    */
@@ -832,7 +897,7 @@ class Form implements FormInterface
     
     return $element;
   }
-
+  
   /**
    * Apply an input filter to a value based on field data.
    * 

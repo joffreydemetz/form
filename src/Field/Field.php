@@ -254,6 +254,10 @@ abstract class Field implements FieldInterface
       throw new RuntimeException('Missing field type');
     }
     
+    if ( $type === 'datetime-local' ){
+      $type = 'datetime';
+    }
+    
     $type = str_replace('-', '', $type);
     
     if ( !isset(self::$instances[$type]) ){
@@ -316,6 +320,24 @@ abstract class Field implements FieldInterface
     $value = (string)$this->element[$attribute];
     
     if ( $type === 'bool' ){
+      if ( $value === '' || $value === '0' || $value === 'false' ){
+        $value = 'false';
+      }
+      else {
+        $value = 'true';
+      }
+    }
+    elseif ( $type === 'int' ){
+      if ( $value === '' ){
+        $value = $default === null ? '0' : (string)$default;
+      }
+    }
+    else {
+      if ( $value === '' ){
+        $value = $default === null ? '' : (string)$default;
+      }
+    }
+    /* if ( $type === 'bool' ){
       if ( empty($value) ){
         $value = $default === null ? 'false' : $default;
       }
@@ -329,7 +351,7 @@ abstract class Field implements FieldInterface
       if ( empty($value) ){
         $value = $default === null ? '' : $default;
       }
-    }
+    } */
     
     $this->setAttribute($attribute, $value);
   }
@@ -583,6 +605,39 @@ abstract class Field implements FieldInterface
   }
   
   /**
+   * Setup the field data
+   *
+   * @return   void
+   */
+  protected function initObject()
+  {
+    $this->required       = ( (string) $this->element['required'] === 'true' );
+    $this->readonly       = ( (string) $this->element['readonly'] === 'true' );
+    $this->disabled       = ( (string) $this->element['disabled'] === 'true' );
+    $this->multiple       = ( (string) $this->element['multiple'] === 'true' );
+    $this->autofocus      = ( (string) $this->element['autofocus'] === 'true' );
+    $this->hidden         = ( (string) $this->element['hidden'] === 'true' );
+    $this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
+    $this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
+    $this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
+    
+    $this->width          = (int) $this->element['width'];
+    
+    $this->default        = (string) $this->element['default'];
+    $this->description    = (string) $this->element['description'];
+    $this->filter         = (string) $this->element['filter'];
+    $this->validate       = (string) $this->element['validate'];
+    $this->class          = (string) $this->element['class'];
+    $this->containerClass = (string) $this->element['containerClass'];
+    $this->labelClass     = (string) $this->element['labelClass'];
+    $this->labelText      = (string) $this->element['labelText'];
+    
+    $this->bsInputgroupPrefix = (string) $this->element['bsInputgroupPrefix'];
+    $this->bsInputgroupSuffix = (string) $this->element['bsInputgroupSuffix'];
+    $this->bsInputgroupClass  = (string) $this->element['bsInputgroupClass'];
+  }
+  
+  /**
    * Get the id used for the field input tag.
    * 
    * @param   string  $fieldId    The field element id.
@@ -668,38 +723,6 @@ abstract class Field implements FieldInterface
     if ( $this->multiple === true ){
       $this->name .= '[]';
     }
-  }
-  
-  /**
-   * Setup the field data
-   *
-   * @return   void
-   */
-  protected function initObject()
-  {
-    $this->required       = ( (string) $this->element['required'] === 'true' );
-    $this->readonly       = ( (string) $this->element['readonly'] === 'true' );
-    $this->disabled       = ( (string) $this->element['disabled'] === 'true' );
-    $this->autofocus      = ( (string) $this->element['autofocus'] === 'true' );
-    $this->hidden         = ( (string) $this->element['hidden'] === 'true' );
-    $this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
-    $this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
-    $this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
-    
-    $this->width          = (int) $this->element['width'];
-    
-    $this->default        = (string) $this->element['default'];
-    $this->description    = (string) $this->element['description'];
-    $this->filter         = (string) $this->element['filter'];
-    $this->validate       = (string) $this->element['validate'];
-    $this->class          = (string) $this->element['class'];
-    $this->containerClass = (string) $this->element['containerClass'];
-    $this->labelClass     = (string) $this->element['labelClass'];
-    $this->labelText      = (string) $this->element['labelText'];
-    
-    $this->bsInputgroupPrefix = (string) $this->element['bsInputgroupPrefix'];
-    $this->bsInputgroupSuffix = (string) $this->element['bsInputgroupSuffix'];
-    $this->bsInputgroupClass  = (string) $this->element['bsInputgroupClass'];
   }
   
   /**
