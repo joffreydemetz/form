@@ -67,45 +67,6 @@ abstract class FormHelper
   }
   
   /**
-   * Get form element template
-   *
-   * @param   string    $name             Template name
-   * @param   string    $indent           HTML indent
-   * @return   string HTML content
-   */
-  /* public static function getTemplate($template, $indent, array $vars=[])
-  {
-    static $templates;
-    
-    if ( !isset($templates) ){
-      $templates = [];
-    }
-    
-    $key = md5(serialize([$template,$indent,$vars]));
-    
-    if ( !isset($templates[$key]) ){
-      foreach($vars as $key => $value){
-        $$key = $value;
-      }
-      
-      $app = Callisto();
-      
-      if ( $filepath = $app->getLayoutFile('form/'.$template) ){
-        ob_start();
-        include $filepath;
-        $templates[$key] = ob_get_contents();
-        ob_end_clean();
-      }
-      else {
-        throw new \RuntimeException('Error loading layout file for form/'.$template);
-        $templates[$key] = '';
-      }
-    }
-    
-    return $templates[$key];
-  } */
-  
-  /**
    * Format a select/option
    * 
    * @return   object
@@ -172,6 +133,7 @@ abstract class FormHelper
       }
       return $value;
     }
+    
     if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_LABEL') ){
       return $str;
     }

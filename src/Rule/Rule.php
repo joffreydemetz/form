@@ -19,8 +19,6 @@ use RuntimeException;
  */
 abstract class Rule implements RuleInterface
 {
-  use \JDZ\Utilities\Traits\Ns;
-  
   /**
    * The regular expression to use in testing a form field value
    * 
@@ -36,11 +34,29 @@ abstract class Rule implements RuleInterface
   protected $modifiers;
   
   /**
+   * Rules namepace
+   * 
+   * @var    string   
+   */
+  protected static $NS;
+  
+  /**
    * Instances
    * 
    * @var    array   
    */
   protected static $instances;
+  
+  /**
+   * Set the rules namespace
+   * 
+   * @param   string  $NS  The rules namespace
+   * @return  void
+   */
+  public static function setNamespace($NS)
+  {
+    self::$NS = $NS;
+  }
   
   /**
    * Get a field instance

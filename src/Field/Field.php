@@ -20,8 +20,7 @@ use RuntimeException;
 abstract class Field implements FieldInterface
 {
   use \JDZ\Utilities\Traits\Get,
-      \JDZ\Utilities\Traits\Set,
-      \JDZ\Utilities\Traits\Ns;
+      \JDZ\Utilities\Traits\Set;
   
   /**
    * Form 
@@ -227,6 +226,13 @@ abstract class Field implements FieldInterface
   protected $bsInputgroupClass;
   
   /**
+   * Fields namepace
+   * 
+   * @var    string   
+   */
+  protected static $NS;
+  
+  /**
    * Field instances
    * 
    * @var    array   
@@ -271,6 +277,17 @@ abstract class Field implements FieldInterface
     }
     
     return clone self::$instances[$type];
+  }
+  
+  /**
+   * Set the field namespace
+   * 
+   * @param   string  $NS  The field namespace
+   * @return  void
+   */
+  public static function setNamespace($NS)
+  {
+    self::$NS = $NS;
   }
   
   /**
