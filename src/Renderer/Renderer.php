@@ -403,7 +403,7 @@ class Renderer
       if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $formContext, $fieldName) ){
         return [
           'attrs' => $attrs,
-          'text' => FormHelper::getFieldLabel($field->get('labelText'), $formContext, $fieldName),
+          'text' => $label,
         ];
       }
     }

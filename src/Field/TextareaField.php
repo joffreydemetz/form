@@ -107,9 +107,7 @@ abstract class TextareaField extends Field
   {
     parent::initDefinition();
     
-    // $this->setAttribute('filter', 'html');
-    $this->setAttribute('filter', '\JDZ\Helpers\StringHelper::cleanTextarea');
-    
+    $this->defAttribute('filter', '\JDZ\Helpers\StringHelper::cleanTextarea');
     $this->defAttribute('size', '0', 'int');
     $this->defAttribute('maxlength', '0', 'int');
     $this->defAttribute('cols', '0', 'int');
@@ -129,6 +127,7 @@ abstract class TextareaField extends Field
     $this->cols        = (int) $this->element['cols'];
     $this->rows        = (int) $this->element['rows'];
     $this->placeholder = (string) $this->element['placeholder'];
+    $this->filter      = (string) $this->element['filter'];
   }
   
   /**

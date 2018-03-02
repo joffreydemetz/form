@@ -20,14 +20,50 @@ use SimpleXMLElement;
  */
 abstract class FormHelper 
 {
-  use \JDZ\Utilities\Traits\Translatable;
-  
   /**
    * Loaded fields instances
    * 
    * @var   array
    */
   protected static $fields;
+  
+  /**
+   * Holds an array of translations
+   * 
+   * Defaults are in french
+   * 
+   * @var   array
+   */
+  protected static $translations = [
+    'UNKNOWN_ERROR' => 'Erreur de type inconnu',
+  ];
+  
+  /**
+   * Set the translations
+   *
+   * @param   array   $translations     Key/value pairs of translations
+   * @return  void
+   */
+  public static function setTranslations(array $translations=[])
+  {
+    self::$translations = array_merge(self::$translations, $translations);
+  }
+  
+  /**
+   * Translation
+   * 
+   * @param   string  $key  The translation key
+   * @return  string  Translated string or false if not found
+   */
+  public static function getTranslation($key)
+  {
+    $_key = strtoupper($key);
+    if ( isset(self::$translations[$_key]) ){
+      return self::$translations[$_key];
+    }
+    
+    return false;
+  }  
   
   /**
    * Load, setup and return a FormField object based on field data.
@@ -127,6 +163,7 @@ abstract class FormHelper
   public static function getFieldLabel($value, $ns, $name)
   {
     $value = (string) $value;
+    
     if ( $value !== '' ){
       if ( $str = self::getTranslation($value) ){
         return $str;
