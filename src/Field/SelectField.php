@@ -43,7 +43,7 @@ abstract class SelectField extends Field
   protected $selection;
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   public function getFieldAttributes(array $attrs=[])
   {
@@ -79,7 +79,7 @@ abstract class SelectField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initDefinition()
   {
@@ -91,7 +91,7 @@ abstract class SelectField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initObject()
   {
@@ -103,7 +103,7 @@ abstract class SelectField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function checkValue()
   {

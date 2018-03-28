@@ -19,7 +19,7 @@ use JDZ\Utilities\Date as DateObject;
 use SimpleXMLElement;
 use RuntimeException;
 use Exception;
- 
+
 /**
  * Form
  *
@@ -402,9 +402,25 @@ class Form implements FormInterface
       throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
     }
     
-    $attrs = $element->attributes();
+    $element[$attribute] = $value;
     
-    if ( isset($attrs[$attribute]) ){
+    $this->syncPaths();
+    
+    return true;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function setFieldAttributes($name, $attributes, $group=null)
+  {
+    $element = $this->findField($name, $group);
+    
+    if ( !($element instanceof SimpleXMLElement) ){
+      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
+    }
+    
+    foreach($attributes as $attribute => $value){
       $element[$attribute] = $value;
     }
     

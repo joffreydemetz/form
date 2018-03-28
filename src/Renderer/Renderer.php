@@ -340,9 +340,9 @@ class Renderer
   {
     $field->cleanForRender();
     
-    if ( $field->get('hidden') ){
-      return false;
-    }
+    // if ( $field->get('hidden') ){
+      // return false;
+    // }
     
     if ( $field->isHidden() ){
       return $this->fieldHiddenInput($field);
@@ -419,6 +419,7 @@ class Renderer
    */
   protected function fieldHiddenInput(Field $field)
   {
+    // debugMe($field)->end();
     $attrs['name']  = $field->get('name');
     $attrs['type']  = 'hidden';
     $attrs['value'] = $field->getHiddenValue();

@@ -63,6 +63,15 @@ abstract class XmlGenerator
       $this->fieldsets[$fieldset] = [];
     }
     
+    foreach($this->fieldsets as $_fieldset => &$_fields){
+      foreach($_fields as &$_field){
+        if ( $_field['name'] === $data['name'] ){
+          $_field = array_merge($_field, $data);
+          return;
+        }
+      }
+    }
+    
     $this->fieldsets[$fieldset][] = $data;
   }
   
@@ -79,7 +88,7 @@ abstract class XmlGenerator
       foreach($fields as $field){
         $type    = null;
         $name    = null;
-        $options = null;
+        $options = [];
         $attrs   = [];
         
         if ( isset($field['name']) ){
@@ -101,6 +110,16 @@ abstract class XmlGenerator
         if ( isset($field['options']) ){
           $options = $field['options'];
           unset($field['options']);
+        }
+        
+        if ( isset($field['optionsCaller']) ){
+          $caller = [ $field['optionsCaller']['class'], $field['optionsCaller']['method'] ];
+          if ( is_callable($caller)){
+            if ( $_options = call_user_func($caller, $field['optionsCaller']['params']) ){
+              $options = array_merge($options, $_options);
+            }
+          }
+          unset($field['optionsCaller']);
         }
         
         $content[] = "\t\t".'<field type="'.$type.'" name="'.$name.'"';

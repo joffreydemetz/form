@@ -8,6 +8,7 @@
 namespace JDZ\Form\Field;
 
 use JDZ\Form\Form;
+use JDZ\Form\FormHelper;
 use JDZ\Registry\Registry;
 use SimpleXMLElement;
 use RuntimeException;
@@ -420,7 +421,7 @@ abstract class Field implements FieldInterface
    */
   public function isHidden()
   {
-    return false;
+    return ( $this->hidden );
   }
   
   /**

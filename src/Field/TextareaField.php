@@ -53,7 +53,7 @@ abstract class TextareaField extends Field
   protected $placeholder;
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   public function getFieldAttributes(array $attrs=[])
   {
@@ -101,7 +101,7 @@ abstract class TextareaField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initDefinition()
   {
@@ -116,7 +116,7 @@ abstract class TextareaField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initObject()
   {
@@ -131,7 +131,7 @@ abstract class TextareaField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function renderField(array $attrs=[])
   {

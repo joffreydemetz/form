@@ -72,7 +72,7 @@ abstract class InputField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   public function getFieldAttributes(array $attrs=[])
   {
@@ -126,7 +126,7 @@ abstract class InputField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initDefinition()
   {
@@ -143,7 +143,7 @@ abstract class InputField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function initObject()
   {
@@ -158,7 +158,7 @@ abstract class InputField extends Field
   }
   
   /**
-   * {@inheritcdoc}
+   * {@inheritDoc}
    */
   protected function renderField(array $attrs=[])
   {
