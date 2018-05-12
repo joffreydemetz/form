@@ -8,7 +8,7 @@
 namespace JDZ\Form\Rule;
 
 use JDZ\Form\Form;
-use JDZ\Registry\Registry;
+use JDZ\Form\FormData;
 use SimpleXMLElement;
 
 /**
@@ -19,16 +19,43 @@ use SimpleXMLElement;
 interface RuleInterface
 {
   /**
+   * Set the form
+   * 
+   * @param  Form  $form  Form instance
+   * @return $this
+   */
+  public function setForm(Form $form);
+  
+  /**
+   * Set the XML element
+   * 
+   * @param  SimpleXMLElement  $element  SimpleXMLElement instance
+   * @return $this
+   */
+  public function setElement(SimpleXMLElement $element);
+  
+  /**
+   * Set the group
+   * 
+   * @param  string  $group  
+   * @return $this
+   */
+  public function setGroup($group);
+  
+  /**
+   * Set the XML element
+   * 
+   * @param  FormData  $data  Form data
+   * @return $this
+   */
+  public function setData(FormData $data);
+  
+  /**
    * Run the test
    * 
-   * @param   SimpleXMLElement    &$element  The SimpleXMLElement object representing the <field /> tag for the form field object
-   * @param   mixed               $value     The form field value to validate
-   * @param   string              $group     The field name group control value. This acts as as an array container for the field.
-   *                                         For example if the field has name="foo" and the group value is set to "bar" then the
-   *                                         full field name would end up being "bar[foo]".
-   * @param   Registry            &$input    An optional Registry object with the entire data set to validate against the entire form
-   * @param   Form                &$form     The form object for which the field is being tested
-   * @return   boolean  True if the value is valid
+   * @param   mixed  $value  The form field value to validate
+   * @return  bool   True if the value is valid
+   * @throws  RuntimeException
    */
-  public function test(SimpleXMLElement &$element, $value, $group=null, Registry &$input=null, Form &$form=null);
+  public function test($value);
 }

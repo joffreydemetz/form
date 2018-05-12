@@ -27,328 +27,209 @@ class Renderer
   protected $form;
   
   /**
-   * Constructor
+   * Renderer type
    * 
-   * @param   Form      $form       Form instance
-   * @param   string    $indent     HTML indent
+   * @var    string
    */
-  public function __construct(Form &$form)
+  protected $type;
+  
+  /**
+   * Hidden fields
+   * 
+   * @var    array
+   */
+  protected $hiddenFields;
+  
+  /**
+   * Fieldse odering
+   * 
+   * @var    array
+   */
+  protected $fieldsetOrdering = null;
+  
+  /**
+   * Form uses buttons
+   * 
+   * @var    [array]
+   */
+  protected $buttons = [];
+  
+  /**
+   * Label class
+   * 
+   * @var    string
+   */
+  protected $bootstrapLabelClass = 'col-sm-3';
+  
+  /**
+   * Field container class
+   * 
+   * @var    string
+   */
+  protected $bootstrapInputClass = 'col-sm-9';
+  
+  /**
+   * Constructor
+   */
+  public function __construct()
   {
-    $this->setForm($form);
   }
   
   /**
    * Set the form singleton
    * 
-   * @param   Form      $form       Form instance
-   * @return   void
+   * @param  Form  $form  Form instance
+   * @return $this
    */
-  public function setForm(Form &$form)
+  public function setForm(Form $form)
   {
-    $this->form =& $form;
+    $this->form = $form;
+    return $this;
   }
   
   /**
-   * Render tabs
+   * Set the fieldset display ordering
    * 
-   * @param   string    $name             Fieldset name
-   * @return   string    HTML
+   * @param  array  $order  Fieldsets ordering
+   * @return $this
    */
-  public function tabs($name)
+  public function setFieldsetOrder($order)
   {
-    $form_fieldsets = $this->form->getFieldsets();
-    
-    $_fieldsets = [];
-    foreach($form_fieldsets as $form_fieldset){
-      $_fieldsets[] = (array)$form_fieldset;
-    }
-    
-    $_tabs = [];
-    $preprendTabs = [];
-    $appendTabs   = [];
-    foreach($_fieldsets as $i => $_fieldset){
-      $_fieldset = (array)$_fieldset;
-      $_name     = $_fieldset['name'];
-      
-      if ( preg_match("/^(.+)\.(.+)$/", $_name, $m) ){
-        $group = $m[1];
-        $name  = $m[2];
-      }
-      else {
-        $group = '';
-        $name  = $_name;
-      }
-      
-      if ( empty($_fieldset['label']) ){
-        $_fieldset['label'] = '';
-      }
-      
-      if ( empty($_fieldset['description']) ){
-        $_fieldset['description'] = '';
-      }
-      
-      $_fieldset['controller']  = $this->form->getContext();
-      $_fieldset['group']       = $group;
-      $_fieldset['active']      = ( $i === 0 );
-      $_fieldset['name']        = $name;
-      $_fieldset['fields']      = $this->form->getFieldset($_name);
-      $_fieldset['label']       = FormHelper::getFieldsetLabel($_fieldset['label'], $_fieldset['controller'], $_fieldset['name']);
-      $_fieldset['description'] = FormHelper::getFieldsetDescription($_fieldset['description'], $_fieldset['controller'], $_fieldset['name']);
-      
-      if ( $name === 'main' ){
-        $preprendTabs[] = new Fieldset($_fieldset);
-      }
-      elseif ( $name === 'infos' ){
-        $appendTabs[] = new Fieldset($_fieldset);
-      }
-      else {
-        $_tabs[] = new Fieldset($_fieldset);
-      }
-    }
-    
-    foreach($preprendTabs as $_tab){
-      array_unshift($_tabs, $_tab);
-    }
-    
-    foreach($appendTabs as $_tab){
-      array_push($_tabs, $_tab);
-    }
-    
-    $tabs     = [];
-    $contents = [];
-    foreach($_tabs as $_tab){
-      if ( $tab = $this->tabContent($_tab) ){
-        $tabs[]     = $this->tabTab($_tab);
-        $contents[] = $tab;
-      }
-    }
-    
-    return [
-      'tabs' => $tabs,
-      'contents' => $contents,
+    $this->fieldsetOrdering = $order;
+    return $this;
+  }
+  
+  /**
+   * Set the form singleton
+   * 
+   * @param  Form  $form  Form instance
+   * @return $this
+   */
+  public function addHiddenField($name, $value)
+  {
+    $this->hiddenFields[] = [ 
+      'type' => 'hidden',
+      'attrs' => [
+        'name' => $name,
+        'type' => 'hidden',
+        'value' => $value,
+      ],
     ];
+    return $this;
   }
   
   /**
-   * Render a fieldset
+   * Set form buttons
    * 
-   * @param   string    $name             Fieldset name
-   * @return   string    HTML
+   * @return $this
    */
-  public function fieldsets(array $names)
+  public function setButtons($buttons)
+  {
+    $this->buttons = $buttons;
+    return $this;
+  }
+  
+  /**
+   * Render the form
+   *
+   * @param  array   $data  Form data
+   * @return string  array 
+   */
+  public function render(array $data=[])
+  {
+    $data['renderer']    = $this->type;
+    $data['buttons']     = $this->buttons;
+    $data['buttongroup'] = count($this->buttons) > 1;
+    $data['offset']      = $this->getBootstrapInputOffset();
+    $data['component']   = $this->form->getComponent();
+    $data['hidden']      = $this->hiddenFields;
+    return $data;
+  }
+  
+  protected function getFieldsets()
   {
     $fieldsets = [];
-    foreach($names as $name){
-      $fieldsets[] = $this->fieldset($name);
+    
+    if ( $this->fieldsetOrdering ){
+      foreach($this->fieldsetOrdering as $fieldset){
+        $fieldsets[$fieldset] = null;
+      }
     }
     
-    return $fieldsets;
+    foreach($this->form->getFieldsets() as $name => $fieldset){
+      if ( $fields = $this->getFields($name) ){
+        $fieldset = (array)$fieldset;
+        $fieldset['name']   = $name;
+        $fieldset['fields'] = $fields;
+        $fieldsets[$name] = $fieldset;
+      }
+    }
+    
+    foreach($fieldsets as $name => $fieldset){
+      if ( empty($fieldset['fields']) ){
+        unset($fieldsets[$name]);
+      }
+    }
+    
+    return array_values($fieldsets);
   }
   
   /**
    * Render a fieldset
    * 
-   * @param   string    $name             Fieldset name
-   * @return   string    HTML
+   * @param  string  $name  Fieldset name
+   * @return string  HTML
    */
-  public function fieldset($name)
+  public function getFields($fieldset)
   {
-    $form_fieldset_fields = $this->form->getFieldset($name);
-    
     $fields = [];
-    foreach($form_fieldset_fields as $field){
+    
+    foreach($this->form->getFieldset($fieldset) as $field){
       if ( $_field = $this->field($field) ){
         $fields[] = $_field;
       }
     }
     
-    return [
-      'name' => $name,
-      'fields' => $fields,
-    ];
+    return $fields;
   }
   
   /**
-   * Render form buttons
-   *
-   * @param   string    $itemController   The item task controller
-   * @return   string  HTML 
-   */
-  public function buttons($itemController)
-  {
-    $buttons = [];
-    
-    if ( $actions = $this->form->getOption('buttons') ){
-      $actions = explode(',', $actions);
-      
-      foreach($actions as $task){
-        switch($task){
-          case 'cancel':
-            $class = 'danger';
-            if ( $this->form->getFormOption('update') === false ){
-              $text = 'CLOSE';
-            }
-            else {
-              $text = 'CANCEL';
-            }
-            break;
-          
-          case 'save':
-            $class = 'success';
-            $text  = 'SAVE_AND_CLOSE';
-            break;
-          
-          case 'apply':
-            $class = 'warning';
-            $text  = 'APPLY';
-            break;
-          
-          default:
-            $class = 'info';
-            $text  = strtoupper($task);
-            break;
-        }
-        
-        $buttons[] = [
-          'class' => 'btn btn-'.$class,
-          'task' => $itemController.'.'.$task,
-          'text' => $text,
-        ];
-      }
-    }
-    
-    return $buttons;
-  }
-  
-  /**
-   * Render form accordion
+   * Get the bootstrap col offset
    * 
-   * @param   string    $name             Fieldset name
-   * @return   string    HTML
-   * @deprecated
+   * @return int
    */
-  public function accordion($name)
+  public function getBootstrapInputOffset()
   {
-    $form_fieldsets = $this->form->getFieldsets();
-    
-    $_fieldsets = [];
-    foreach($form_fieldsets as $form_fieldset){
-      $form_fieldset = (array)$form_fieldset;
-      
-      if ( !preg_match("/^".$name."\.(.+)$/", $form_fieldset['name']) ){
-        continue;
-      }
-      
-      $_fieldsets[] = $form_fieldset;
+    if ( $this->form->isHorizontal() ){
+      $width  = (int) preg_replace("/[^\d]/", "", $this->bootstrapInputClass);
+      $offset = 12 - $width;
     }
-    
-    $_panels = [];
-    foreach($_fieldsets as $i => $_fieldset){
-      $_fieldset = (array)$_fieldset;
-      $_name     = $_fieldset['name'];
-      
-      list($group, $name) = explode('.', $_name);
-      
-      if ( empty($_fieldset['label']) ){
-        $_fieldset['label'] = '';
-      }
-      
-      if ( empty($_fieldset['description']) ){
-        $_fieldset['description'] = '';
-      }
-      
-      $_fieldset['controller']  = $this->form->getContext();
-      $_fieldset['group']       = $group;
-      $_fieldset['active']      = ( $i === 0 );
-      $_fieldset['name']        = $name;
-      $_fieldset['fields']      = $this->form->getFieldset($_name);
-      $_fieldset['label']       = FormHelper::getFieldsetLabel($_fieldset['label'], $_fieldset['controller'], $_fieldset['name']);
-      $_fieldset['description'] = FormHelper::getFieldsetDescription($_fieldset['description'], $_fieldset['controller'], $_fieldset['name']);
-      
-      $_panels[] = new Fieldset($_fieldset);
+    else {
+      $offset = 0;
     }
-    
-    $panels = [];
-    foreach($_panels as $panel){
-      if ( $panel = $this->panel($panel) ){
-        $panels[] = $panel;
-      }
-    }
-    
-    if ( empty($panels) ){
-      return false;
-    }
-    
-    return [
-      'id' => $group,
-      'panels' => $panels,
-    ];
-  }
-  
-  /**
-   * Render panel
-   * 
-   * @param   Fieldset   $tab  Panel object
-   * @return   string  HTML 
-   * @deprecated
-   */
-  protected function tabTab(Fieldset $tab)
-  {
-    return [
-      'id' => $tab->get('id'),
-      'active' => $tab->get('active'),
-      'legend' => $tab->get('legend'),
-    ];
-    
-    return (string) $html;
-  }
-  
-  /**
-   * Render tab fieldset
-   * 
-   * @param   Field   $field  Field object
-   * @return   string  HTML 
-   */
-  protected function tabContent(Fieldset $tab)
-  {
-    $fields = [];
-    foreach((array)$tab->get('fields') as $field){
-      if ( $_field = $this->field($field) ){
-        $fields[] = $_field;
-      }
-    }
-    
-    if ( empty($fields) ){
-      return false;
-    }
-    
-    return [
-      'id' => $tab->get('id'),
-      'active' => $tab->get('active'),
-      'description' => $tab->get('description'),
-      'fields' => $fields,
-    ];
+    return $offset;
   }
   
   /**
    * Render form field.
    * 
-   * @param   Field   $field  Field object
-   * @return   string  HTML 
+   * @param  Field   $field  Field object
+   * @return string  HTML 
    */
   protected function field(Field $field)
   {
     $field->cleanForRender();
     
-    // if ( $field->get('hidden') ){
-      // return false;
-    // }
-    
-    if ( $field->isHidden() ){
-      return $this->fieldHiddenInput($field);
+    if ( $field->get('hideWhenEmpty') && $field->isEmpty() ){
+      return false;
     }
     
-    $contained = ( $field->get('form')->getOption('type') === 'horizontal' );
+    if ( !$field->get('static') && $field->isHidden() ){
+      $this->addHiddenField($field->getName(), $field->getValue());
+      return false;
+    }
+    
+    $contained = ( $this->form->isHorizontal() );
     
     if ( $field->get('static') ){
       $fieldData = $this->fieldStatic($field);
@@ -360,9 +241,32 @@ class Renderer
       $fieldData = $field->getFieldHtml();
     }
     
-    if ( $contained === true ){
+    if ( true === $contained ){
+      $classes = $field->getContainerClasses();
+      
       $attrs = [];
-      $attrs['class'] = $field->getContainerClass();
+      
+      if ( $this->form->isHorizontal() ){
+        $_classes = explode(' ', $this->bootstrapInputClass);
+        
+        if ( $field->get('labelHide') ){
+          foreach($_classes as $i => $v){
+            if ( substr($v, 0, 4) === 'col-' ){
+              unset($_classes[$i]);
+              continue;
+            }
+          }
+          
+          $width  = (int) preg_replace("/[^\d]/", "", $this->bootstrapInputClass);
+          $offset = $this->getBootstrapInputOffset();
+          $_classes[] = 'col-xs-12 col-sm-offset-'.$offset.' col-sm-'.$width;
+        }   
+        
+        $classes = array_merge($_classes, $classes);
+        $classes = array_unique($classes);
+        
+        $attrs['class'] = implode(' ', $classes);
+      }
       
       $fieldData['container'] = $attrs;
     }
@@ -372,35 +276,48 @@ class Renderer
     
     return $fieldData;
   }
-
+  
   /**
    * Render a form field label.
    * 
-   * @param   Field   $field  Field object
-   * @return   string  HTML 
+   * @param  Field   $field  Field object
+   * @return string  HTML 
    */
   protected function fieldLabel(Field $field)
   {
     if ( !$field->get('hidden') && !$field->get('labelHide') ){
       $id = $field->get('id');
       
+      $classes = $field->getLabelClasses();
+      $classes[] = array_unshift($classes, 'control-label');
+      
       $attrs = [];
       $attrs['id']    = $id.'-lbl';
       $attrs['for']   = $id;
-      $attrs['class'] = $field->getLabelClass();
+      $attrs['class'] = implode(' ', $classes);
       
-      $element     = $field->get('element');
-      $formContext = $field->get('form')->getContext();
-      $fieldName   = (string) $element['name'];
+      if ( $field->get('labelSrOnly') ){
+        array_unshift($classes, 'sr-only');
+      }
+      elseif ( $this->form->isHorizontal() ){
+        $_classes = explode(' ', $this->bootstrapLabelClass);
+        $_classes[] = 'control-label';
+        $classes = array_merge($_classes, $classes);
+      }
       
-      if ( FormHelper::getTranslation('HELP_FIELD_'.$formContext.'_'.$fieldName) ){
-        $fieldHelp = strtoupper('HELP_FIELD_'.$formContext.'_'.$fieldName);
-
+      $attrs['class'] = implode(' ', $classes);
+      
+      $element   = $field->get('element');
+      $fieldName = (string) $element['name'];
+      
+      if ( FormHelper::getTranslation('HELP_FIELD_'.$this->form->getComponent().'_'.$fieldName) ){
+        $fieldHelp = strtoupper('HELP_FIELD_'.$this->form->getComponent().'_'.$fieldName);
+        
         $attrs['data-help-key']  = $fieldHelp;
         $attrs['data-help-type'] = 'field';
       }
       
-      if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $formContext, $fieldName) ){
+      if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $this->form->getComponent(), $fieldName) ){
         return [
           'attrs' => $attrs,
           'text' => $label,
@@ -414,27 +331,26 @@ class Renderer
   /**
    * Render a form field as an hidden input.
    * 
-   * @param   Field   $field  Field object
-   * @return   string  HTML 
+   * @param  Field   $field  Field object
+   * @return string  HTML 
    */
   protected function fieldHiddenInput(Field $field)
   {
-    // debugMe($field)->end();
     $attrs['name']  = $field->get('name');
     $attrs['type']  = 'hidden';
     $attrs['value'] = $field->getHiddenValue();
     
     return [
-      'type'  => 'hidden',
-      'attrs' => $attrs,
+      'type'   => 'hidden',
+      'attrs'  => $attrs,
     ];
   }
   
   /**
    * Format a bootstrap input-group
    * 
-   * @param   Field   $field  Field object
-   * @return   string  HTML 
+   * @param  Field   $field  Field object
+   * @return string  HTML 
    */
   protected function fieldInputGroup(Field $field)
   {
@@ -452,8 +368,8 @@ class Renderer
   /**
    * Render a form field as static
    * 
-   * @param   Field     $field            Field object
-   * @return   string    HTML
+   * @param  Field   $field  Field object
+   * @return string  HTML
    */
   protected function fieldStatic(Field $field)
   {
@@ -466,47 +382,24 @@ class Renderer
   /**
    * Render a form field helper
    * 
-   * @param   Field     $field            Field object
-   * @return   string    HTML
+   * @param  Field   $field  Field object
+   * @return string  HTML
    */
   protected function fieldDescription(Field $field)
   {
     $element = $field->get('element');
-    $ns      = $field->get('form')->getContext();
     $name    = (string) $element['name'];
-    $suffix  = $field->get('form')->getFormOption('update') === true ? 'DESC_UPDATE' : 'DESC';
     
-    return FormHelper::getFieldDescription($field->get('description'), $ns, $name, $suffix);
-  }
-  
-  /**
-   * Render panel
-   * 
-   * @param   Fieldset  $panel            Panel fields
-   * @return   string    HTML
-   * @deprecated
-   */
-  protected function panel(Fieldset $panel)
-  {
-    $content = [];
-    
-    foreach((array)$panel->get('fields') as $field){
-      if ( $_field = $this->field($field.'    ') ){
-        $content[] = $_field;
+    if ( $this->form->isUpdateMode() ){
+      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC_UPDATE');
+      if ( !$tip ){
+        $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC');
       }
     }
-    
-    if ( trim(implode("\n", $content)) === '' ){
-      return false;
+    else {
+      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC');
     }
     
-    return [
-      'name' => $panel->get('name'),
-      'group' => $panel->get('group'),
-      'active' => $panel->get('active'),
-      'legend' => $panel->get('legend'),
-      'description' => $panel->get('description'),
-      'content' => $content,
-    ];
+    return $tip;
   }
 }

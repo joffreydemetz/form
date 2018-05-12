@@ -12,6 +12,7 @@ use JDZ\Form\Field\Field;
 use JDZ\Filesystem\File;
 use JDZ\Filesystem\Path;
 use SimpleXMLElement;
+use RuntimeException;
 
 /**
  * Form Helper
@@ -20,13 +21,6 @@ use SimpleXMLElement;
  */
 abstract class FormHelper 
 {
-  /**
-   * Loaded fields instances
-   * 
-   * @var   array
-   */
-  protected static $fields;
-  
   /**
    * Holds an array of translations
    * 
@@ -37,6 +31,17 @@ abstract class FormHelper
   protected static $translations = [
     'UNKNOWN_ERROR' => 'Erreur de type inconnu',
   ];
+  
+  /**
+   * Set the translations
+   *
+   * @param   string  $namespace  The form namespace (fields and rules)
+   * @return  void
+   */
+  public static function setNamespace($namespace)
+  {
+    Form::$ns = $namespace;
+  }
   
   /**
    * Set the translations
@@ -66,40 +71,27 @@ abstract class FormHelper
   }  
   
   /**
-   * Load, setup and return a FormField object based on field data.
+   * Get form XML generator instance
    * 
-   * @param   Form              $form       The parent form.
-   * @param   SimpleXMLElement  $element    The XML element object representation of the form field.
-   * @param   string            $group      The optional dot-separated form group path on which to find the field.
-   * @param   mixed             $value      The optional value to use as the default for the field.
-   * @return   Field 
-   * @throws   FormException
+   * @param  string  $formName  The form file name
+   * @return XmlGenerator 
+   * @throws RuntimeException 
    */
-  public static function loadField(Form $form, SimpleXMLElement $element, $group=null, $value=null)
+  public static function loadXmlGenerator($formName)
   {
-    if ( !isset(self::$fields) ){
-      self::$fields = [];
-    }
+    $Class = Form::$ns.'\\'.ucfirst(Callisto()->getName()).'Bundle\\Form\\'.ucfirst($formName).'XmlGenerator';
     
-    if ( (string)$element['type'] === '' ){
-      $element['type'] = 'text';
-    }
-    
-    $type = (string) $element['type'];
-    $name = (string) $element['name'];
-    
-    $key = $type.'_'.$name.'_'.$group;
-    
-    if ( !isset(self::$fields[$key]) ){
-      if ( $value === null ){
-        $value = $form->getValue($name, $group);
-      }
+    if ( !class_exists($Class) ){
+      $Class = Form::$ns.'\\Form\\'.ucfirst($formName).'XmlGenerator';
       
-      self::$fields[$key] = Field::getInstance($type);
-      self::$fields[$key]->init($form, $element, $group, $value);
+      if ( !class_exists($Class) ){
+        $Class = 'JDZ\\Form\\XmlGenerator';
+        // throw new RuntimeException('Error loading form file for '.$formName);
+      }
     }
     
-    return self::$fields[$key];
+    // debugMe($Class);
+    return new $Class();
   }
   
   /**
@@ -180,7 +172,8 @@ abstract class FormHelper
     /* if ( $str = self::getTranslation($name) ){
       return $str;
     } */
-    return $name;
+    return 'FIELD_'.$ns.'_'.$name.'_LABEL';
+    // return $name;
     // return '[-L-]'.$name;
   }
   

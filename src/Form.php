@@ -10,11 +10,12 @@ namespace JDZ\Form;
 use JDZ\Form\Renderer\Renderer;
 use JDZ\Form\Validator\Validator;
 use JDZ\Form\Field\FieldInterface;
+use JDZ\Form\Field\Field;
 use JDZ\Form\Exception\RequiredException;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Helpers\ArrayHelper;
 use JDZ\Registry\Registry;
-use JDZ\Utilities\DataObject;
+use JDZ\Form\FormData;
 use JDZ\Utilities\Date as DateObject;
 use SimpleXMLElement;
 use RuntimeException;
@@ -32,26 +33,14 @@ use Exception;
 class Form implements FormInterface
 {
   /**
-   * The boostrap3 class for label html display
+   * Form namespace
    * 
-   * @var    constant   
+   * Used to include Forms, Fields, Rules, ..
+   * 
+   * @var   string
    */
-  const BS_COL_LABEL='col-sm-3';
+  public static $ns = '\\Form';
   
-  /**
-   * The boostrap3 class for field container html display
-   * 
-   * @var    constant   
-   */
-  const BS_COL_FIELD='col-sm-9';
-  
-  /**
-   * The Registry data storage for form fields during display
-   * 
-   * @var    object   
-   */
-  protected $data;
-
   /**
    * The name of the form instance
    * 
@@ -60,12 +49,33 @@ class Form implements FormInterface
   protected $name;
 
   /**
-   * The form object options for use in rendering and validation
+   * Input control
    * 
-   * @var    array 
+   * @var    string
    */
-  protected $options;
-
+  protected $inputControlName = 'csForm';
+  
+  /**
+   * Update mode
+   * 
+   * @var    string
+   */
+  protected $updateMode = false;
+  
+  /**
+   * Component
+   * 
+   * @var    string
+   */
+  protected $component;
+  
+  /**
+   * Form orientation
+   * 
+   * @var    string   'vertical' or  'inline' or 'horizontal'
+   */
+  protected $orientation = 'vertical';
+  
   /**
    * Form XML definition
    * 
@@ -74,11 +84,18 @@ class Form implements FormInterface
   protected $xml;
   
   /**
-   * Form Validator instance
+   * Form field values
    * 
-   * @var    Validator 
+   * @var    FormData   
    */
-  protected $validator;
+  protected $data;
+
+  /**
+   * Fields 
+   * 
+   * @var    [FieldInterface]
+   */
+  protected $fields;
 
   /**
    * Renderer instance
@@ -88,12 +105,12 @@ class Form implements FormInterface
   protected $renderer;
   
   /**
-   * Current HTML indent
+   * Form Validator instance
    * 
-   * @var    string 
+   * @var    Validator 
    */
-  protected $currentIndent;
-  
+  protected $validator;
+
   /** 
    * An array of error messages or Exception objects
    * 
@@ -102,273 +119,83 @@ class Form implements FormInterface
   protected $errors = [];
   
   /**
-   * Form instances
-   * 
-   * @var    array 
-   */
-  protected static $instances;
-  
-  /**
-   * Adds a new child SimpleXMLElement node to the source
-   * 
-   * @param   SimpleXMLElement  $source  The source element on which to append.
-   * @param   SimpleXMLElement  $new     The new element to append.
-   * @return   void
-   * @throws   RuntimeException
-   */
-  public static function addNode(SimpleXMLElement $source, SimpleXMLElement $new)
-  {
-    $node = $source->addChild($new->getName(), trim($new));
-
-    foreach($new->attributes() as $name => $value){
-      $node->addAttribute($name, $value);
-    }
-
-    foreach($new->children() as $child){
-      self::addNode($node, $child);
-    }
-  }
-
-  /**
-   * Adds a new child SimpleXMLElement node to the source.
-   * @param   SimpleXMLElement  $source  The source element on which to append.
-   * @param   SimpleXMLElement  $new     The new element to append.
-   * @return   void
-   */
-  public static function mergeNode(SimpleXMLElement $source, SimpleXMLElement $new)
-  {
-    foreach($new->attributes() as $name => $value){
-      if ( isset($source[$name]) ){
-        $source[$name] = (string) $value;
-      }
-      else {
-        $source->addAttribute($name, $value);
-      }
-    }
-  }
-
-  /**
-   * Merges new elements into a source <fields> element.
-   * @param   SimpleXMLElement  $source  The source element.
-   * @param   SimpleXMLElement  $new     The new element to merge.
-   * @return   void
-   */
-  public static function mergeNodes(SimpleXMLElement $source, SimpleXMLElement $new)
-  {
-    // The assumption is that the inputs are at the same relative level.
-    // So we just have to scan the children and deal with them.
-
-    // Update the attributes of the child node.
-    foreach($new->attributes() as $name => $value){
-      if ( isset($source[$name]) ){
-        $source[$name] = (string)$value;
-      }
-      else {
-        $source->addAttribute($name, $value);
-      }
-    }
-
-    foreach($new->children() as $child){
-      $type = $child->getName();
-      $name = $child['name'];
-
-      $fields = $source->xpath($type.'[@name="'.$name.'"]');
-
-      if ( empty($fields) ){
-        // This node does not exist, so add it.
-        self::addNode($source, $child);
-      }
-      else {
-        // This node does exist.
-        switch($type){
-          case 'field':
-            self::mergeNode($fields[0], $child);
-            break;
-
-          default:
-            self::mergeNodes($fields[0], $child);
-            break;
-        }
-      }
-    }
-  }
-  
-  /**
    * Instantiate the form object
    * 
-   * @param   string            $name     The name of the form.
-   * @param   SimpleXMLElement  $xml      The form xml definition
-   * @param   array             $options  An array of form options.
-   * @param   bool              $reset    Flag to toggle whether form fields should be replaced if a field
-   *                                      already exists with the same group/name.
-   * @param   string|false      $xpath    An optional xpath to search for the fields.
+   * @param  string  $name  The name of the form
    */
-  public function __construct($name, array $options=[])
+  public function __construct($name)
   {
-    $this->errors        = [];
-    $this->options       = [];
-    $this->currentIndent = '';
-    
-    $this->name = $name;
-    $this->data = new Registry;
-    
-    $this->options['control']   = isset($options['control'])   ? $options['control']   : 'csForm';
-    $this->options['type']      = isset($options['type'])      ? $options['type']      : 'vertical';
-    $this->options['labelCols'] = isset($options['labelCols']) ? $options['labelCols'] : Form::BS_COL_LABEL;
-    $this->options['fieldCols'] = isset($options['fieldCols']) ? $options['fieldCols'] : Form::BS_COL_FIELD;
-    $this->options['buttons']   = isset($options['buttons'])   ? $options['buttons']   : '';
-    $this->options['update']    = isset($options['update'])    ? (bool)$options['update'] : false;
+    $this->name   = $name;
+    $this->data   = new FormData();
+    $this->errors = [];
+    $this->fields = [];
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function load(SimpleXMLElement $xml, $replace=true, $xpath=false)
+  public function setXml(SimpleXMLElement $xml)
   {
-    if ( empty($this->xml) ){
-      if ( $xpath === false && ($xml->getName() === 'form') ){
-        $this->xml = $xml;
-        $this->syncPaths();
-        return;
-      }
-      
-      throw new RuntimeException('Invalid XML form ['.get_class($this).']');
+    if ( 'form' !== $xml->getName() ){
+      throw new RuntimeException('Invalid XML form ['.$xml->getName().']');
     }
     
-    $elements = [];
-    if ( $xpath === true ){
-      $elements = $xml->xpath($xpath);
-    }
-    elseif ( $xml->getName() == 'form' ){
-      $elements = $xml->children();
-    }
+    $formAttributes = $xml->attributes();
     
-    if ( empty($elements) ){
-      return;
-    }
-    
-    foreach($elements as $element){
-      $fields = $element->xpath('descendant-or-self::field');
-      foreach ($fields as $field){
-        $attrs  = $field->xpath('ancestor::fields[@name]/@name');
-        $groups = array_map('strval', $attrs ? $attrs : []);
-
-        if ( $current = $this->findField((string) $field['name'], implode('.', $groups)) ){
-          if ( $replace ){
-            $olddom = dom_import_simplexml($current);
-            $loadeddom = dom_import_simplexml($field);
-            $addeddom = $olddom->ownerDocument->importNode($loadeddom);
-            $olddom->parentNode->replaceChild($addeddom, $olddom);
-            $loadeddom->parentNode->removeChild($loadeddom);
-          }
-          else {
-            unset($field);
-          }
-        }
-      }
-
-      self::addNode($this->xml, $element);
-    }
-    
+    $this->xml = $xml;
     $this->syncPaths();
+    return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function bind($data)
+  public function setData(FormData $data, $reset=false)
   {
-    if ( !is_object($data) && !is_array($data) ){
-      return false;
+    if ( $reset ){
+      $this->data = new FormData();
     }
-    
-    if ( is_object($data) ){
-      if ( $data instanceof Registry ){
-        $data = $data->toArray();
-      }
-      elseif ( $data instanceof DataObject ){
-        $data = $data->export();
-      }
-      else {
-        $data = (array) $data;
-      }
-    }
-    
-    foreach($data as $k => $v){
-      if ( $this->findField($k) ){
-        $this->data->set($k, $v);
-      }
-      elseif ( is_object($v) || ArrayHelper::isAssociative($v) ){
-        $this->bindLevel($k, $v);
-      }
-    }
-    
-    return true;
+    $this->bindData($data);
+    return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function reset($xml=false)
+  public function setUpdateMode($updateMode)
   {
-    unset($this->data);
-    $this->data = new Registry;
-
-    if ( $xml ){
-      unset($this->xml);
-      $this->xml = new SimpleXMLElement('<form></form>');
-    }
-    
-    return true;
+    $this->updateMode = $updateMode;
+    return $this;
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function filter($data, $group=null)
+  
+  public function setComponent($component)
   {
-    $fields = $this->findFieldsByGroup($group);
-    if ( !$fields ){
-      throw new RuntimeException('No fields found for '.$group);
-    }
-    
-    $input  = new Registry($data);
-    $output = new Registry;
-    
-    foreach($fields as $element){
-      $attrs   = $element->xpath('ancestor::fields[@name]/@name');
-      $groups  = array_map('strval', $attrs ? $attrs : []);
-      $group   = implode('.', $groups);
-      $name    = (string) $element['name'];
-      
-      $key = ($group===''?'':$group.'.').$name;
-      
-      $field = FormHelper::loadField($this, $element, $group, $input->get($key, '', 'raw'));
-      $element = $field->get('element');
-      $filter  = (string) $element['filter'];
-      $default = (string) $element['default'];
-      
-      if ( empty($filter) ){
-        $filter = 'string';
-      }
-      /* elseif ( is_callable($filter) ){
-        $filter = 'raw';
-      } */
-      
-      if ( $input->exists($key) ){
-        $output->set($key, $this->filterField($field, $input->get($key, $default, $filter)));
-      }
-    }
-    
-    return $output->toArray();
+    $this->component = $component;
+    return $this;
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  public function validate($data, $group=null)
+  
+  public function setOrientation($orientation)
   {
-    return $this->getValidator()->execute($data, $group);
+    $this->orientation = $orientation;
+    return $this;
+  }
+  
+  public function setInputControlName($inputControlName)
+  {
+    $this->inputControlName = $inputControlName;
+    return $this;
+  }
+  
+  public function setRenderer($name)
+  {
+    $Class = '\\JDZ\\Form\\Renderer\\'.ucfirst($name).'Renderer';
+    if ( !class_exists($Class) ){
+      throw new RuntimeException('Form renderer '.$name.' not found');
+    }
+    
+    $this->renderer = new $Class();
+    $this->renderer->setForm($this);
+    $this->renderer->addHiddenField(CrsfToken(), '1');
+    
+    return $this;
+  }
+  
+  public function setValidator()
+  {
+    $this->validator = new Validator();
+    $this->validator->setForm($this);
+    return $this;
   }
   
   /**
@@ -389,6 +216,7 @@ class Form implements FormInterface
     }
     
     $this->errors[] = (object)$error;
+    return $this;
   }
   
   /**
@@ -406,7 +234,7 @@ class Form implements FormInterface
     
     $this->syncPaths();
     
-    return true;
+    return $this;
   }
   
   /**
@@ -426,7 +254,7 @@ class Form implements FormInterface
     
     $this->syncPaths();
     
-    return true;
+    return $this;
   }
   
   /**
@@ -451,87 +279,47 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
-  public function setFields(&$elements, $group=null, $replace=true)
+  public function getNs()
   {
-    foreach ($elements as $element){
-      if ( !($element instanceof SimpleXMLElement) ){
-        throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
-      }
-    }
-    
-    $return = true;
-    foreach($elements as $element){
-      if ( !$this->setField($element, $group, $replace) ){
-        $return = false;
-      }
-    }
-
-    $this->syncPaths();
-    return $return;
+    return static::$ns;
   }
   
   /**
    * {@inheritDoc}
    */
-  public function setField(&$element, $group=null, $replace=true)
+  public function getName()
   {
-    if ( !($element instanceof SimpleXMLElement) ){
-      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
-    }
-
-    $old = &$this->findField((string) $element['name'], $group);
-
-    if ( !$replace && !empty($old) ){
-      return true;
-    }
-
-    if ( $replace && !empty($old) && ($old instanceof SimpleXMLElement) ){
-      $dom = dom_import_simplexml($old);
-      $dom->parentNode->removeChild($dom);
-    }
-    
-    if ( $group ){
-      $fields = &$this->findGroup($group);
-      if ( isset($fields[0]) && ($fields[0] instanceof SimpleXMLElement) ){
-        self::addNode($fields[0], $element);
-      }
-    }
-    else {
-      self::addNode($this->xml, $element);
-    }
-
-    $this->syncPaths();
-    
-    return true;
+    return $this->name;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getFormOption($property)
+  public function getOrientation()
   {
-    if ( isset($this->options[$property]) ){
-      return $this->options[$property];
-    }
-    
-    return false;
+    return $this->orientation;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getOption($key, $default='')
+  public function getInputControlName()
   {
-    switch($key){
-      case 'labelCols':
-      case 'fieldCols':
-        if ( $this->getOption('type') !== 'horizontal' ){
-          return $default;
-        }
-        break;
-    }
-    
-    return (string) $this->options[$key];
+    return $this->inputControlName;
+  }
+  
+  public function getRenderer()
+  {
+    return $this->renderer;
+  }
+  
+  public function getValidator()
+  {
+    return $this->validator;
+  }
+  
+  public function getXml()
+  {
+    return $this->xml;
+  }
+  
+  public function getData()
+  {
+    return $this->data;
   }
   
   /**
@@ -559,47 +347,9 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
-  public function getValidator()
+  public function getComponent()
   {
-    if ( !isset($this->validator) ){
-      $this->validator = new Validator($this);
-    }
-    
-    return $this->validator;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public function getRenderer()
-  {
-    if ( !isset($this->renderer) ){
-      $this->renderer = new Renderer($this);
-    }
-    
-    return $this->renderer;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public function getName()
-  {
-    return $this->name;
-  }
-  
-  /**
-   * {@inheritDoc}
-   */
-  public function getContext()
-  {
-    if ( strpos($this->name, '.') !== false ){
-      list($type, $name) = explode('.', $this->name, 2);
-    }
-    else {
-      $name = $this->name;
-    }
-    return $name;
+    return $this->component;
   }
   
   /**
@@ -690,7 +440,7 @@ class Form implements FormInterface
       $groups  = array_map('strval', $attrs ? $attrs : []);
       $group  = implode('.', $groups);
 
-      if ( $field = FormHelper::loadField($this, $element, $group) ){
+      if ( $field = $this->getField($element, $group) ){
         $fields[$field->id] = $field;
       }
     }
@@ -701,14 +451,34 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
-  public function getField($name, $group=null, $value=null)
+  public function getField(SimpleXMLElement $element, $group=null, $value=null)
   {
-    $element = $this->findField($name, $group);
     if ( !$element ){
       return false;
     }
     
-    return FormHelper::loadField($this, $element, $group, $value);
+    $name = (string) $element['name'];
+    if ( !$name ){
+      return false;
+    }
+    
+    if ( null === $value ){
+      $value = $this->getValue($name, $group);
+    }
+    
+    if ( !isset($this->fields[$name]) ){
+      $type = (string) $element['type'];
+      
+      $this->fields[$name] = Field::create($type)
+        ->setForm($this)
+        ->setElement($element)
+        ->setGroup($group)
+        ->init();
+    }
+    
+    $this->fields[$name]->setValue($value); 
+    
+    return $this->fields[$name];
   }
   
   /**
@@ -748,7 +518,7 @@ class Form implements FormInterface
       $groups = array_map('strval', $attrs ? $attrs : []);
       $group  = implode('.', $groups);
 
-      if ( $field = FormHelper::loadField($this, $element, $group) ){
+      if ( $field = $this->getField($element, $group) ){
         $fields[$field->get('id')] = $field;
       }
     }
@@ -794,17 +564,104 @@ class Form implements FormInterface
     return true;
   }
 
+  public function isVertical()
+  {
+    return 'horizontal' !== $this->orientation && 'inline' !== $this->orientation;
+  }
+  
+  public function isHorizontal()
+  {
+    return 'horizontal' === $this->orientation;
+  }
+  
+  public function isInline()
+  {
+    return 'inline' === $this->orientation;
+  }
+  
+  public function isUpdateMode()
+  {
+    return true === $this->updateMode;
+  }
+  
   /**
    * {@inheritDoc}
    */
-  public function removeGroup($group)
+  public function filter(array $data, $group=null)
   {
-    $elements =& $this->findGroup($group);
-    foreach($elements as &$element){
-      $dom = dom_import_simplexml($element);
-      $dom->parentNode->removeChild($dom);
+    $fields = $this->findFieldsByGroup($group);
+    if ( !$fields ){
+      throw new RuntimeException('No fields found for '.$group);
     }
-    return true;
+    
+    $input  = new FormData($data);
+    $output = new FormData();
+    
+    foreach($fields as $element){
+      $attrs   = $element->xpath('ancestor::fields[@name]/@name');
+      $groups  = array_map('strval', $attrs ? $attrs : []);
+      $group   = implode('.', $groups);
+      $name    = (string) $element['name'];
+      
+      $key = ($group===''?'':$group.'.').$name;
+      
+      $field = $this->getField($element, $group, $input->get($key, ''));
+      $element = $field->get('element');
+      $filter  = (string) $element['filter'];
+      $default = (string) $element['default'];
+      
+      if ( empty($filter) ){
+        $filter = 'string';
+      }
+      /* elseif ( is_callable($filter) ){
+        $filter = 'raw';
+      } */
+      
+      if ( $input->has($key) ){
+        $output->set($key, $this->filterField($field, $input->get($key, $default, $filter)));
+      }
+    }
+    
+    return $output;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function validate(FormData $data)
+  {
+    return $this->validator->execute($data);
+  }
+  
+  /**
+   * Bind data to the form
+   * 
+   * @param   FormData|array|object  $data  An array or object of data to bind to the form
+   * @return  $this
+   */
+  protected function bindData($data, $group=null)
+  {
+    if ( $data instanceof FormData ){
+      $data = $data->export();
+    }
+    
+    foreach((array)$data as $k => $v){
+      if ( $group ){
+        $key = $group.'.'.$k;
+      }
+      else {
+        $key = $k;
+      }
+      
+      if ( $this->findField($k) ){
+        $this->data->set($key, $v);
+      }
+      elseif ( is_object($v) || ArrayHelper::isAssociative($v) ){
+        $this->bindData($key, $v);
+      }
+    }
+    
+    return $this;
   }
   
   /**
@@ -1023,26 +880,6 @@ class Form implements FormInterface
     }
 
     return $return;
-  }
-  
-  /**
-   * Bind data to the form for the group level.
-   * @param   string  $group  The dot-separated form group path on which to bind the data.
-   * @param   mixed   $data   An array or object of data to bind to the form for the group level.
-   * @return   void
-   */
-  protected function bindLevel($group, $data)
-  {
-    settype($data, 'array');
-
-    foreach($data as $k => $v){
-      if ( $this->findField($k, $group) ){
-        $this->data->set($group . '.' . $k, $v);
-      }
-      elseif ( is_object($v) || ArrayHelper::isAssociative($v) ){
-        $this->bindLevel($group . '.' . $k, $v);
-      }
-    }
   }
   
   /**

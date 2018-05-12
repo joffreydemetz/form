@@ -3,21 +3,20 @@
 	"type": "library",
     "description": "Form manager",
     "keywords": ["form"],
-    "homepage": "http://joffreydemetz.com/git/form/",
-    "version": "1.2.3",
+    "homepage": "https://github.com/joffreydemetz/form/",
+    "version": "1.2.4",
     "license": "MIT",
     
     "authors": [
         {
             "name": "Joffrey Demetz",
             "email": "joffrey.demetz@gmail.com",
-            "homepage": "http://joffreydemetz.com",
+            "homepage": "https://joffreydemetz.com",
             "role": "Lead"
         }
     ],
     
     "require": {
-        "php": ">=5.6",
         "jdz/helpers": "^1.2",
         "jdz/registry": "^1.2",
         "jdz/utilities": "^1.2"

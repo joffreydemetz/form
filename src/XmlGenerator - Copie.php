@@ -16,7 +16,7 @@ use RuntimeException;
  *
  * @author Joffrey Demetz <joffrey.demetz@gmail.com>
  */
-class XmlGenerator 
+abstract class XmlGenerator 
 {
   protected $subForm = false;
   
@@ -166,8 +166,5 @@ class XmlGenerator
     return implode("\n", $content);
   }
   
-  protected function data()
-  {
-    return [];
-  }
+  abstract protected function data();
 }

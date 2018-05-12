@@ -41,13 +41,6 @@ abstract class InputField extends Field
   protected $maxlength;
   
   /**
-   * Field autocomplete attribute
-   * 
-   * @var    bool   
-   */
-  protected $autocomplete;
-  
-  /**
    * Field placeholder attribute
    * 
    * @var    string   
@@ -68,7 +61,8 @@ abstract class InputField extends Field
    */
   public function isHidden()
   {
-    return ( $this->type === 'hidden' );
+    return ( $this->hidden );
+    // return ( $this->type === 'hidden' );
   }
   
   /**
@@ -90,10 +84,6 @@ abstract class InputField extends Field
     
     if ( $this->pattern !== '' ){
       $attrs['pattern'] = $this->pattern;
-    }
-    
-    if ( $this->autocomplete === false ){
-      $attrs['autocomplete'] = 'off';
     }
     
     if ( $this->placeholder !== '' ){
@@ -137,7 +127,6 @@ abstract class InputField extends Field
     
     $this->defAttribute('size', '0', 'int');
     $this->defAttribute('maxlength', '0', 'int');
-    $this->defAttribute('autocomplete', 'true', 'bool');
     $this->defAttribute('placeholder', '');
     $this->defAttribute('pattern', '');
   }
@@ -152,7 +141,6 @@ abstract class InputField extends Field
     $this->type         = (string) $this->element['type'];
     $this->size         = (int) $this->element['size'];
     $this->maxlength    = (int) $this->element['maxlength'];
-    $this->autocomplete = ( (string) $this->element['autocomplete'] === 'true' );
     $this->placeholder  = (string) $this->element['placeholder'];
     $this->pattern      = (string) $this->element['pattern'];
   }

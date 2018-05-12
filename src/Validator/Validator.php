@@ -7,13 +7,13 @@
  */
 namespace JDZ\Form\Validator;
 
-use JDZ\Form\FormInterface;
+use JDZ\Form\Form;
 use JDZ\Form\FormHelper;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Form\Exception\RequiredException;
 use JDZ\Form\Field\Field;
 use JDZ\Form\Rule\Rule;
-use JDZ\Registry\Registry;
+use JDZ\Form\FormData;
 use RuntimeException;
 
 /**
@@ -26,32 +26,29 @@ class Validator implements ValidatorInterface
   /**
    * Form instance
    * 
-   * @var    FormInterface   
+   * @var    Form   
    */
   protected $form;
   
   /**
-   * Constructor
-   * 
-   * @param   FormInterface      $form       Form instance
+   * {@inheritDoc}
    */
-  public function __construct(FormInterface &$form)
+  public function setForm(Form $form)
   {
-    $this->form =& $form;
+    $this->form = $form;
+    return $this;
   }
   
   /**
    * {@inheritDoc}
    */
-  public function execute($data, $group=null)
+  public function execute(FormData $data, $group=null)
   {
     $fields = $this->form->findFieldsByGroup($group);
     
     if ( !$fields ){
       throw new RuntimeException('No fields found for '.$group);
     }
-    
-    $registry = new Registry($data);
     
     $return = true;
     
@@ -63,11 +60,10 @@ class Validator implements ValidatorInterface
       
       $key = ($group===''?'':$group.'.').$name;
       
-      $field = FormHelper::loadField($this->form, $element, $group, $registry->get($key, '', 'raw'));
+      $field = $this->form->getField($element, $group, $data->get($key, ''));
+      $value = $data->get($key, '', $field->get('filter', 'raw'));
       
-      $value = $registry->get($key, '', $field->get('filter', 'raw'));
-      
-      if ( !($result=$this->check($field, $group, $value, $registry)) ){
+      if ( !($result=$this->check($field, $group, $value, $data)) ){
         $return = false;
       }
     }
@@ -76,43 +72,45 @@ class Validator implements ValidatorInterface
   }
   
   /**
-   * Test a field object based on field data.
+   * Test a field object based on field data
    * 
-   * @param   Field     $field      Form Field instanse.
-   * @param   string    $group      The optional dot-separated form group path on which to find the field.
-   * @param   mixed     $value      The optional value to use as the default for the field.
-   * @param   object    $input      An optional Registry object with the entire data set to validate
-   *                                against the entire form.
-   * @return   mixed   Boolean true if field value is valid, False or Exception on failure.
+   * @param   Field       $field      Form Field instanse
+   * @param   string      $group      The optional dot-separated form group path on which to find the field
+   * @param   mixed       $value      The optional value to use as the default for the field
+   * @param   FormData  $data       An optional Data object with the entire data set to validate against the entire form
+   * @return  mixed       Boolean true if field value is valid, False or Exception on failure
    */
-  protected function check(Field $field, $group=null, $value=null, $input=null)
+  protected function check(Field $field, $group=null, $value=null, $data=null)
   {
-    $form    = $field->get('form');
     $element = $field->get('element');
-    $ns      = $form->getContext();
     $name    = (string)$element['name'];
     
     if ( $required = $field->get('required') ){
       if ( $field->isEmpty() ){
-        $message = FormHelper::getRequiredError($field->get('message'), $ns, $name);
-        $form->setError( new RequiredException($message), $field );
+        $message = FormHelper::getRequiredError($field->get('message'), $this->form->getComponent(), $name);
+        $this->form->setError( new RequiredException($message), $field );
         return false;
       }
     }
     
     if ( $validate = $field->get('validate') ){
       foreach($validate as $type){
-        $rule = Rule::getInstance($type);
+        $Class = $this->form->getNs().'\\Rule\\'.ucfirst($type);
         
-        if ( $rule === false ){
-          throw new RuntimeException('Missing field rule ('.$type.') ['.get_class($this).']');
+        if ( !class_exists($Class) ){
+          throw new RuntimeException('Unrecognized rule type :: '.$type);
         }
         
-        $valid = $rule->test($element, $value, $group, $input, $form);
+        $rule = new $Class();
+        $rule
+          ->setForm($this->form)
+          ->setElement($element)
+          ->setGroup($group)
+          ->setData($data);
         
-        if ( $valid === false ){
-          $message = FormHelper::getRuleError('', $ns, $name, $type);
-          $form->setError( new InvalidException($message), $field );
+        if ( false === $rule->test($value) ){
+          $message = FormHelper::getRuleError('', $this->form->getComponent(), $name, $type);
+          $this->form->setError( new InvalidException($message), $field );
           return false;
         }        
       }

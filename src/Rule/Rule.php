@@ -8,7 +8,8 @@
 namespace JDZ\Form\Rule;
 
 use JDZ\Form\Form;
-use JDZ\Registry\Registry;
+use JDZ\Form\FormHelper;
+use JDZ\Form\FormData;
 use SimpleXMLElement;
 use RuntimeException;
 
@@ -20,12 +21,40 @@ use RuntimeException;
 abstract class Rule implements RuleInterface
 {
   /**
+   * Form 
+   * 
+   * @var    Form   
+   */
+  protected $form;
+  
+  /**
+   * Field XML definition
+   * 
+   * @var    SimpleXMLElement   
+   */
+  protected $element;
+  
+  /**
+   * Field group
+   * 
+   * @var    string   
+   */
+  protected $group;
+  
+  /**
+   * Form Data
+   * 
+   * @var    FormData   
+   */
+  protected $data;
+  
+  /**
    * The regular expression to use in testing a form field value
    * 
    * @var    string   
    */
   protected $regex;
-
+  
   /**
    * The regular expression modifiers to use when testing a form field value
    * 
@@ -34,68 +63,45 @@ abstract class Rule implements RuleInterface
   protected $modifiers;
   
   /**
-   * Rules namepace
-   * 
-   * @var    string   
+   * {@inheritDoc}
    */
-  protected static $NS;
-  
-  /**
-   * Instances
-   * 
-   * @var    array   
-   */
-  protected static $instances;
-  
-  /**
-   * Set the rules namespace
-   * 
-   * @param   string  $NS  The rules namespace
-   * @return  void
-   */
-  public static function setNamespace($NS)
+  public function setForm(Form $form)
   {
-    self::$NS = $NS;
+    $this->form = $form;
+    return $this;
   }
-  
-  /**
-   * Get a field instance
-   * 
-   * @param   string  $name  The field type
-   * @return   Rule    Rule instance clone
-   * @throws   RuntimeException
-   */
-  public static function getInstance($type)
-  {
-    if ( !isset(self::$NS) ){
-      self::$NS = '\\Form\\Rule\\';
-    }
-    
-    if ( !isset(self::$instances) ){
-      self::$instances = [];
-    }
-    
-    if ( empty($type) ){
-      throw new RuntimeException('Missing rule type');
-    }
-    
-    if ( !isset(self::$instances[$type]) ){
-      $Class = self::$NS.ucfirst($type);
-      
-      if ( !class_exists($Class) ){
-        throw new RuntimeException('Unrecognized rule type :: '.$type);
-      }
-      
-      self::$instances[$type] = new $Class();
-    }
-    
-    return clone self::$instances[$type];
-  }  
   
   /**
    * {@inheritDoc}
    */
-  public function test(SimpleXMLElement &$element, $value, $group=null, Registry &$input=null, Form &$form=null)
+  public function setElement(SimpleXMLElement $element)
+  {
+    $this->element = $element;
+    return $this;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function setGroup($group=null)
+  {
+    $this->group = $group;
+    return $this;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function setData(FormData $data)
+  {
+    $this->data = $data;
+    return $this;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
+  public function test($value)
   {
     if ( empty($this->regex) ){
       throw new RuntimeException('Invalid rule ['.get_class($this).']');
@@ -114,6 +120,6 @@ abstract class Rule implements RuleInterface
       }
     }
     
-    return preg_match('/'.$this->regex.'/'.$this->modifiers, $value, $m);
+    return ( preg_match('/'.$this->regex.'/'.$this->modifiers, $value) );
   }
 }

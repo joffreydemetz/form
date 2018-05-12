@@ -25,11 +25,11 @@ class Fieldset
   protected $id;
   
   /**
-   * Form active controller
+   * Form active component
    * 
    * @var    string   
    */
-  protected $controller;
+  protected $component;
   
   /**
    * Fieldset group
@@ -80,7 +80,7 @@ class Fieldset
    */
   public function __construct(array $properties)
   {
-    $this->controller  = (string) $properties['controller'];
+    $this->component  = (string) $properties['component'];
     $this->group       = (string) $properties['group'];
     $this->active      = (bool) $properties['active'];
     $this->name        = (string) $properties['name'];

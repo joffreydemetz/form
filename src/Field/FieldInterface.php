@@ -8,7 +8,6 @@
 namespace JDZ\Form\Field;
 
 use JDZ\Form\Form;
-use RuntimeException;
 use SimpleXMLElement;
 
 /**
@@ -21,15 +20,34 @@ interface FieldInterface
   /**
    * Init field
    * 
-   * @param   Form                  $form     Form instance.
-   * @param   SimpleXMLElement      $value    SimpleXMLElement object representing the <field /> tag for the form field object
-   * @param   mixed                 $group    Field group. This acts as an array container for the field
-   *                                          For example if the field has name="foo" and the group value is set to "bar" then the
-   *                                          full field name would end up being "bar[foo]"
-   * @param   mixed                 $value    Field value
-   * @return   void
+   * @param   mixed  $value  Field value
+   * @return  void
    */
-  public function init(Form &$form, SimpleXMLElement &$element, $group=null, $value=null);
+  public function init($value=null);
+  
+  /**
+   * Set the form
+   * 
+   * @param  Form  $form  Form instance
+   * @return void
+   */
+  public function setForm(Form $form);
+  
+  /**
+   * Set the XML element
+   * 
+   * @param  SimpleXMLElement  $element  SimpleXMLElement instance
+   * @return void
+   */
+  public function setElement(SimpleXMLElement $element);
+  
+  /**
+   * Set the group
+   * 
+   * @param  string  $group  
+   * @return void
+   */
+  public function setGroup($group);
   
   /**
    * Set field attribute in XML definition
@@ -50,15 +68,6 @@ interface FieldInterface
    * @return   void
    */
   public function defAttribute($attribute, $default=null, $type='string');
-  
-  /**
-   * Clean the field Object before rendering it
-   * 
-   * Checks if a readonly field must be hidden or static
-   *
-   * @return   void
-   */
-  public function cleanForRender();
   
   /**
    * Get the field input markup.
@@ -84,6 +93,34 @@ interface FieldInterface
   public function getHiddenValue();
   
   /**
+   * Get field attributes
+   * 
+   * @return   array   Key/Value pairs of html field attributes
+   */
+  public function getFieldAttributes(array $attrs=[]);
+  
+  /**
+   * Get the field container class
+   * 
+   * @return   array  The container classes.
+   */
+  public function getContainerClasses();
+  
+  /**
+   * Get the field label class
+   * 
+   * @return   array  The label classes.
+   */
+  public function getLabelClasses();
+  
+  /**
+   * Get the field class
+   * 
+   * @return   array  The field classes.
+   */
+  public function getFieldClasses();
+  
+  /**
    * Check if a value was set for the field
    * 
    * @return   bool  True if the value was set.
@@ -98,30 +135,11 @@ interface FieldInterface
   public function isHidden();
   
   /**
-   * Get field attributes
+   * Clean the field Object before rendering it
    * 
-   * @return   array   Key/Value pairs of html field attributes
+   * Checks if a readonly field must be hidden or static
+   *
+   * @return   void
    */
-  public function getFieldAttributes(array $attrs=[]);
-  
-  /**
-   * Get the field container class
-   * 
-   * @return   array  The container classes.
-   */
-  public function getContainerClass();
-  
-  /**
-   * Get the field label class
-   * 
-   * @return   array  The label classes.
-   */
-  public function getLabelClass();
-  
-  /**
-   * Get the field class
-   * 
-   * @return   array  The field classes.
-   */
-  public function getFieldClass();
+  public function cleanForRender();
 }
