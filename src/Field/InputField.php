@@ -150,9 +150,9 @@ abstract class InputField extends Field
    */
   protected function renderField(array $attrs=[])
   {
-    return [
+    return array_merge(parent::renderField($attrs), [
       'type' => 'input',
       'attrs' => $this->getFieldAttributes($attrs),
-    ];
+    ]);
   }
 }

@@ -208,7 +208,7 @@ abstract class FormHelper
   }
   
   /**
-   * Get field label 
+   * Get field placeholder 
    * 
    * @param   string    $value  Specified value
    * @param   string    $ns     Namespace
@@ -288,7 +288,9 @@ abstract class FormHelper
     // if ( $str = self::getTranslation($name) ){
       // return $str;
     // }
-    return '[-F-]'.$name;
+    // return 'FIELDSET_'.$ns.'_'.$name.'_LEGEND';
+    // return '[-F-]'.$name;
+    return '';
   }
   
   /**

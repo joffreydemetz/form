@@ -70,6 +70,13 @@ class Form implements FormInterface
   protected $component;
   
   /**
+   * i18n namespace
+   * 
+   * @var    string
+   */
+  protected $i18nNamespace;
+  
+  /**
    * Form orientation
    * 
    * @var    string   'vertical' or  'inline' or 'horizontal'
@@ -162,6 +169,12 @@ class Form implements FormInterface
   public function setComponent($component)
   {
     $this->component = $component;
+    return $this;
+  }
+  
+  public function setI18nNamespace($i18nNamespace)
+  {
+    $this->i18nNamespace = $i18nNamespace;
     return $this;
   }
   
@@ -355,12 +368,22 @@ class Form implements FormInterface
   /**
    * {@inheritDoc}
    */
+  public function getI18nNamespace()
+  {
+    if ( !isset($this->i18nNamespace) ){
+      $this->i18nNamespace = $this->component;
+    }
+    return $this->i18nNamespace;
+  }
+  
+  /**
+   * {@inheritDoc}
+   */
   public function getValue($name, $group=null, $default=null)
   {
     if ( $group ){
       return $this->data->get($group.'.'.$name, $default);
     }
-
     return $this->data->get($name, $default);
   }
   
@@ -653,7 +676,7 @@ class Form implements FormInterface
         $key = $k;
       }
       
-      if ( $this->findField($k) ){
+      if ( $this->findField($k, $group) ){
         $this->data->set($key, $v);
       }
       elseif ( is_object($v) || ArrayHelper::isAssociative($v) ){

@@ -159,8 +159,10 @@ class Renderer
     foreach($this->form->getFieldsets() as $name => $fieldset){
       if ( $fields = $this->getFields($name) ){
         $fieldset = (array)$fieldset;
-        $fieldset['name']   = $name;
-        $fieldset['fields'] = $fields;
+        $fieldset['name']         = $name;
+        $fieldset['label']        = '';
+        $fieldset['description']  = '';
+        $fieldset['fields']       = $fields;
         $fieldsets[$name] = $fieldset;
       }
     }
@@ -257,10 +259,15 @@ class Renderer
             }
           }
           
-          $width  = (int) preg_replace("/[^\d]/", "", $this->bootstrapInputClass);
-          $offset = $this->getBootstrapInputOffset();
-          $_classes[] = 'col-xs-12 col-sm-offset-'.$offset.' col-sm-'.$width;
-        }   
+          if ( $field->get('fullWidth') ){
+            $_classes[] = 'col-xs-12';
+          }
+          else {
+            $_classes[] = 'col-xs-12';
+            $_classes[] = 'col-sm-offset-'.$this->getBootstrapInputOffset();
+            $_classes[] = 'col-sm-'.preg_replace("/[^\d]/", "", $this->bootstrapInputClass);
+          }
+        }
         
         $classes = array_merge($_classes, $classes);
         $classes = array_unique($classes);
@@ -310,14 +317,14 @@ class Renderer
       $element   = $field->get('element');
       $fieldName = (string) $element['name'];
       
-      if ( FormHelper::getTranslation('HELP_FIELD_'.$this->form->getComponent().'_'.$fieldName) ){
-        $fieldHelp = strtoupper('HELP_FIELD_'.$this->form->getComponent().'_'.$fieldName);
+      if ( FormHelper::getTranslation('HELP_FIELD_'.$this->form->getI18nNamespace().'_'.$fieldName) ){
+        $fieldHelp = strtoupper('HELP_FIELD_'.$this->form->getI18nNamespace().'_'.$fieldName);
         
         $attrs['data-help-key']  = $fieldHelp;
         $attrs['data-help-type'] = 'field';
       }
       
-      if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $this->form->getComponent(), $fieldName) ){
+      if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $this->form->getI18nNamespace(), $fieldName) ){
         return [
           'attrs' => $attrs,
           'text' => $label,
@@ -355,13 +362,14 @@ class Renderer
   protected function fieldInputGroup(Field $field)
   {
     return [
-      'type'     => 'inputgroup',
-      'bsClass'  => $field->get('bsInputgroupClass'),
-      'bsPrefix' => $field->get('bsInputgroupPrefix'),
-      'bsSuffix' => $field->get('bsInputgroupSuffix'),
-      'field'    => $field->getFieldHtml([
-        'aria-describedby' => 'bsigroup-'.$field->get('id'),
-      ]),
+      'type'      => 'inputgroup',
+      'fieldname' => $field->get('fieldname'),
+      'goeswith'  => $field->get('goeswith'),
+      'gonewith'  => $field->get('gonewith'),
+      'bsClass'   => $field->get('bsInputgroupClass'),
+      'bsPrefix'  => $field->get('bsInputgroupPrefix'),
+      'bsSuffix'  => $field->get('bsInputgroupSuffix'),
+      'field'     => $field->getFieldHtml(),
     ];
   }
   
@@ -374,8 +382,10 @@ class Renderer
   protected function fieldStatic(Field $field)
   {
     return [
-      'type'  => 'static',
-      'value' => $field->getStaticValue(),
+      'type'     => 'static',
+      'goeswith' => $field->get('goeswith'),
+      'gonewith' => $field->get('gonewith'),
+      'value'    => $field->getStaticValue(),
     ];
   }
   
@@ -391,13 +401,13 @@ class Renderer
     $name    = (string) $element['name'];
     
     if ( $this->form->isUpdateMode() ){
-      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC_UPDATE');
+      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC_UPDATE');
       if ( !$tip ){
-        $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC');
+        $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC');
       }
     }
     else {
-      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getComponent(), $name, 'DESC');
+      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC');
     }
     
     return $tip;

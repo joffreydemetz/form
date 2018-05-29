@@ -8,7 +8,6 @@
 namespace JDZ\Form\Renderer;
 
 use JDZ\Form\FormHelper;
-use JDZ\Form\Field\Field;
 
 /**
  * Form Renderer
@@ -27,8 +26,6 @@ class TabsRenderer extends Renderer
     $fieldsets = $this->getFieldsets();
     
     $_tabs = [];
-    $preprendTabs = [];
-    $appendTabs   = [];
     $i=0;
     foreach($fieldsets as $fieldset){
       $fieldset = (array)$fieldset;
@@ -58,26 +55,10 @@ class TabsRenderer extends Renderer
       $fieldset['label']       = FormHelper::getFieldsetLabel($fieldset['label'], $this->form->getComponent(), $fieldset['name']);
       $fieldset['description'] = FormHelper::getFieldsetDescription($fieldset['description'], $this->form->getComponent(), $fieldset['name']);
       
-      // if ( $name === 'main' ){
-        // $preprendTabs[] = new Fieldset($fieldset);
-      // }
-      // elseif ( $name === 'infos' ){
-        // $appendTabs[] = new Fieldset($fieldset);
-      // }
-      // else {
-        $_tabs[] = new Fieldset($fieldset);
-      // }
+      $_tabs[] = new Fieldset($fieldset);
       
       $i++;
     }
-    
-    // foreach($preprendTabs as $_tab){
-      // array_unshift($_tabs, $_tab);
-    // }
-    
-    // foreach($appendTabs as $_tab){
-      // $_tabs[] = $_tab;
-    // }
     
     $tabs     = [];
     $contents = [];

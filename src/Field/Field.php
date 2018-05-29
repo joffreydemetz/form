@@ -37,6 +37,13 @@ abstract class Field implements FieldInterface
   protected $element;
   
   /**
+   * Field short name
+   * 
+   * @var    string   
+   */
+  protected $fieldname;
+  
+  /**
    * Field group
    * 
    * @var    string   
@@ -105,6 +112,29 @@ abstract class Field implements FieldInterface
    * @var    bool   
    */
   protected $multiple;
+  
+  /**
+   * Field goes with
+   * 
+   * @var    string  Another field name
+   */
+  protected $goeswith;
+  
+  /**
+   * Field gone with
+   * 
+   * The field won't be displayed as is
+   * 
+   * @var    string  Another field name
+   */
+  protected $gonewith;
+  
+  /**
+   * Full width field (no label)
+   * 
+   * @var    bool
+   */
+  protected $fullWidth;
   
   /**
    * Field autofocus attribute
@@ -472,6 +502,10 @@ abstract class Field implements FieldInterface
       $attrs['width'] = $this->width;
     }
     
+    if ( $this->bsInputgroupPrefix ){
+      $attrs['aria-describedby'] = 'bsigroup-'.$this->id;
+    }
+    
     $attrs['class'] = implode(' ', $classes);
     return $attrs;
   }
@@ -600,6 +634,7 @@ abstract class Field implements FieldInterface
     $this->defAttribute('labelHide', 'false', 'bool');
     $this->defAttribute('labelSrOnly', 'false', 'bool');
     $this->defAttribute('canBeStatic', 'false', 'bool');
+    $this->defAttribute('fullWidth', 'false', 'bool');
     
     $this->defAttribute('width', '0', 'int');
     
@@ -613,6 +648,8 @@ abstract class Field implements FieldInterface
     $this->defAttribute('validate', '');
     $this->defAttribute('message', '');
     $this->defAttribute('autocomplete', '');
+    $this->defAttribute('goeswith', '');
+    $this->defAttribute('gonewith', '');
     
     $this->defAttribute('bsInputgroupPrefix', '');
     $this->defAttribute('bsInputgroupSuffix', '');
@@ -635,6 +672,11 @@ abstract class Field implements FieldInterface
     $this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
     $this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
     $this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
+    $this->fullWidth      = ( (string) $this->element['fullWidth'] === 'true' );
+    
+    if ( $this->fullWidth ){
+      $this->labelHide = true;
+    }
     
     $this->width          = (int) $this->element['width'];
     
@@ -647,6 +689,8 @@ abstract class Field implements FieldInterface
     $this->labelClass     = (string) $this->element['labelClass'];
     $this->labelText      = (string) $this->element['labelText'];
     $this->autocomplete   = (string) $this->element['autocomplete'];
+    $this->goeswith       = (string) $this->element['goeswith'];
+    $this->gonewith       = (string) $this->element['gonewith'];
     
     $this->bsInputgroupPrefix = (string) $this->element['bsInputgroupPrefix'];
     $this->bsInputgroupSuffix = (string) $this->element['bsInputgroupSuffix'];
@@ -770,8 +814,9 @@ abstract class Field implements FieldInterface
   {
     $fieldname = (string) $this->element['name'];
     
-    $this->name = '';
+    $this->fieldname = $fieldname;
 
+    $this->name = '';
     if ( $control = $this->form->getInputControlName() ){
       $this->name .= $control;
     }
@@ -819,5 +864,11 @@ abstract class Field implements FieldInterface
    * @param   string  $indent  HTML indent
    * @return   string  HTML
    */
-  abstract protected function renderField(array $attrs=[]);
+  protected function renderField(array $attrs=[])
+  {
+    $attrs['fieldname'] = $this->fieldname;
+    $attrs['goeswith']  = $this->goeswith;
+    $attrs['gonewith']  = $this->gonewith;
+    return $attrs;
+  }
 }

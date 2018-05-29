@@ -112,7 +112,10 @@ abstract class TextareaField extends Field
     $this->defAttribute('maxlength', '0', 'int');
     $this->defAttribute('cols', '0', 'int');
     $this->defAttribute('rows', '0', 'int');
-    $this->defAttribute('placeholder', '');
+    
+    $this->setAttribute('bsInputgroupPrefix', '');
+    $this->setAttribute('bsInputgroupSuffix', '');
+    $this->setAttribute('bsInputgroupClass', '');
   }
   
   /**
@@ -135,10 +138,10 @@ abstract class TextareaField extends Field
    */
   protected function renderField(array $attrs=[])
   {
-    return [
+    return array_merge(parent::renderField($attrs), [
       'type' => 'textarea',
       'attrs' => $this->getFieldAttributes($attrs),
       'content' => $this->value,
-    ];
+    ]);
   }
 }
