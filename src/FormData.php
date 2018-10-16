@@ -27,12 +27,12 @@ class FormData
   }
   
   /**
-   * Returns an associative array of object properties
+   * Returns the record data as an associative array or object
    *
-   * @param   bool  $object  True to return a stdClass
-   * @return  array|\stdClass
+   * @param  bool  $object  True to return a stdClass
+   * @return array|stdClass
    */
-  public function getProperties($object=true)
+  public function all($object=false)
   {
     $properties = get_object_vars($this);
     
@@ -41,6 +41,17 @@ class FormData
     }
     
     return $properties;
+  }  
+  
+  /**
+   * Returns an associative array of object properties
+   *
+   * @param   bool  $object  True to return a stdClass
+   * @return  array|\stdClass
+   */
+  public function getProperties($object=true)
+  {
+    return $this->all($object);
   }
   
   /**
@@ -50,7 +61,7 @@ class FormData
    */
   public function export()
   {
-    return get_object_vars($this);
+    return $this->all(false);
   }
   
   /**
@@ -69,6 +80,21 @@ class FormData
   }
   
   /**
+   * Sets the default value of a property
+   * 
+   * @param   string  $key    The name of the property
+   * @param   mixed   $value  The default value
+   * @return  mixed   The value of the property
+   */
+  public function def($key, $value)
+  {
+    if ( !isset($this->{$key}) ){
+      $this->set($key, $value);
+    }
+    return $this;
+  }
+  
+  /**
    * Set the object properties
    * 
    * @param   mixed  $properties  Either an associative array or another object
@@ -81,6 +107,7 @@ class FormData
         $this->set($k, $v);
       }
     }
+    return $this;
   }
   
   /**
@@ -93,6 +120,7 @@ class FormData
   public function set($key, $value=null)
   {
     $this->{$key} = $value;
+    return $this;
   }
   
   /**
@@ -117,5 +145,6 @@ class FormData
     if ( $this->has($key) ){
       unset($this->{$key});
     }
+    return $this;
   }
 }

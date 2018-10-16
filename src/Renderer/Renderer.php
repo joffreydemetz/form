@@ -296,12 +296,12 @@ class Renderer
       $id = $field->get('id');
       
       $classes = $field->getLabelClasses();
-      $classes[] = array_unshift($classes, 'control-label');
+      array_unshift($classes, 'control-label');
       
       $attrs = [];
-      $attrs['id']    = $id.'-lbl';
-      $attrs['for']   = $id;
-      $attrs['class'] = implode(' ', $classes);
+      // $attrs['data-id'] = $id.'-lbl';
+      $attrs['for']     = $id;
+      $attrs['class']   = implode(' ', $classes);
       
       if ( $field->get('labelSrOnly') ){
         array_unshift($classes, 'sr-only');

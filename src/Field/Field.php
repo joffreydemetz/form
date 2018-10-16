@@ -19,9 +19,6 @@ use RuntimeException;
  */
 abstract class Field implements FieldInterface
 {
-  use \JDZ\Utilities\Traits\Get,
-      \JDZ\Utilities\Traits\Set;
-  
   /**
    * Form 
    * 
@@ -151,11 +148,18 @@ abstract class Field implements FieldInterface
   protected $width;
   
   /**
-   * Field class value
+   * Field class attribute
    * 
    * @var    string   
    */
   protected $class;
+  
+  /**
+   * Field style attribute
+   * 
+   * @var    string   
+   */
+  protected $style;
   
   /**
    * Field default value
@@ -282,7 +286,7 @@ abstract class Field implements FieldInterface
     $type = str_replace('-', '', $type);
     
     $Class = Form::$ns.'\\Field\\'.ucfirst($type);
-    
+    // debugMe($Class);
     if ( !class_exists($Class) ){
       throw new RuntimeException('Unrecognized field type :: '.$type);
     }
@@ -296,18 +300,38 @@ abstract class Field implements FieldInterface
     $this->static   = false;
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  public function setProperties($properties)
+  {
+    if ( is_array($properties) || is_object($properties) ){
+      foreach((array)$properties as $k => $v){
+        $this->set($k, $v);
+      }
+      return true;
+    }
+
+    return false;
+  }
+
+  public function set($property, $value = null)
+  {
+    $previous = isset($this->$property) ? $this->$property : null;
+    $this->$property = $value;
+    return $previous;
+  }
+
+  public function erase($property)
+  {
+    if ( isset($this->$property) ){
+      unset($this->$property);
+    }
+  }
+  
   public function setForm(Form $form)
   {
     $this->form = $form;
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setElement(SimpleXMLElement $element)
   {
     if ( empty($element['name']) ){
@@ -318,21 +342,12 @@ abstract class Field implements FieldInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setGroup($group=null)
   {
     $this->group = $group;
     return $this;
   }
   
-  /**
-   * Set the value
-   * 
-   * @param   mixed    $value   The field value
-   * @return   void
-   */
   public function setValue($value=null)
   {
     $this->value = $value === null ? '' : $value;
@@ -341,18 +356,12 @@ abstract class Field implements FieldInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setAttribute($attribute, $value='', $type='string')
   {
     $this->element[$attribute] = $value;
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function defAttribute($attribute, $default=null, $type='string')
   {
     $attrs = $this->element->attributes();
@@ -400,88 +409,82 @@ abstract class Field implements FieldInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
+  public function get($property, $default = null)
+  {
+    if ( isset($this->$property) ){
+      return $this->$property;
+    }
+    return $default;
+  }
+  
+  public function has($property)
+  {
+    return ( isset($this->{$property}) );
+  }
+  
+  public function export()
+  {
+    return $this->getProperties();
+  }
+  
+  public function getProperties()
+  {
+    $vars = get_object_vars($this);
+    return $vars;
+  }
+  
   public function getForm()
   {
     return $this->form;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getElement()
   {
     return $this->element;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getGroup()
   {
     return $this->group;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getValue()
   {
     return $this->value;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getId()
   {
     return $this->id;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getName()
   {
     return $this->name;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldHtml(array $attrs=[])
   {
     return $this->renderField($attrs);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getStaticValue()
   {
     return FormHelper::formatStaticValue($this->value);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getHiddenValue()
   {
     return FormHelper::formatHiddenValue($this->value);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldAttributes(array $attrs=[])
   {
     $classes = $this->getFieldClasses();
     
-    $attrs['id']    = $this->id;
-    $attrs['name']  = $this->name;
-    
+    $attrs['data-id'] = $this->id;
+    $attrs['name']    = $this->name;
+     
     if ( true === $this->readonly ){
       $attrs['readonly'] = 'readonly';
     }
@@ -498,8 +501,12 @@ abstract class Field implements FieldInterface
       $attrs['autocomplete'] = $this->autocomplete;
     }
     
-    if ( $this->width > 0 ){
+    if ( $this->width ){
       $attrs['width'] = $this->width;
+    }
+    
+    if ( $this->style ){
+      $attrs['style'] = $this->style;
     }
     
     if ( $this->bsInputgroupPrefix ){
@@ -510,9 +517,6 @@ abstract class Field implements FieldInterface
     return $attrs;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getContainerClasses()
   {
     $classes = [];
@@ -525,9 +529,6 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getLabelClasses()
   {
     $classes = [];
@@ -546,9 +547,6 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldClasses()
   {
     $classes = [];
@@ -574,25 +572,16 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function isEmpty()
   {
     return ( $this->value === '' );
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function isHidden()
   {
     return ( $this->hidden );
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function init($value=null)
   {
     $this->initDefinition();
@@ -605,9 +594,6 @@ abstract class Field implements FieldInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function cleanForRender()
   {
     $this->checkValue();
@@ -642,6 +628,7 @@ abstract class Field implements FieldInterface
     $this->defAttribute('description', '');
     $this->defAttribute('filter', '');
     $this->defAttribute('class', '');
+    $this->defAttribute('style', '');
     $this->defAttribute('containerClass', '');
     $this->defAttribute('labelClass', '');
     $this->defAttribute('labelText', '');
@@ -685,6 +672,7 @@ abstract class Field implements FieldInterface
     $this->filter         = (string) $this->element['filter'];
     $this->validate       = (string) $this->element['validate'];
     $this->class          = (string) $this->element['class'];
+    $this->style          = (string) $this->element['style'];
     $this->containerClass = (string) $this->element['containerClass'];
     $this->labelClass     = (string) $this->element['labelClass'];
     $this->labelText      = (string) $this->element['labelText'];
@@ -791,7 +779,8 @@ abstract class Field implements FieldInterface
         $parts[] = $control;
       }
       
-      $parts[] = $this->form->getComponent();
+      // $parts[] = $this->form->getComponent();
+      $parts[] = strtolower($this->form->getName());
       
       if ( $this->group ){
         $parts[] = str_replace('.', '_', $this->group);

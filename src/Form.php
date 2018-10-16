@@ -14,7 +14,6 @@ use JDZ\Form\Field\Field;
 use JDZ\Form\Exception\RequiredException;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Helpers\ArrayHelper;
-use JDZ\Registry\Registry;
 use JDZ\Form\FormData;
 use JDZ\Utilities\Date as DateObject;
 use SimpleXMLElement;
@@ -211,9 +210,6 @@ class Form implements FormInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setError(Exception $e, FieldInterface $field)
   {
     $error = [];
@@ -232,15 +228,12 @@ class Form implements FormInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setFieldAttribute($name, $attribute, $value, $group=null)
   {
     $element = $this->findField($name, $group);
     
     if ( !($element instanceof SimpleXMLElement) ){
-      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
+      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement for '.$name); 
     }
     
     $element[$attribute] = $value;
@@ -250,9 +243,6 @@ class Form implements FormInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setFieldAttributes($name, $attributes, $group=null)
   {
     $element = $this->findField($name, $group);
@@ -270,9 +260,6 @@ class Form implements FormInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function setValue($name, $group=null, $value=null)
   {
     if ( !$this->findField($name, $group) ){
@@ -289,17 +276,11 @@ class Form implements FormInterface
     return true;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getNs()
   {
     return static::$ns;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getName()
   {
     return $this->name;
@@ -335,9 +316,6 @@ class Form implements FormInterface
     return $this->data;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getErrorsAsString($separator='<br />')
   {
     $errors = [];
@@ -349,25 +327,16 @@ class Form implements FormInterface
     return implode($separator, $errors);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getErrors()
   {
     return $this->errors;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getComponent()
   {
     return $this->component;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getI18nNamespace()
   {
     if ( !isset($this->i18nNamespace) ){
@@ -376,9 +345,6 @@ class Form implements FormInterface
     return $this->i18nNamespace;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getValue($name, $group=null, $default=null)
   {
     if ( $group ){
@@ -387,9 +353,6 @@ class Form implements FormInterface
     return $this->data->get($name, $default);
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldsets($group=null)
   {
     $fieldsets = [];
@@ -445,9 +408,6 @@ class Form implements FormInterface
     return $fieldsets;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public function getGroup($group, $nested=false)
   {
     $fields = [];
@@ -471,9 +431,6 @@ class Form implements FormInterface
     return $fields;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public function getField(SimpleXMLElement $element, $group=null, $value=null)
   {
     if ( !$element ){
@@ -504,9 +461,6 @@ class Form implements FormInterface
     return $this->fields[$name];
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldAttribute($name, $attribute, $default=null, $group=null)
   {
     $element = $this->findField($name, $group);
@@ -518,9 +472,6 @@ class Form implements FormInterface
     return $default;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function getFieldset($set=null)
   {
     $fields = [];
@@ -542,16 +493,13 @@ class Form implements FormInterface
       $group  = implode('.', $groups);
 
       if ( $field = $this->getField($element, $group) ){
-        $fields[$field->get('id')] = $field;
+        $fields[$field->getId()] = $field;
       }
     }
     
     return $fields;
   }
 
-  /**
-   * {@inheritDoc}
-   */
   public function getError($i=null, $toString=true)
   {
     if ( $i === null ){
@@ -572,9 +520,6 @@ class Form implements FormInterface
     return $error;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function removeField($name, $group=null)
   {
     $element = $this->findField($name, $group);
@@ -607,9 +552,6 @@ class Form implements FormInterface
     return true === $this->updateMode;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function filter(array $data, $group=null)
   {
     $fields = $this->findFieldsByGroup($group);
@@ -648,9 +590,6 @@ class Form implements FormInterface
     return $output;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function validate(FormData $data)
   {
     return $this->validator->execute($data);
@@ -687,9 +626,6 @@ class Form implements FormInterface
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function &findFieldsByGroup($group=null, $nested=false)
   {
     $false = false;
@@ -750,7 +686,7 @@ class Form implements FormInterface
   {
     $element = false;
     $fields = [];
-
+    
     if ( $group ){
       $elements =& $this->findGroup($group);
       foreach($elements as $element){

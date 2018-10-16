@@ -14,8 +14,8 @@ namespace JDZ\Form\Renderer;
  */
 class Fieldset 
 {
-  use \JDZ\Utilities\Traits\Get,
-      \JDZ\Utilities\Traits\Set;
+  // use \JDZ\Utilities\Traits\Get,
+      // \JDZ\Utilities\Traits\Set;
   
   /**
    * Fieldset id attribute
@@ -80,7 +80,7 @@ class Fieldset
    */
   public function __construct(array $properties)
   {
-    $this->component  = (string) $properties['component'];
+    $this->component   = (string) $properties['component'];
     $this->group       = (string) $properties['group'];
     $this->active      = (bool) $properties['active'];
     $this->name        = (string) $properties['name'];
@@ -88,5 +88,45 @@ class Fieldset
     $this->description = (string) $properties['description'];
     $this->fields      = (array) $properties['fields'];
     $this->id          = 'tab-'.($this->group !== '' ? $this->group.'-'.$this->name : $this->name);
+  }
+  
+  public function getComponent()
+  {
+    return $this->component;
+  }
+  
+  public function getGroup()
+  {
+    return $this->group;
+  }
+  
+  public function isActive()
+  {
+    return $this->active;
+  }
+  
+  public function getName()
+  {
+    return $this->name;
+  }
+  
+  public function getLegend()
+  {
+    return $this->legend;
+  }
+  
+  public function getDescription()
+  {
+    return $this->description;
+  }
+  
+  public function getFields()
+  {
+    return $this->fields;
+  }
+  
+  public function getId()
+  {
+    return $this->id;
   }
 }

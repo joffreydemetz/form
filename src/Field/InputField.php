@@ -9,7 +9,6 @@ namespace JDZ\Form\Field;
 
 use JDZ\Form\Form;
 use JDZ\Form\FormHelper;
-use JDZ\Registry\Registry;
 use JDZ\Helpers\AttributesHelper;
 
 /**
@@ -87,7 +86,7 @@ abstract class InputField extends Field
     }
     
     if ( $this->placeholder !== '' ){
-      $attrs['placeholder'] = $this->placeholder;
+      $attrs['placeholder'] = i18n($this->placeholder);
     }
     
     $attrs['value'] = htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8');

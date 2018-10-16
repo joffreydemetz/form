@@ -64,21 +64,21 @@ class TabsRenderer extends Renderer
     $contents = [];
     
     foreach($_tabs as $tab){
-      if ( !$tab->get('fields') ){
+      if ( !$tab->getFields() ){
         continue;
       }
       
       $tabs[] = [
-        'id' => $tab->get('id'),
-        'active' => $tab->get('active'),
-        'legend' => $tab->get('legend'),
+        'id' => $tab->getId(),
+        'active' => $tab->isActive(),
+        'legend' => $tab->getLegend(),
       ];
       
       $contents[] = [
-        'id' => $tab->get('id'),
-        'active' => $tab->get('active'),
-        'description' => $tab->get('description'),
-        'fields' => $tab->get('fields'),
+        'id' => $tab->getId(),
+        'active' => $tab->isActive(),
+        'description' => $tab->getDescription(),
+        'fields' => $tab->getFields(),
       ];
     }
     

@@ -91,6 +91,18 @@ class XmlGenerator
     $this->fieldsets[$fieldset][] = $data;
   }
   
+  public function removeField($name)
+  {
+    foreach($this->fieldsets as $_fieldset => &$_fields){
+      foreach($_fields as $i => $_field){
+        if ( $_field['name'] === $name ){
+          unset($_fields[$i]);
+          return;
+        }
+      }
+    }
+  }
+  
   protected function toString()
   {
     $content = [];

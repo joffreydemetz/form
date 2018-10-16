@@ -290,7 +290,7 @@ abstract class FormHelper
     // }
     // return 'FIELDSET_'.$ns.'_'.$name.'_LEGEND';
     // return '[-F-]'.$name;
-    return '';
+    return ''; //'FIELDSET_'.$ns.'_'.$name.'_LEGEND';
   }
   
   /**
