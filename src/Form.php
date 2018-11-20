@@ -97,13 +97,6 @@ class Form implements FormInterface
   protected $data;
 
   /**
-   * Fields 
-   * 
-   * @var    [FieldInterface]
-   */
-  protected $fields;
-
-  /**
    * Renderer instance
    * 
    * @var    Renderer 
@@ -116,6 +109,13 @@ class Form implements FormInterface
    * @var    Validator 
    */
   protected $validator;
+  
+  /**
+   * Fields 
+   * 
+   * @var    [FieldInterface]
+   */
+  protected $fields = [];
 
   /** 
    * An array of error messages or Exception objects
@@ -133,8 +133,6 @@ class Form implements FormInterface
   {
     $this->name   = $name;
     $this->data   = new FormData();
-    $this->errors = [];
-    $this->fields = [];
   }
   
   public function setXml(SimpleXMLElement $xml)

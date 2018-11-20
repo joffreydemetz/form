@@ -14,9 +14,6 @@ namespace JDZ\Form\Renderer;
  */
 class Fieldset 
 {
-  // use \JDZ\Utilities\Traits\Get,
-      // \JDZ\Utilities\Traits\Set;
-  
   /**
    * Fieldset id attribute
    * 
