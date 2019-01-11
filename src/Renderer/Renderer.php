@@ -159,10 +159,7 @@ class Renderer
     foreach($this->form->getFieldsets() as $name => $fieldset){
       if ( $fields = $this->getFields($name) ){
         $fieldset = (array)$fieldset;
-        $fieldset['name']         = $name;
-        $fieldset['label']        = '';
-        $fieldset['description']  = '';
-        $fieldset['fields']       = $fields;
+        $fieldset['fields'] = $fields;
         $fieldsets[$name] = $fieldset;
       }
     }
@@ -277,9 +274,15 @@ class Renderer
       
       $fieldData['container'] = $attrs;
     }
+    // debugMe($fieldData);
     
-    $fieldData['label'] = $this->fieldLabel($field);
-    $fieldData['tip']   = $this->fieldDescription($field);
+    if ( !isset($fieldData['label']) ){
+      $fieldData['label'] = $this->fieldLabel($field);
+    }
+    
+    if ( !isset($fieldData['tip']) ){
+      $fieldData['tip'] = $this->fieldDescription($field);
+    }
     
     return $fieldData;
   }

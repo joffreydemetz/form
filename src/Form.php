@@ -144,6 +144,7 @@ class Form implements FormInterface
     $formAttributes = $xml->attributes();
     
     $this->xml = $xml;
+    
     $this->syncPaths();
     return $this;
   }
@@ -369,6 +370,42 @@ class Form implements FormInterface
     else {
       $sets = $this->xml->xpath('//fieldset[@name] | //field[@fieldset]/@fieldset');
     }
+    
+    // if ( !empty($sets) ){
+      foreach($sets as $set){
+        $fieldsetName        = (string)$set['name'];
+        $fieldsetLabel       = (string)$set['label'];
+        $fieldsetDescription = (string)$set['description'];
+        $fieldset = (object) [ 
+          'name' => $fieldsetName, 
+          'label' => $fieldsetLabel, 
+          'description' => $fieldsetDescription,
+        ];
+        $fieldsets[$fieldsetName] = $fieldset;
+      }
+    // }
+
+    return $fieldsets;
+  }
+
+  /* public function getFieldsets($group=null)
+  {
+    $fieldsets = [];
+    $sets      = [];
+
+    if ( $group ){
+      $elements =& $this->findGroup($group);
+
+      foreach($elements as &$element){
+        // Get an array of <fieldset /> elements and fieldset attributes within the fields element.
+        if ( $tmp = $element->xpath('descendant::fieldset[@name] | descendant::field[@fieldset]/@fieldset') ){
+          $sets = array_merge($sets, (array) $tmp);
+        }
+      }
+    }
+    else {
+      $sets = $this->xml->xpath('//fieldset[@name] | //field[@fieldset]/@fieldset');
+    }
 
     if ( empty($sets) ){
       return $fieldsets;
@@ -404,7 +441,7 @@ class Form implements FormInterface
     }
 
     return $fieldsets;
-  }
+  } */
 
   public function getGroup($group, $nested=false)
   {

@@ -225,6 +225,13 @@ abstract class Field implements FieldInterface
   protected $labelText;
   
   /**
+   * The field tip
+   * 
+   * @var    string
+   */
+  protected $tip;
+  
+  /**
    * Hide field label
    * 
    * @var    bool   
@@ -637,6 +644,7 @@ abstract class Field implements FieldInterface
     $this->defAttribute('autocomplete', '');
     $this->defAttribute('goeswith', '');
     $this->defAttribute('gonewith', '');
+    $this->defAttribute('tip', '');
     
     $this->defAttribute('bsInputgroupPrefix', '');
     $this->defAttribute('bsInputgroupSuffix', '');
@@ -676,6 +684,7 @@ abstract class Field implements FieldInterface
     $this->containerClass = (string) $this->element['containerClass'];
     $this->labelClass     = (string) $this->element['labelClass'];
     $this->labelText      = (string) $this->element['labelText'];
+    $this->tip            = (string) $this->element['tip'];
     $this->autocomplete   = (string) $this->element['autocomplete'];
     $this->goeswith       = (string) $this->element['goeswith'];
     $this->gonewith       = (string) $this->element['gonewith'];
@@ -858,6 +867,7 @@ abstract class Field implements FieldInterface
     $attrs['fieldname'] = $this->fieldname;
     $attrs['goeswith']  = $this->goeswith;
     $attrs['gonewith']  = $this->gonewith;
+    $attrs['tip']       = $this->tip;
     return $attrs;
   }
 }

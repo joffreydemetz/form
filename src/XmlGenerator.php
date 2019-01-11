@@ -40,12 +40,12 @@ class XmlGenerator
     }
     
     $xmlStr = $this->toString();
-    
+    // debugMe($xmlStr);
     try {
       $xml = XmlObject::populateXml($xmlStr, true);
     }
     catch(Exception $e){
-      throw new RuntimeException('Invalid Form XML content');
+      throw new RuntimeException('Invalid Form XML content'.$e->getMessage());
     }
     
     return $xml;
@@ -62,10 +62,28 @@ class XmlGenerator
     }
   }
   
-  public function addFieldset($name, $fields)
+  public function setFieldsetLabel(string $name, string $label)
+  {
+    $this->addFieldset($name, []);
+    
+    $this->fieldsets[$name]['label'] = $label;
+  }
+  
+  public function setFieldsetDescription(string $name, string $description)
+  {
+    $this->addFieldset($name, []);
+    
+    $this->fieldsets[$name]['description'] = $description;
+  }
+  
+  public function addFieldset($name, $fields=[])
   {
     if ( !isset($this->fieldsets[$name]) ){
-      $this->fieldsets[$name] = [];
+      $this->fieldsets[$name] = [
+        'label' => '',
+        'description' => '',
+        'fields' => [],
+      ];
     }
     
     foreach($fields as $field){
@@ -75,28 +93,26 @@ class XmlGenerator
   
   public function addField($data, $fieldset='main')
   {
-    if ( !isset($this->fieldsets[$fieldset]) ){
-      $this->fieldsets[$fieldset] = [];
-    }
+    $this->addFieldset($fieldset, []);
     
-    foreach($this->fieldsets as $_fieldset => &$_fields){
-      foreach($_fields as &$_field){
-        if ( $_field['name'] === $data['name'] ){
-          $_field = array_merge($_field, $data);
+    foreach($this->fieldsets as $fieldsetName => $fieldsetData){
+      foreach($fieldsetData['fields'] as $i => $field){
+        if ( $field['name'] === $data['name'] ){
+          $this->fieldsets[$fieldsetName]['fields'][$i] = array_merge($this->fieldsets[$fieldsetName]['fields'][$i], $data);
           return;
         }
       }
     }
     
-    $this->fieldsets[$fieldset][] = $data;
+    $this->fieldsets[$fieldset]['fields'][] = $data;
   }
   
   public function removeField($name)
   {
-    foreach($this->fieldsets as $_fieldset => &$_fields){
-      foreach($_fields as $i => $_field){
-        if ( $_field['name'] === $name ){
-          unset($_fields[$i]);
+    foreach($this->fieldsets as $fieldsetName => $fieldset){
+      foreach($fieldset['fields'] as $i => $field){
+        if ( $field['name'] === $name ){
+          unset($this->fieldsets[$fieldsetName]['fields'][$i]);
           return;
         }
       }
@@ -110,10 +126,17 @@ class XmlGenerator
     $content[] = '<?xml version="1.0" encoding="utf-8"?>';
     $content[] = '<form>';
     
-    foreach($this->fieldsets as $fieldset => $fields){
-      $content[] = "\t".'<fieldset name="'.$fieldset.'">';
+    foreach($this->fieldsets as $fieldsetName => $fieldset){
+      $content[] = "\t".'<fieldset name="'.$fieldsetName.'" ';
+      if ( '' !== $fieldset['label'] ){
+        $content[] = "\t\t".' label="'.$this->cleanXmlAttr($fieldset['label']).'"';
+      }
+      if ( '' !== $fieldset['description'] ){
+        $content[] = "\t\t".' description="'.$this->cleanXmlAttr($fieldset['description']).'"';
+      }
+      $content[] = "\t".'>';
       
-      foreach($fields as $field){
+      foreach($fieldset['fields'] as $field){
         $type    = null;
         $name    = null;
         $options = [];
@@ -153,14 +176,14 @@ class XmlGenerator
         $content[] = "\t\t".'<field type="'.$type.'" name="'.$name.'"';
         
         foreach($field as $key => $value){
-          $content[] = "\t\t\t".$key.'="'.$value.'"';
+          $content[] = "\t\t\t".$key.'="'.$this->cleanXmlAttr($value).'"';
         }
         
         if ( $options ){
           $content[] = "\t\t".'>';
           
           foreach($options as $option){
-            $content[] = "\t\t\t".'<option value="'.$option['value'].'">'.$option['text'].'</option>';
+            $content[] = "\t\t\t".'<option value="'.$this->cleanXmlAttr($option['value']).'">'.$this->cleanXmlAttr($option['text']).'</option>';
           }
           
           $content[] = "\t\t".'</field>';
@@ -175,11 +198,19 @@ class XmlGenerator
     
     $content[] = '</form>';
     
+    // debugMe($content);
     return implode("\n", $content);
   }
   
   protected function data()
   {
     return [];
+  }
+
+  protected function cleanXmlAttr(string $str): string
+  {
+    $str = html_entity_decode($str);
+    $str = str_replace(['&','<','>','"'], ['&amp;','&lt;','&gt;','&quot;'], $str);
+    return $str;
   }
 }

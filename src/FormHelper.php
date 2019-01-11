@@ -215,7 +215,7 @@ abstract class FormHelper
    * @param   string    $name   Field name
    * @return   string    Defaults to empty string if not found
    */
-  public static function getFieldPlaceholder($value, $ns, $name)
+  /* public static function getFieldPlaceholder($value, $ns, $name)
   {
     $value = (string) $value;
     if ( $value !== '' ){
@@ -231,7 +231,7 @@ abstract class FormHelper
       return $str;
     }
     return '';
-  }
+  } */
   
   /**
    * Get field description 
@@ -279,6 +279,7 @@ abstract class FormHelper
       }
       return $value;
     }
+    // debugMe('FIELDSET_'.$ns.'_'.$name.'_LEGEND');
     if ( $str = self::getTranslation('FIELDSET_'.$ns.'_'.$name.'_LEGEND') ){
       return $str;
     }
