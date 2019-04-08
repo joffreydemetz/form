@@ -4,7 +4,7 @@
     "description": "Form manager",
     "keywords": ["form"],
     "homepage": "https://github.com/joffreydemetz/form/",
-    "version": "2.0.4",
+    "version": "2.0.5",
     "license": "MIT",
     
     "authors": [
@@ -25,9 +25,6 @@
     "autoload": {
         "psr-4": {
             "JDZ\\Form\\": "src"
-        },
-        "files": [
-            "shortcuts.php"
-        ]
+        }
     }
 }
