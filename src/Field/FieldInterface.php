@@ -23,7 +23,7 @@ interface FieldInterface
    * @param   mixed  $value  Field value
    * @return  void
    */
-  public function init($value=null);
+  // public function init($value=null);
   
   /**
    * Set the object properties based on a named array/hash.
@@ -31,7 +31,7 @@ interface FieldInterface
    * @param   mixed  $properties  Either an associative array or another object.
    * @return   boolean
    */
-  public function setProperties($properties);
+  // public function setProperties($properties);
 
   /**
    * Modifies a property of the object, creating it if it does not already exist.
@@ -40,7 +40,7 @@ interface FieldInterface
    * @param   mixed   $value     The value of the property to set.
    * @return   mixed  Previous value of the property.
    */
-  public function set($property, $value = null);
+  // public function set($property, $value = null);
 
   /**
    * Clears a property.
@@ -48,7 +48,7 @@ interface FieldInterface
    * @param   string  $property  The name of the property.
    * @return   void
    */
-  public function erase($property);
+  // public function erase($property);
   
   /**
    * Set the form
@@ -56,7 +56,7 @@ interface FieldInterface
    * @param  Form  $form  Form instance
    * @return void
    */
-  public function setForm(Form $form);
+  // public function setForm(Form $form);
   
   /**
    * Set the XML element
@@ -64,7 +64,7 @@ interface FieldInterface
    * @param  SimpleXMLElement  $element  SimpleXMLElement instance
    * @return void
    */
-  public function setElement(SimpleXMLElement $element);
+  // public function setElement(SimpleXMLElement $element);
   
   /**
    * Set the group
@@ -72,7 +72,7 @@ interface FieldInterface
    * @param  string  $group  
    * @return void
    */
-  public function setGroup($group);
+  // public function setGroup($group);
   
   /**
    * Set the value
@@ -80,7 +80,7 @@ interface FieldInterface
    * @param   mixed    $value   The field value
    * @return   void
    */
-  public function setValue($value=null);
+  // public function setValue($value=null);
   
   /**
    * Set field attribute in XML definition
@@ -90,7 +90,7 @@ interface FieldInterface
    * @param   string    $type         The value type
    * @return   void
    */
-  public function setAttribute($attribute, $value='', $type='string');
+  // public function setAttribute($attribute, $value='', $type='string');
   
   /**
    * Define field attribute in XML definition
@@ -100,7 +100,7 @@ interface FieldInterface
    * @param   string    $type         The value type
    * @return   void
    */
-  public function defAttribute($attribute, $default=null, $type='string');
+  // public function defAttribute($attribute, $default=null, $type='string');
   
   /**
    * Returns a property of the object or the default value if the property is not set.
@@ -109,7 +109,7 @@ interface FieldInterface
    * @param   mixed   $default   The default value.
    * @return   mixed    The value of the property.
    */
-  public function get($property, $default = null);
+  // public function get($property, $default = null);
   
   /**
    * Test if the property exists
@@ -117,7 +117,7 @@ interface FieldInterface
    * @param  string  $property  The name of the property.
    * @return bool
    */
-  public function has($property);
+  // public function has($property);
   
   /**
    * Returns an associative array of object properties.
@@ -125,7 +125,7 @@ interface FieldInterface
    * @param   boolean  $public  If true, returns only the public properties.
    * @return   array
    */
-  public function export();
+  // public function export();
   
   /**
    * Get the field input markup.
@@ -134,63 +134,63 @@ interface FieldInterface
    * @param   array   $attrs    Key/Value pairs of field attributes (optionnal)
    * @return   string  HTML.
    */
-  public function getFieldHtml(array $attrs=[]);
+  // public function getFieldHtml(array $attrs=[]);
   
   /**
    * Get the field value when readonly or disabled
    * 
    * @return   string  The field readonly value.
    */
-  public function getStaticValue();
+  // public function getStaticValue();
   
   /**
    * Get the field value when hidden
    * 
    * @return   string  The field hidden value.
    */
-  public function getHiddenValue();
+  // public function getHiddenValue();
   
   /**
    * Get field attributes
    * 
    * @return   array   Key/Value pairs of html field attributes
    */
-  public function getFieldAttributes(array $attrs=[]);
+  // public function getFieldAttributes(array $attrs=[]);
   
   /**
    * Get the field container class
    * 
    * @return   array  The container classes.
    */
-  public function getContainerClasses();
+  // public function getContainerClasses();
   
   /**
    * Get the field label class
    * 
    * @return   array  The label classes.
    */
-  public function getLabelClasses();
+  // public function getLabelClasses();
   
   /**
    * Get the field class
    * 
    * @return   array  The field classes.
    */
-  public function getFieldClasses();
+  // public function getFieldClasses();
   
   /**
    * Check if a value was set for the field
    * 
    * @return   bool  True if the value was set.
    */
-  public function isEmpty();
+  // public function isEmpty();
   
   /**
    * Check if field is a hidden input 
    * 
    * @return   bool
    */
-  public function isHidden();
+  // public function isHidden();
   
   /**
    * Clean the field Object before rendering it
@@ -199,5 +199,5 @@ interface FieldInterface
    *
    * @return   void
    */
-  public function cleanForRender();
+  // public function cleanForRender();
 }

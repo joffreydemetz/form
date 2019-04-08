@@ -7,6 +7,7 @@
  */
 namespace JDZ\Form\Renderer;
 
+use JDZ\Form\Field\FieldInterface;
 /**
  * Form fieldset
  * 
@@ -17,7 +18,7 @@ class Fieldset
   /**
    * Fieldset id attribute
    * 
-   * @var    Form   
+   * @var    string   
    */
   protected $id;
   
@@ -29,25 +30,18 @@ class Fieldset
   protected $component;
   
   /**
-   * Fieldset group
-   * 
-   * @var    string   
-   */
-  protected $group;
-  
-  /**
-   * Is active tab (only for tab/accordion mode)
-   * 
-   * @var    string   
-   */
-  protected $active;
-  
-  /**
    * Fieldset name
    * 
    * @var    string   
    */
   protected $name;
+  
+  /**
+   * Fieldset group
+   * 
+   * @var    string   
+   */
+  protected $group;
   
   /**
    * Fieldset legend
@@ -64,66 +58,127 @@ class Fieldset
   protected $description;
   
   /**
-   * Fieldset fields
+   * Is active tab (only for tab/accordion mode)
    * 
-   * @var    array   
+   * @var    bool   
    */
-  protected $fields;
+  protected $active = false;
   
   /**
-   * Constructor
+   * Fieldset fields
    * 
-   * @param   array   $properties     Key/Value pairs of the fieldset properties
+   * @var    [FieldInterface]   
    */
-  public function __construct(array $properties)
+  protected $fields = [];
+  
+  public static function create()
   {
-    $this->component   = (string) $properties['component'];
-    $this->group       = (string) $properties['group'];
-    $this->active      = (bool) $properties['active'];
-    $this->name        = (string) $properties['name'];
-    $this->legend      = (string) $properties['label'];
-    $this->description = (string) $properties['description'];
-    $this->fields      = (array) $properties['fields'];
-    $this->id          = 'tab-'.($this->group !== '' ? $this->group.'-'.$this->name : $this->name);
+    return new self();
   }
   
-  public function getComponent()
+  public function setComponent(string $component)
+  {
+    $this->component = $component;
+    return $this;
+  }
+  
+  public function setGroup(string $group)
+  {
+    $this->group = $group;
+    return $this;
+  }
+  
+  public function setName(string $name)
+  {
+    $this->name = $name;
+    return $this;
+  }
+  
+  public function setLegend(string $legend)
+  {
+    $this->legend = $legend;
+    return $this;
+  }
+  
+  public function setDescription(string $description)
+  {
+    $this->description = $description;
+    return $this;
+  }
+  
+  public function setFields(array $fields)
+  {
+    $this->fields = $fields;
+    return $this;
+  }
+  
+  public function setActive(bool $active=true)
+  {
+    $this->active = $active;
+    return $this;
+  }
+  
+  public function setId(string $id)
+  {
+    $this->id = $id;
+    return $this;
+  }
+  
+  public function makeId()
+  {
+    if ( !$this->id ){
+      $parts = [];
+      $parts[] = 'tab';
+      if ( $this->group ){
+        $parts[] = $this->group;
+      }
+      if ( $this->name ){
+        $parts[] = $this->name;
+      }
+      
+      $this->id = implode('-', $parts);
+    }
+    
+    return $this;
+  }
+  
+  public function getComponent(): string
   {
     return $this->component;
   }
   
-  public function getGroup()
+  public function getGroup(): string
   {
     return $this->group;
   }
   
-  public function isActive()
-  {
-    return $this->active;
-  }
-  
-  public function getName()
+  public function getName(): string
   {
     return $this->name;
   }
   
-  public function getLegend()
+  public function getId(): string
+  {
+    return $this->id;
+  }
+  
+  public function getLegend(): string
   {
     return $this->legend;
   }
   
-  public function getDescription()
+  public function getDescription(): string
   {
     return $this->description;
   }
   
-  public function getFields()
+  public function getFields(): array
   {
     return $this->fields;
   }
   
-  public function getId()
+  public function isActive(): bool
   {
-    return $this->id;
+    return $this->active;
   }
 }

@@ -26,20 +26,6 @@ abstract class InputField extends Field
   protected $type;
   
   /**
-   * Field size attribute
-   * 
-   * @var    int   
-   */
-  protected $size;
-  
-  /**
-   * Field maxlength attribute
-   * 
-   * @var    int   
-   */
-  protected $maxlength;
-  
-  /**
    * Field placeholder attribute
    * 
    * @var    string   
@@ -54,20 +40,55 @@ abstract class InputField extends Field
   protected $pattern;
   
   /**
+   * Field size attribute
+   * 
+   * @var    int   
+   */
+  protected $size;
+  
+  /**
+   * Field maxlength attribute
+   * 
+   * @var    int   
+   */
+  protected $maxlength;
+  
+  public function getType(): string
+  {
+    return $this->type;
+  }
+  
+  public function getPlaceholder(): string
+  {
+    return $this->placeholder;
+  }
+  
+  public function getPattern(): string
+  {
+    return $this->pattern;
+  }
+  
+  public function getSize(): int
+  {
+    return $this->size;
+  }
+  
+  public function getMaxlength(): int
+  {
+    return $this->maxlength;
+  }
+  
+  /**
    * Check if field is a hidden input 
    * 
    * @return   bool
    */
-  public function isHidden()
+  /* public function isHidden(): bool
   {
-    return ( $this->hidden );
-    // return ( $this->type === 'hidden' );
-  }
+    return 'hidden' === $this->type;
+  } */
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getFieldAttributes(array $attrs=[])
+  public function getFieldAttributes(array $attrs=[]): array
   {
     $attrs = parent::getFieldAttributes($attrs);
     
@@ -86,7 +107,7 @@ abstract class InputField extends Field
     }
     
     if ( $this->placeholder !== '' ){
-      $attrs['placeholder'] = i18n($this->placeholder);
+      $attrs['placeholder'] = $this->placeholder;
     }
     
     $attrs['value'] = htmlspecialchars($this->value, ENT_COMPAT, 'UTF-8');
@@ -94,29 +115,23 @@ abstract class InputField extends Field
     return $attrs;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getStaticValue()
+  public function getStaticValue(): string
   {
-    $this->bsInputgroupPrefix = trim($this->bsInputgroupPrefix);
+    $this->spanBefore = trim($this->spanBefore);
     
     $value = FormHelper::formatStaticValue($this->value);
     
-    if ( $this->bsInputgroupPrefix === '' ){
+    if ( $this->spanBefore === '' ){
       return $value;
     }
     
-    if ( $this->bsInputgroupSuffix === '' ){
+    if ( $this->spanAfter === '' ){
       return $value;
     }
     
-    return '['.$this->bsInputgroupPrefix.'] '.$value;
+    return '['.$this->spanBefore.'] '.$value;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initDefinition()
   {
     parent::initDefinition();
@@ -124,15 +139,12 @@ abstract class InputField extends Field
     $this->setAttribute('type', 'text');
     $this->setAttribute('canBeStatic', 'true');
     
-    $this->defAttribute('size', '0', 'int');
-    $this->defAttribute('maxlength', '0', 'int');
+    $this->defAttribute('size', '0');
+    $this->defAttribute('maxlength', '0');
     $this->defAttribute('placeholder', '');
     $this->defAttribute('pattern', '');
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initObject()
   {
     parent::initObject();
@@ -144,10 +156,7 @@ abstract class InputField extends Field
     $this->pattern      = (string) $this->element['pattern'];
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  protected function renderField(array $attrs=[])
+  protected function renderField(array $attrs=[]): array
   {
     return array_merge(parent::renderField($attrs), [
       'type' => 'input',

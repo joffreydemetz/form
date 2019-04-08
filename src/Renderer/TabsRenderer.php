@@ -18,10 +18,7 @@ class TabsRenderer extends Renderer
 {
   protected $type = 'tabs';
   
-  /**
-   * {@inheritDoc}
-   */
-  public function render(array $data=[])
+  public function render(array $data=[]): array
   {
     $fieldsets = $this->getFieldsets();
     
@@ -48,15 +45,16 @@ class TabsRenderer extends Renderer
         $fieldset['description'] = '';
       }
       
-      $fieldset['component']   = $this->form->getComponent();
-      $fieldset['group']       = $group;
-      $fieldset['active']      = ( $i === 0 );
-      $fieldset['name']        = $name;
-      $fieldset['label']       = FormHelper::getFieldsetLabel($fieldset['label'], $this->form->getComponent(), $fieldset['name']);
-      $fieldset['description'] = FormHelper::getFieldsetDescription($fieldset['description'], $this->form->getComponent(), $fieldset['name']);
-      
-      $_tabs[] = new Fieldset($fieldset);
-      
+      $_tabs[] = Fieldset::create()
+        ->setActive( ($i===0) )
+        ->setComponent($this->form->getComponent())
+        ->setGroup($group)
+        ->setName($name)
+        ->setLegend( FormHelper::getFieldsetLabel($fieldset['label'], $this->form->getComponent(), $fieldset['name']) )
+        ->setDescription( FormHelper::getFieldsetDescription($fieldset['description'], $this->form->getComponent(), $fieldset['name']) )
+        ->setFields($fieldset['fields'])
+        // ->setId('tab-'.($this->group !== '' ? $this->group.'-'.$this->name : $this->name))
+        ->makeId();
       $i++;
     }
     

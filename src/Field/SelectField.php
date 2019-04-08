@@ -42,10 +42,7 @@ abstract class SelectField extends Field
    */
   protected $selection;
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getFieldAttributes(array $attrs=[])
+  public function getFieldAttributes(array $attrs=[]): array
   {
     $attrs = parent::getFieldAttributes($attrs);
     
@@ -60,10 +57,7 @@ abstract class SelectField extends Field
     return $attrs;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function isEmpty()
+  public function isEmpty(): bool
   {
     return ( count($this->selection) === 0 );
   }
@@ -73,38 +67,29 @@ abstract class SelectField extends Field
    * 
    * @return   bool
    */
-  public function isSelected($testValue)
+  public function isSelected($testValue): bool
   {
     return ( in_array($testValue, $this->selection) );
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initDefinition()
   {
     parent::initDefinition();
     
-    $this->defAttribute('size', '0', 'int');
-    $this->defAttribute('multiple', 'false', 'bool');
-    $this->defAttribute('defaultOption', 'true', 'bool');
+    $this->defAttribute('size', '0');
+    $this->defAttribute('multiple', 'false');
+    $this->defAttribute('defaultOption', 'false');
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initObject()
   {
     parent::initObject();
-
-    $this->size           = (int) $this->element['size'];
-    $this->multiple       = ( (string) $this->element['multiple'] === 'true' );
-    $this->defaultOption  = ( (string) $this->element['defaultOption'] === 'true' );
+    
+    $this->size          = (int) $this->element['size'];
+    $this->multiple      = ( (string) $this->element['multiple'] === 'true' );
+    $this->defaultOption = ( (string) $this->element['defaultOption'] === 'true' );
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function checkValue()
   {
     if ( is_array($this->value) ){

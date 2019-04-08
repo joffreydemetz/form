@@ -97,17 +97,27 @@ class FormData
   /**
    * Set the object properties
    * 
+   * @param   array  $properties  Associative array
+   * @return  void
+   */
+  public function sets(array $properties)
+  {
+    foreach($properties as $k => $v){
+      $this->set($k, $v);
+    }
+    return $this;
+  }
+  
+  /**
+   * Set the object properties
+   * 
    * @param   mixed  $properties  Either an associative array or another object
    * @return  void
    */
   public function setProperties($properties)
   {
-    if ( is_array($properties) || is_object($properties) ){
-      foreach((array)$properties as $k => $v){
-        $this->set($k, $v);
-      }
-    }
-    return $this;
+    $properties = is_array($properties) || is_object($properties) ? (array)$properties : [];
+    return $this->sets($properties);
   }
   
   /**

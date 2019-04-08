@@ -69,13 +69,6 @@ class Renderer
   protected $bootstrapInputClass = 'col-sm-9';
   
   /**
-   * Constructor
-   */
-  public function __construct()
-  {
-  }
-  
-  /**
    * Set the form singleton
    * 
    * @param  Form  $form  Form instance
@@ -105,7 +98,7 @@ class Renderer
    * @param  Form  $form  Form instance
    * @return $this
    */
-  public function addHiddenField($name, $value)
+  public function addHiddenField(string $name, $value)
   {
     $this->hiddenFields[] = [ 
       'type' => 'hidden',
@@ -123,7 +116,7 @@ class Renderer
    * 
    * @return $this
    */
-  public function setButtons($buttons)
+  public function setButtons(array $buttons)
   {
     $this->buttons = $buttons;
     return $this;
@@ -135,7 +128,7 @@ class Renderer
    * @param  array   $data  Form data
    * @return string  array 
    */
-  public function render(array $data=[])
+  public function render(array $data=[]): array
   {
     $data['renderer']    = $this->type;
     $data['buttons']     = $this->buttons;
@@ -146,40 +139,13 @@ class Renderer
     return $data;
   }
   
-  protected function getFieldsets()
-  {
-    $fieldsets = [];
-    
-    if ( $this->fieldsetOrdering ){
-      foreach($this->fieldsetOrdering as $fieldset){
-        $fieldsets[$fieldset] = null;
-      }
-    }
-    
-    foreach($this->form->getFieldsets() as $name => $fieldset){
-      if ( $fields = $this->getFields($name) ){
-        $fieldset = (array)$fieldset;
-        $fieldset['fields'] = $fields;
-        $fieldsets[$name] = $fieldset;
-      }
-    }
-    
-    foreach($fieldsets as $name => $fieldset){
-      if ( empty($fieldset['fields']) ){
-        unset($fieldsets[$name]);
-      }
-    }
-    
-    return array_values($fieldsets);
-  }
-  
   /**
    * Render a fieldset
    * 
    * @param  string  $name  Fieldset name
    * @return string  HTML
    */
-  public function getFields($fieldset)
+  public function getFields($fieldset): array
   {
     $fields = [];
     
@@ -197,7 +163,7 @@ class Renderer
    * 
    * @return int
    */
-  public function getBootstrapInputOffset()
+  public function getBootstrapInputOffset(): int
   {
     if ( $this->form->isHorizontal() ){
       $width  = (int) preg_replace("/[^\d]/", "", $this->bootstrapInputClass);
@@ -209,33 +175,115 @@ class Renderer
     return $offset;
   }
   
+  protected function getFieldsets(): array
+  {
+    $fieldsets = [];
+    
+    if ( $this->fieldsetOrdering ){
+      foreach($this->fieldsetOrdering as $fieldset){
+        $fieldsets[$fieldset] = null;
+      }
+    }
+    
+    foreach($this->form->getFieldsets() as $name => $fieldset){
+      if ( $fields = $this->getFields($name) ){
+        foreach($fields as &$field){
+          if ( $field['type'] === 'inputgroup' ){
+            if ( !Inputgroup::create($field['inputgroupId']) ){
+              throw new RuntimeException('Inputgroup was not created properly');
+            }
+            $inputgroup = Inputgroup::create($field['inputgroupId']);
+            $field = $inputgroup->render();
+          }
+        }
+        
+        $fieldset = (array)$fieldset;
+        $fieldset['fields'] = $fields;
+        $fieldsets[$name] = $fieldset;
+      }
+    }
+    
+    foreach($fieldsets as $name => $fieldset){
+      if ( empty($fieldset['fields']) ){
+        unset($fieldsets[$name]);
+      }
+    }
+    
+    return array_values($fieldsets);
+  }
+  
   /**
    * Render form field.
    * 
    * @param  Field   $field  Field object
-   * @return string  HTML 
    */
-  protected function field(Field $field)
+  protected function field(Field $field): array
   {
+    $fieldData = [];
+    
     $field->cleanForRender();
     
-    if ( $field->get('hideWhenEmpty') && $field->isEmpty() ){
-      return false;
+    if ( $field->isHiddenWhenEmpty() && $field->isEmpty() ){
+      return $fieldData;
     }
     
-    if ( !$field->get('static') && $field->isHidden() ){
+    if ( !$field->isStatic() && $field->isHidden() ){
       $this->addHiddenField($field->getName(), $field->getValue());
-      return false;
+      return $fieldData;
     }
     
     $contained = ( $this->form->isHorizontal() );
     
-    if ( $field->get('static') ){
+    if ( $field->isStatic() ){
       $fieldData = $this->fieldStatic($field);
     } 
-    elseif ( $field->get('bsInputgroupPrefix') !== '' || $field->get('bsInputgroupSuffix') !== '' ){
-      $fieldData = $this->fieldInputGroup($field);
+    elseif ( $inputgroupId = $field->getInputgroupId() ){
+      $newInputgroup = false === Inputgroup::exists($inputgroupId);
+      
+      $inputgroup = Inputgroup::create($inputgroupId);
+      if ( $newInputgroup ){
+        $inputgroup
+          ->setFieldname($field->getFieldname())
+          ->setClassname(implode(' ', $field->getFieldClasses()))
+          ->setLabel($this->fieldLabel($field))
+          ->setTip($field->getTip())
+          ->setTipBefore($field->getTipBefore());
+      }
+      
+      if ( $buttonBefore = $field->getButtonBefore() ){
+        $buttonBeforeClass = $field->getButtonBeforeClass();
+        $inputgroup->addButton($buttonBefore, $buttonBeforeClass);
+      }
+      
+      if ( $spanBefore = $field->getSpanBefore() ){
+        $spanBeforeClass = $field->getSpanBeforeClass();
+        $inputgroup->addButtonShell($spanBefore, $spanBeforeClass);
+      }
+      
+      $inputgroup->addField($field->getFieldHtml());
+      
+      if ( $spanAfter = $field->getSpanAfter() ){
+        $spanAfterClass = $field->getSpanAfterClass();
+        $inputgroup->addButtonShell($spanAfter, $spanAfterClass);
+      }
+      
+      if ( $buttonAfter = $field->getButtonAfter() ){
+        $buttonAfterClass = $field->getButtonAfterClass();
+        $inputgroup->addButton($buttonAfter, $buttonAfterClass);
+      }
+      
+      $fieldData = [
+        'type' => 'inputgroup',
+        'inputgroupId' => $inputgroupId,
+      ];
+      
+      if ( !$newInputgroup ){
+        return [];
+      }
     }
+    // elseif ( $field->getSpanBefore() || $field->getSpanAfter() || $field->getInputgroupId() ){
+      // $fieldData = $this->fieldInputGroup($field);
+    // }
     else {
       $fieldData = $field->getFieldHtml();
     }
@@ -248,7 +296,7 @@ class Renderer
       if ( $this->form->isHorizontal() ){
         $_classes = explode(' ', $this->bootstrapInputClass);
         
-        if ( $field->get('labelHide') ){
+        if ( $field->isLabelHidden() ){
           foreach($_classes as $i => $v){
             if ( substr($v, 0, 4) === 'col-' ){
               unset($_classes[$i]);
@@ -256,7 +304,7 @@ class Renderer
             }
           }
           
-          if ( $field->get('fullWidth') ){
+          if ( $field->isFullWidth() ){
             $_classes[] = 'col-xs-12';
           }
           else {
@@ -274,14 +322,13 @@ class Renderer
       
       $fieldData['container'] = $attrs;
     }
-    // debugMe($fieldData);
     
     if ( !isset($fieldData['label']) ){
       $fieldData['label'] = $this->fieldLabel($field);
     }
     
     if ( !isset($fieldData['tip']) ){
-      $fieldData['tip'] = $this->fieldDescription($field);
+      $fieldData['tip'] = '';
     }
     
     return $fieldData;
@@ -293,20 +340,22 @@ class Renderer
    * @param  Field   $field  Field object
    * @return string  HTML 
    */
-  protected function fieldLabel(Field $field)
+  protected function fieldLabel(Field $field): array
   {
-    if ( !$field->get('hidden') && !$field->get('labelHide') ){
-      $id = $field->get('id');
+    $labelData = [];
+    
+    if ( !$field->isHidden() && !$field->isLabelHidden() ){
+      $element   = $field->getElement();
+      $classes   = $field->getLabelClasses();
+      $labelText = $field->getLabelText();
       
-      $classes = $field->getLabelClasses();
       array_unshift($classes, 'control-label');
       
-      $attrs = [];
-      // $attrs['data-id'] = $id.'-lbl';
-      $attrs['for']     = $id;
-      $attrs['class']   = implode(' ', $classes);
+      $labelData['attrs'] = [];
+      $labelData['attrs']['for']   = $field->getId();
+      $labelData['attrs']['class'] = implode(' ', $classes);
       
-      if ( $field->get('labelSrOnly') ){
+      if ( $field->isLabelSrOnly() ){
         array_unshift($classes, 'sr-only');
       }
       elseif ( $this->form->isHorizontal() ){
@@ -315,27 +364,17 @@ class Renderer
         $classes = array_merge($_classes, $classes);
       }
       
-      $attrs['class'] = implode(' ', $classes);
+      $labelData['attrs']['class'] = implode(' ', $classes);
       
-      $element   = $field->get('element');
       $fieldName = (string) $element['name'];
+      $labelData['text'] = $field->getLabelText();
       
-      if ( FormHelper::getTranslation('HELP_FIELD_'.$this->form->getI18nNamespace().'_'.$fieldName) ){
-        $fieldHelp = strtoupper('HELP_FIELD_'.$this->form->getI18nNamespace().'_'.$fieldName);
-        
-        $attrs['data-help-key']  = $fieldHelp;
-        $attrs['data-help-type'] = 'field';
-      }
-      
-      if ( $label = FormHelper::getFieldLabel($field->get('labelText'), $this->form->getI18nNamespace(), $fieldName) ){
-        return [
-          'attrs' => $attrs,
-          'text' => $label,
-        ];
+      if ( '' === $labelData['text'] ){
+        $labelData['text'] = 'FIELD_'.$this->form->getComponent().'_'.$fieldName.'_LABEL';
       }
     }
     
-    return false;
+    return $labelData;
   }
   
   /**
@@ -344,10 +383,10 @@ class Renderer
    * @param  Field   $field  Field object
    * @return string  HTML 
    */
-  protected function fieldHiddenInput(Field $field)
+  protected function fieldHiddenInput(Field $field): array
   {
-    $attrs['name']  = $field->get('name');
     $attrs['type']  = 'hidden';
+    $attrs['name']  = $field->getName();
     $attrs['value'] = $field->getHiddenValue();
     
     return [
@@ -362,19 +401,23 @@ class Renderer
    * @param  Field   $field  Field object
    * @return string  HTML 
    */
-  protected function fieldInputGroup(Field $field)
+  /* protected function fieldInputGroup(Field $field): array
   {
+    $inputgroupId = $field->getInputgroupId();
+    
     return [
-      'type'      => 'inputgroup',
-      'fieldname' => $field->get('fieldname'),
-      'goeswith'  => $field->get('goeswith'),
-      'gonewith'  => $field->get('gonewith'),
-      'bsClass'   => $field->get('bsInputgroupClass'),
-      'bsPrefix'  => $field->get('bsInputgroupPrefix'),
-      'bsSuffix'  => $field->get('bsInputgroupSuffix'),
+      'type'      => $inputgroupId ? 'ig' : 'inputgroup',
+      'fieldname' => $field->getFieldname(),
+      'goeswith'  => $field->getGoesWith(),
+      'gonewith'  => $field->getGoneWith(),
+      
+      'inputgroupId' => $field->getInputgroupId(),
+      'bsClass'   => $field->getInputgroupClass(),
+      // 'bsPrefix'  => $field->getSpanBefore(),
+      // 'bsSuffix'  => $field->getSpanAfter(),
       'field'     => $field->getFieldHtml(),
     ];
-  }
+  } */
   
   /**
    * Render a form field as static
@@ -382,37 +425,13 @@ class Renderer
    * @param  Field   $field  Field object
    * @return string  HTML
    */
-  protected function fieldStatic(Field $field)
+  protected function fieldStatic(Field $field): array
   {
     return [
       'type'     => 'static',
-      'goeswith' => $field->get('goeswith'),
-      'gonewith' => $field->get('gonewith'),
+      'goeswith' => $field->getGoesWith(),
+      'gonewith' => $field->getGoneWith(),
       'value'    => $field->getStaticValue(),
     ];
-  }
-  
-  /**
-   * Render a form field helper
-   * 
-   * @param  Field   $field  Field object
-   * @return string  HTML
-   */
-  protected function fieldDescription(Field $field)
-  {
-    $element = $field->get('element');
-    $name    = (string) $element['name'];
-    
-    if ( $this->form->isUpdateMode() ){
-      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC_UPDATE');
-      if ( !$tip ){
-        $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC');
-      }
-    }
-    else {
-      $tip = FormHelper::getFieldDescription($field->get('description'), $this->form->getI18nNamespace(), $name, 'DESC');
-    }
-    
-    return $tip;
   }
 }

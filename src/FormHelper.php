@@ -77,7 +77,7 @@ abstract class FormHelper
    * @return XmlGenerator 
    * @throws RuntimeException 
    */
-  public static function loadXmlGenerator($formName)
+  /* public static function loadXmlGenerator($formName)
   {
     $Class = Form::$ns.'\\'.ucfirst(Callisto()->getName()).'Bundle\\Form\\'.ucfirst($formName).'XmlGenerator';
     
@@ -90,9 +90,8 @@ abstract class FormHelper
       }
     }
     
-    // debugMe($Class);
     return new $Class();
-  }
+  } */
   
   /**
    * Format a select/option
@@ -208,61 +207,6 @@ abstract class FormHelper
   }
   
   /**
-   * Get field placeholder 
-   * 
-   * @param   string    $value  Specified value
-   * @param   string    $ns     Namespace
-   * @param   string    $name   Field name
-   * @return   string    Defaults to empty string if not found
-   */
-  /* public static function getFieldPlaceholder($value, $ns, $name)
-  {
-    $value = (string) $value;
-    if ( $value !== '' ){
-      if ( $str = self::getTranslation($value) ){
-        return $str;
-      }
-      return $value;
-    }
-    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_PLACEHOLDER') ){
-      return $str;
-    }
-    if ( $str = self::getTranslation('FIELD_'.$name.'_PLACEHOLDER') ){
-      return $str;
-    }
-    return '';
-  } */
-  
-  /**
-   * Get field description 
-   * 
-   * @param   string    $value      Specified value
-   * @param   string    $ns         Namespace
-   * @param   string    $name       Field name
-   * @param   bool      $suffix     Key suffix (DESC or DESC_UPDATE)
-   * @return   string    Defaults to empty string if not found
-   */
-  public static function getFieldDescription($value, $ns, $name, $suffix)
-  {
-    $value = (string) $value;
-    if ( $value !== '' ){
-      if ( $str = self::getTranslation($value) ){
-        return $str;
-      }
-      return $value;
-    }
-    
-    if ( $str = self::getTranslation('FIELD_'.$ns.'_'.$name.'_'.$suffix) ){
-      return $str;
-    }
-    if ( $str = self::getTranslation('FIELD_'.$name.'_'.$suffix) ){
-      return $str;
-    }
-    
-    return '';
-  }
-  
-  /**
    * Get fieldset label 
    * 
    * @param   string    $value  Specified value
@@ -279,18 +223,15 @@ abstract class FormHelper
       }
       return $value;
     }
-    // debugMe('FIELDSET_'.$ns.'_'.$name.'_LEGEND');
+    
     if ( $str = self::getTranslation('FIELDSET_'.$ns.'_'.$name.'_LEGEND') ){
       return $str;
     }
+    
     if ( $str = self::getTranslation('FIELDSET_'.$name.'_LEGEND') ){
       return $str;
     }
-    // if ( $str = self::getTranslation($name) ){
-      // return $str;
-    // }
-    // return 'FIELDSET_'.$ns.'_'.$name.'_LEGEND';
-    // return '[-F-]'.$name;
+    
     return ''; //'FIELDSET_'.$ns.'_'.$name.'_LEGEND';
   }
   

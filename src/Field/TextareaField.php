@@ -52,10 +52,7 @@ abstract class TextareaField extends Field
    */
   protected $placeholder;
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getFieldAttributes(array $attrs=[])
+  public function getFieldAttributes(array $attrs=[]): array
   {
     $attrs = parent::getFieldAttributes($attrs);
     
@@ -82,45 +79,33 @@ abstract class TextareaField extends Field
     return $attrs;
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getStaticValue()
+  public function getStaticValue(): string
   {
     $value='NEED TO IMPLEMENT READONLY FOR TEXTAREA';
     // $value = nl2br($this->value);
     return FormHelper::formatStaticValue($value);
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  public function getHiddenValue()
+  public function getHiddenValue(): string
   {
     throw new RuntimeException('Textarea cannot be formatted as hidden !'); 
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initDefinition()
   {
     parent::initDefinition();
     
     $this->defAttribute('filter', '\JDZ\Helpers\StringHelper::cleanTextarea');
-    $this->defAttribute('size', '0', 'int');
-    $this->defAttribute('maxlength', '0', 'int');
-    $this->defAttribute('cols', '0', 'int');
-    $this->defAttribute('rows', '0', 'int');
+    $this->defAttribute('size', '0');
+    $this->defAttribute('maxlength', '0');
+    $this->defAttribute('cols', '0');
+    $this->defAttribute('rows', '0');
     
-    $this->setAttribute('bsInputgroupPrefix', '');
-    $this->setAttribute('bsInputgroupSuffix', '');
-    $this->setAttribute('bsInputgroupClass', '');
+    $this->setAttribute('spanBefore', '');
+    $this->setAttribute('spanAfter', '');
+    $this->setAttribute('inputgroupClass', '');
   }
   
-  /**
-   * {@inheritDoc}
-   */
   protected function initObject()
   {
     parent::initObject();
@@ -133,10 +118,7 @@ abstract class TextareaField extends Field
     $this->filter      = (string) $this->element['filter'];
   }
   
-  /**
-   * {@inheritDoc}
-   */
-  protected function renderField(array $attrs=[])
+  protected function renderField(array $attrs=[]): array
   {
     return array_merge(parent::renderField($attrs), [
       'type' => 'textarea',

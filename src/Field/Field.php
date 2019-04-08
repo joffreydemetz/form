@@ -55,20 +55,6 @@ abstract class Field implements FieldInterface
   protected $value;
   
   /**
-   * Field is static
-   * 
-   * @var    bool
-   */
-  protected $static;
-  
-  /**
-   * Field is hidden
-   * 
-   * @var    bool   
-   */
-  protected $hidden;
-  
-  /**
    * Field id attribute
    * 
    * @var    string   
@@ -83,32 +69,11 @@ abstract class Field implements FieldInterface
   protected $name;
   
   /**
-   * Field required attribute
+   * Field validation filter
    * 
-   * @var    bool   
+   * @var    string   
    */
-  protected $required;
-  
-  /**
-   * Field readonly attribute
-   * 
-   * @var    bool   
-   */
-  protected $readonly;
-  
-  /**
-   * Field disabled attribute
-   * 
-   * @var    bool   
-   */
-  protected $disabled;
-  
-  /**
-   * Field multiple attribute
-   * 
-   * @var    bool   
-   */
-  protected $multiple;
+  protected $filter;
   
   /**
    * Field goes with
@@ -125,20 +90,6 @@ abstract class Field implements FieldInterface
    * @var    string  Another field name
    */
   protected $gonewith;
-  
-  /**
-   * Full width field (no label)
-   * 
-   * @var    bool
-   */
-  protected $fullWidth;
-  
-  /**
-   * Field autofocus attribute
-   * 
-   * @var    bool   
-   */
-  protected $autofocus;
   
   /**
    * Field width attribute
@@ -176,27 +127,6 @@ abstract class Field implements FieldInterface
   protected $description;
   
   /**
-   * Field validation filter
-   * 
-   * @var    string   
-   */
-  protected $filter;
-  
-  /**
-   * Hide field when empty value
-   * 
-   * @var    bool   
-   */
-  protected $hideWhenEmpty;
-  
-  /**
-   * Field can be rendered as static 
-   * 
-   * @var    bool   
-   */
-  protected $canBeStatic;
-  
-  /**
    * The field container class
    * 
    * @var    string
@@ -209,13 +139,6 @@ abstract class Field implements FieldInterface
    * @var    string
    */
   protected $labelClass;
-  
-  /**
-   * Label sr only
-   * 
-   * @var    bool
-   */
-  protected $labelSrOnly;
   
   /**
    * The field label text
@@ -232,11 +155,11 @@ abstract class Field implements FieldInterface
   protected $tip;
   
   /**
-   * Hide field label
+   * The tip goes before the tip
    * 
-   * @var    bool   
+   * @var    bool
    */
-  protected $labelHide;
+  protected $tipBefore;
   
   /**
    * Validate methods
@@ -253,32 +176,165 @@ abstract class Field implements FieldInterface
   protected $message;
   
   /**
-   * Boostrap3 inputgroup prefix
-   * 
-   * @var    string   
-   */
-  protected $bsInputgroupPrefix;
-  
-  /**
-   * Boostrap3 inputgroup suffix
-   * 
-   * @var    string   
-   */
-  protected $bsInputgroupSuffix;
-  
-  /**
-   * Boostrap3 inputgroup class
-   * 
-   * @var    string   
-   */
-  protected $bsInputgroupClass;
-  
-  /**
    * Field autocomplete attribute
    * 
    * @var    string   
    */
   protected $autocomplete;
+  
+  /**
+   * Field is static
+   * 
+   * @var    bool
+   */
+  protected $static;
+  
+  /**
+   * Field is hidden
+   * 
+   * @var    bool   
+   */
+  protected $hidden;
+  
+  /**
+   * Field required attribute
+   * 
+   * @var    bool   
+   */
+  protected $required;
+  
+  /**
+   * Field readonly attribute
+   * 
+   * @var    bool   
+   */
+  protected $readonly;
+  
+  /**
+   * Field disabled attribute
+   * 
+   * @var    bool   
+   */
+  protected $disabled;
+  
+  /**
+   * Field multiple attribute
+   * 
+   * @var    bool   
+   */
+  protected $multiple;
+  
+  /**
+   * Full width field (no label)
+   * 
+   * @var    bool
+   */
+  protected $fullWidth;
+  
+  /**
+   * Field autofocus attribute
+   * 
+   * @var    bool   
+   */
+  protected $autofocus;
+  
+  /**
+   * Hide field when empty value
+   * 
+   * @var    bool   
+   */
+  protected $hideWhenEmpty;
+  
+  /**
+   * Field can be rendered as static 
+   * 
+   * @var    bool   
+   */
+  protected $canBeStatic;
+  
+  /**
+   * Label sr only
+   * 
+   * @var    bool
+   */
+  protected $labelSrOnly;
+  
+  /**
+   * Hide field label
+   * 
+   * @var    bool   
+   */
+  protected $labelHide;
+  
+  /**
+   * Inputgroup Type
+   * 
+   * @var    string   
+   */
+  protected $inputgroupId;
+  
+  /**
+   * Inputgroup class
+   * 
+   * @var    string   
+   */
+  protected $inputgroupClass;
+  
+  /**
+   * Inputgroup prefix span
+   * 
+   * @var    string   
+   */
+  protected $spanBefore;
+  
+  /**
+   * Inputgroup prefix span class
+   * 
+   * @var    string   
+   */
+  protected $spanBeforeClass;
+  
+  /**
+   * Inputgroup suffix span
+   * 
+   * @var    string   
+   */
+  protected $spanAfter;
+  
+  /**
+   * Inputgroup suffix span class
+   * 
+   * @var    string   
+   */
+  protected $spanAfterClass;
+  
+  /**
+   * Inputgroup prefix button
+   * 
+   * @var    string   
+   */
+  protected $buttonBefore;
+  
+  /**
+   * Inputgroup prefix button class
+   * 
+   * @var    string   
+   */
+  protected $buttonBeforeClass;
+  
+  /**
+   * Inputgroup suffix button
+   * 
+   * @var    string   
+   */
+  protected $buttonAfter;
+  
+  /**
+   * Inputgroup suffix button class
+   * 
+   * @var    string   
+   */
+  protected $buttonAfterClass;
   
   public static function create($type)
   {
@@ -293,7 +349,6 @@ abstract class Field implements FieldInterface
     $type = str_replace('-', '', $type);
     
     $Class = Form::$ns.'\\Field\\'.ucfirst($type);
-    // debugMe($Class);
     if ( !class_exists($Class) ){
       throw new RuntimeException('Unrecognized field type :: '.$type);
     }
@@ -307,23 +362,29 @@ abstract class Field implements FieldInterface
     $this->static   = false;
   }
   
-  public function setProperties($properties)
+  public function get($property, $default=null)
   {
-    if ( is_array($properties) || is_object($properties) ){
-      foreach((array)$properties as $k => $v){
-        $this->set($k, $v);
-      }
-      return true;
+    if ( isset($this->{$property}) ){
+      return $this->{$property};
     }
-
-    return false;
+    return $default;
   }
-
+  
   public function set($property, $value = null)
   {
     $previous = isset($this->$property) ? $this->$property : null;
     $this->$property = $value;
     return $previous;
+  }
+  
+  public function has($property): bool
+  {
+    return ( isset($this->{$property}) );
+  }
+  
+  public function all(): array
+  {
+    return get_object_vars($this);
   }
 
   public function erase($property)
@@ -333,6 +394,15 @@ abstract class Field implements FieldInterface
     }
   }
   
+  public function sets(array $properties)
+  {
+    foreach($properties as $k => $v){
+      $this->set($k, $v);
+    }
+    
+    return $this;
+  }
+
   public function setForm(Form $form)
   {
     $this->form = $form;
@@ -363,13 +433,13 @@ abstract class Field implements FieldInterface
     return $this;
   }
   
-  public function setAttribute($attribute, $value='', $type='string')
+  /* public function setAttribute(string $attribute, $value='', $type='string')
   {
     $this->element[$attribute] = $value;
     return $this;
   }
   
-  public function defAttribute($attribute, $default=null, $type='string')
+  public function defAttribute(string $attribute, $default=null, $type='string')
   {
     $attrs = $this->element->attributes();
     if ( !isset($attrs[$attribute]) ){
@@ -396,96 +466,352 @@ abstract class Field implements FieldInterface
         $value = $default === null ? '' : (string)$default;
       }
     }
-    /* if ( $type === 'bool' ){
-      if ( empty($value) ){
-        $value = $default === null ? 'false' : $default;
-      }
-    }
-    elseif ( $type === 'int' ){
-      if ( empty($value) ){
-        $value = $default === null ? '0' : $default;
-      }
-    }
-    else {
-      if ( empty($value) ){
-        $value = $default === null ? '' : $default;
-      }
-    } */
     
     $this->setAttribute($attribute, $value);
     return $this;
+  } */
+  
+  public function setAttribute(string $attribute, string $value='')
+  {
+    $this->element[$attribute] = $value;
+    return $this;
   }
   
-  public function get($property, $default = null)
+  public function defAttribute(string $attribute, string $default='')
   {
-    if ( isset($this->$property) ){
-      return $this->$property;
+    $attrs = $this->element->attributes();
+    
+    if ( !isset($attrs[$attribute]) ){
+      $this->setAttribute($attribute, $default);
     }
-    return $default;
+    
+    return $this;
   }
   
-  public function has($property)
+  
+  /**
+   * @deprecated
+   */
+  public function setProperties($properties)
   {
-    return ( isset($this->{$property}) );
+    $this->sets((array)$properties);
+    return $this;
   }
   
-  public function export()
+  /**
+   * @deprecated
+   */
+  public function export(): array
   {
-    return $this->getProperties();
+    return $this->all();
   }
   
-  public function getProperties()
+  /**
+   * @deprecated
+   */
+  public function getProperties(): array
   {
-    $vars = get_object_vars($this);
-    return $vars;
+    return $this->all();
   }
   
-  public function getForm()
+  public function getForm(): Form
   {
     return $this->form;
   }
   
-  public function getElement()
+  public function getElement(): SimpleXMLElement
   {
     return $this->element;
   }
   
-  public function getGroup()
+  public function getFieldname(): string
+  {
+    return $this->fieldname;
+  }
+  
+  public function getGroup(): string
   {
     return $this->group;
   }
   
-  public function getValue()
+  public function getValue(): string
   {
     return $this->value;
   }
   
-  public function getId()
+  public function getId(): string
   {
     return $this->id;
   }
   
-  public function getName()
+  public function getName(): string
   {
     return $this->name;
   }
   
-  public function getFieldHtml(array $attrs=[])
+  public function getFilter(): string
+  {
+    return $this->filter;
+  }
+  
+  public function getGoesWith(): string
+  {
+    return $this->goeswith;
+  }
+  
+  public function getGoneWith(): string
+  {
+    return $this->gonewith;
+  }
+  
+  public function getWidth(): string
+  {
+    return $this->width;
+  }
+  
+  public function getClass(): string
+  {
+    return $this->class;
+  }
+  
+  public function getStyle(): string
+  {
+    return $this->style;
+  }
+  
+  public function getDefault(): string
+  {
+    return $this->default;
+  }
+  
+  public function getDescription(): string
+  {
+    return $this->description;
+  }
+  
+  public function getContainerClass(): string
+  {
+    return $this->containerClass;
+  }
+  
+  public function getLabelClass(): string
+  {
+    return $this->labelClass;
+  }
+  
+  public function getLabelText(): string
+  {
+    return $this->labelText;
+  }
+  
+  public function getTip(): string
+  {
+    return $this->tip;
+  }
+  
+  public function getTipBefore(): string
+  {
+    return $this->tipBefore;
+  }
+  
+  public function getValidate(): string
+  {
+    return $this->validate;
+  }
+  
+  public function getMessage(): string
+  {
+    return $this->message;
+  }
+  
+  public function getAutocomplete(): string
+  {
+    return $this->autocomplete;
+  }
+
+  public function getInputgroupId(): string
+  {
+    return $this->inputgroupId;
+  }
+  
+  public function getInputgroupClass(): string
+  {
+    return $this->inputgroupClass;
+  }
+  
+  public function getSpanBefore(): string
+  {
+    return $this->spanBefore;
+  }
+  
+  public function getSpanBeforeClass(): string
+  {
+    return $this->spanBeforeClass;
+  }
+  
+  public function getSpanAfter(): string
+  {
+    return $this->spanAfter;
+  }
+  
+  public function getSpanAfterClass(): string
+  {
+    return $this->spanAfterClass;
+  }
+  
+  public function getButtonBefore(): string
+  {
+    return $this->buttonBefore;
+  }
+  
+  public function getButtonBeforeClass(): string
+  {
+    return $this->buttonBeforeClass;
+  }
+  
+  public function getButtonAfter(): string
+  {
+    return $this->buttonAfter;
+  }
+  
+  public function getButtonAfterClass(): string
+  {
+    return $this->buttonAfterClass;
+  }
+  
+  public function isStatic(): bool
+  {
+    return true == $this->static;
+  }
+  
+  public function isHidden(): bool
+  {
+    return true == $this->hidden;
+  }
+  
+  public function isRequired(): bool
+  {
+    return true == $this->required;
+  }
+  
+  public function isReadonly(): bool
+  {
+    return true == $this->readonly;
+  }
+  
+  public function isDisabled(): bool
+  {
+    return true == $this->disabled;
+  }
+  
+  public function isMultiple(): bool
+  {
+    return true == $this->multiple;
+  }
+  
+  public function isTipBefore(): bool
+  {
+    return true === $this->tipBefore;
+  }
+  
+  public function isFullWidth(): bool
+  {
+    return true == $this->fullWidth;
+  }
+  
+  public function isAutofocus(): bool
+  {
+    return true == $this->autofocus;
+  }
+  
+  public function isHiddenWhenEmpty(): bool
+  {
+    return true == $this->hideWhenEmpty;
+  }
+  
+  public function isCanBeStatic(): bool
+  {
+    return true == $this->canBeStatic;
+  }
+  
+  public function isLabelSrOnly(): bool
+  {
+    return true == $this->labelSrOnly;
+  }
+  
+  public function isLabelHidden(): bool
+  {
+    return true == $this->labelHide;
+  }
+  
+  public function isEmpty(): bool
+  {
+    return '' === $this->value;
+  }
+  
+  public function getLabelClasses(): array
+  {
+    $classes = [];
+    
+    if ( !$this->labelHide ){
+      if ( $this->labelClass !== '' ){
+        $_classes = explode(' ', $this->labelClass);
+        $classes = array_merge($classes, $_classes);
+      }
+      
+      if ( true === $this->required ){
+        $classes[] = 'required';
+      }      
+    }
+    
+    return $classes;
+  }
+  
+  public function getFieldClasses(): array
+  {
+    $classes = [];
+    $classes[] = 'form-control';
+    
+    if ( $this->class !== '' ){
+      $_classes = explode(' ', $this->class);
+      $classes  = array_merge($classes, $_classes);
+    }
+    
+    if ( true === $this->required ){
+      $classes[] = 'required';
+    }
+    
+    if ( true === $this->readonly ){
+      $classes[] = 'readonly';
+    }
+    
+    if ( true === $this->disabled ){
+      $classes[] = 'disabled';
+    }
+    
+    if ( true === $this->fullWidth ){
+      $classes[] = 'fullwidth';
+    }
+    
+    return $classes;
+  }
+  
+  public function getFieldHtml(array $attrs=[]): array
   {
     return $this->renderField($attrs);
   }
   
-  public function getStaticValue()
+  public function getStaticValue(): string
   {
     return FormHelper::formatStaticValue($this->value);
   }
   
-  public function getHiddenValue()
+  public function getHiddenValue(): string
   {
     return FormHelper::formatHiddenValue($this->value);
   }
   
-  public function getFieldAttributes(array $attrs=[])
+  public function getFieldAttributes(array $attrs=[]): array
   {
     $classes = $this->getFieldClasses();
     
@@ -516,15 +842,15 @@ abstract class Field implements FieldInterface
       $attrs['style'] = $this->style;
     }
     
-    if ( $this->bsInputgroupPrefix ){
-      $attrs['aria-describedby'] = 'bsigroup-'.$this->id;
-    }
+    // if ( $this->spanBefore ){
+      // $attrs['aria-describedby'] = 'bsigroup-'.$this->id;
+    // }
     
     $attrs['class'] = implode(' ', $classes);
     return $attrs;
   }
   
-  public function getContainerClasses()
+  public function getContainerClasses(): array
   {
     $classes = [];
     
@@ -536,59 +862,6 @@ abstract class Field implements FieldInterface
     return $classes;
   }
   
-  public function getLabelClasses()
-  {
-    $classes = [];
-    
-    if ( !$this->labelHide ){
-      if ( $this->labelClass !== '' ){
-        $_classes = explode(' ', $this->labelClass);
-        $classes = array_merge($classes, $_classes);
-      }
-      
-      if ( true === $this->required ){
-        $classes[] = 'required';
-      }      
-    }
-    
-    return $classes;
-  }
-  
-  public function getFieldClasses()
-  {
-    $classes = [];
-    $classes[] = 'form-control';
-    
-    if ( $this->class !== '' ){
-      $_classes = explode(' ', $this->class);
-      $classes  = array_merge($classes, $_classes);
-    }
-    
-    if ( true === $this->required ){
-      $classes[] = 'required';
-    }
-    
-    if ( true === $this->readonly ){
-      $classes[] = 'readonly';
-    }
-    
-    if ( true === $this->disabled ){
-      $classes[] = 'disabled';
-    }
-    
-    return $classes;
-  }
-  
-  public function isEmpty()
-  {
-    return ( $this->value === '' );
-  }
-  
-  public function isHidden()
-  {
-    return ( $this->hidden );
-  }
-  
   public function init($value=null)
   {
     $this->initDefinition();
@@ -598,6 +871,7 @@ abstract class Field implements FieldInterface
     $this->onReady();
     $this->checkValidate();
     $this->setValue($value);
+    
     return $this;
   }
   
@@ -606,6 +880,8 @@ abstract class Field implements FieldInterface
     $this->checkValue();
     $this->checkValidate();
     $this->checkState();
+    
+    return $this;
   }
   
   /**
@@ -618,22 +894,23 @@ abstract class Field implements FieldInterface
     // $attrs = $this->element->attributes();
     
     $this->defAttribute('id', ''); // $this->element['name']);
-    $this->defAttribute('required', 'false', 'bool');
-    $this->defAttribute('readonly', 'false', 'bool');
-    $this->defAttribute('disabled', 'false', 'bool');
-    $this->defAttribute('autofocus', 'false', 'bool');
-    $this->defAttribute('hidden', 'false', 'bool');
-    $this->defAttribute('hideWhenEmpty', 'false', 'bool');
-    $this->defAttribute('labelHide', 'false', 'bool');
-    $this->defAttribute('labelSrOnly', 'false', 'bool');
-    $this->defAttribute('canBeStatic', 'false', 'bool');
-    $this->defAttribute('fullWidth', 'false', 'bool');
+    $this->defAttribute('required', 'false');
+    $this->defAttribute('readonly', 'false');
+    $this->defAttribute('disabled', 'false');
+    $this->defAttribute('autofocus', 'false');
+    $this->defAttribute('hidden', 'false');
+    $this->defAttribute('hideWhenEmpty', 'false');
+    $this->defAttribute('labelHide', 'false');
+    $this->defAttribute('labelSrOnly', 'false');
+    $this->defAttribute('canBeStatic', 'false');
+    $this->defAttribute('fullWidth', 'false');
+    $this->defAttribute('tipBefore', 'false');
     
-    $this->defAttribute('width', '0', 'int');
+    $this->defAttribute('width', '0');
     
     $this->defAttribute('default', '');
     $this->defAttribute('description', '');
-    $this->defAttribute('filter', '');
+    $this->defAttribute('filter', 'raw');
     $this->defAttribute('class', '');
     $this->defAttribute('style', '');
     $this->defAttribute('containerClass', '');
@@ -646,9 +923,17 @@ abstract class Field implements FieldInterface
     $this->defAttribute('gonewith', '');
     $this->defAttribute('tip', '');
     
-    $this->defAttribute('bsInputgroupPrefix', '');
-    $this->defAttribute('bsInputgroupSuffix', '');
-    $this->defAttribute('bsInputgroupClass', '');
+    // inputgroup
+    $this->defAttribute('inputgroupId', '');
+    $this->defAttribute('inputgroupClass', '');
+    $this->defAttribute('spanBefore', '');
+    $this->defAttribute('spanBeforeClass', '');
+    $this->defAttribute('spanAfter', '');
+    $this->defAttribute('spanAfterClass', '');
+    $this->defAttribute('buttonBefore', '');
+    $this->defAttribute('buttonBeforeClass', '');
+    $this->defAttribute('buttonAfter', '');
+    $this->defAttribute('buttonAfterClass', '');
   }
   
   /**
@@ -667,13 +952,9 @@ abstract class Field implements FieldInterface
     $this->hideWhenEmpty  = ( (string) $this->element['hideWhenEmpty'] === 'true' );
     $this->canBeStatic    = ( (string) $this->element['canBeStatic'] === 'true' );
     $this->labelHide      = ( (string) $this->element['labelHide'] === 'true' );
+    $this->labelSrOnly    = ( (string) $this->element['labelSrOnly'] === 'true' );
     $this->fullWidth      = ( (string) $this->element['fullWidth'] === 'true' );
-    
-    if ( $this->fullWidth ){
-      $this->labelHide = true;
-    }
-    
-    $this->width          = (int) $this->element['width'];
+    $this->tipBefore      = ( (string) $this->element['tipBefore'] === 'true' );
     
     $this->default        = (string) $this->element['default'];
     $this->description    = (string) $this->element['description'];
@@ -686,12 +967,29 @@ abstract class Field implements FieldInterface
     $this->labelText      = (string) $this->element['labelText'];
     $this->tip            = (string) $this->element['tip'];
     $this->autocomplete   = (string) $this->element['autocomplete'];
-    $this->goeswith       = (string) $this->element['goeswith'];
-    $this->gonewith       = (string) $this->element['gonewith'];
     
-    $this->bsInputgroupPrefix = (string) $this->element['bsInputgroupPrefix'];
-    $this->bsInputgroupSuffix = (string) $this->element['bsInputgroupSuffix'];
-    $this->bsInputgroupClass  = (string) $this->element['bsInputgroupClass'];
+    $this->width          = (int) $this->element['width'];
+    
+    // inputgroup
+    $this->inputgroupId      = (string) $this->element['inputgroupId'];
+    $this->inputgroupClass   = (string) $this->element['inputgroupClass'];
+    $this->spanBefore        = (string) $this->element['spanBefore'];
+    $this->spanBeforeClass   = (string) $this->element['spanBeforeClass'];
+    $this->spanAfter         = (string) $this->element['spanAfter'];
+    $this->spanAfterClass    = (string) $this->element['spanAfterClass'];
+    $this->buttonBefore      = (string) $this->element['buttonBefore'];
+    $this->buttonBeforeClass = (string) $this->element['buttonBeforeClass'];
+    $this->buttonAfter       = (string) $this->element['buttonAfter'];
+    $this->buttonAfterClass  = (string) $this->element['buttonAfterClass'];
+    //
+    $this->goeswith = (string) $this->element['goeswith'];
+    $this->gonewith = (string) $this->element['gonewith'];
+    
+    if ( $this->fullWidth ){
+      $this->labelHide  = true;
+      $this->labelText  = '';
+      $this->labelClass = '';
+    }
   }
   
   /**
@@ -702,11 +1000,11 @@ abstract class Field implements FieldInterface
   protected function checkValue()
   {
     if ( $this->filter === 'int' ){
-      if ( $this->value !== '' ){
+      // if ( $this->value !== '' ){
         if ( intval($this->value) === 0 ){
-          $this->value = '';
+          $this->value = $this->default;
         }
-      }
+      // }
       
       return;
     }
@@ -755,9 +1053,9 @@ abstract class Field implements FieldInterface
    */
   protected function checkState()
   {
-    if ( $this->canBeStatic === true ){
-      if ( $this->readonly === true ){
-        if ( $this->hideWhenEmpty === true && $this->isEmpty() ){
+    if ( $this->isCanBeStatic() ){
+      if ( $this->isReadonly() ){
+        if ( $this->isHiddenWhenEmpty() && $this->isEmpty() ){
           $this->hidden = true;
         }
         else {
@@ -862,12 +1160,14 @@ abstract class Field implements FieldInterface
    * @param   string  $indent  HTML indent
    * @return   string  HTML
    */
-  protected function renderField(array $attrs=[])
+  protected function renderField(array $attrs=[]): array
   {
-    $attrs['fieldname'] = $this->fieldname;
-    $attrs['goeswith']  = $this->goeswith;
-    $attrs['gonewith']  = $this->gonewith;
-    $attrs['tip']       = $this->tip;
+    $attrs['fieldname']    = $this->fieldname;
+    $attrs['goeswith']     = $this->goeswith;
+    $attrs['gonewith']     = $this->gonewith;
+    $attrs['tip']          = $this->tip;
+    $attrs['tipBefore']    = $this->tipBefore;
+    $attrs['inputgroupId'] = $this->inputgroupId;
     return $attrs;
   }
 }

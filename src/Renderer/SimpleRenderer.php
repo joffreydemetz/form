@@ -18,18 +18,12 @@ class SimpleRenderer extends Renderer
 {
   protected $type = 'simple';
   
-  public function render(array $data=[])
+  public function render(array $data=[]): array
   {
     $fieldsets = $this->getFieldsets();
     
-    // debugMe($fieldsets);
     foreach($fieldsets as $name => &$fieldset){
       $fieldset = (array)$fieldset;
-      
-      // debugMe($name);
-      // if ( $name === 'recruteur.description' ){
-        // debugMe($fieldset)->end();
-      // }
       
       $_name = $fieldset['name'];
       
@@ -42,18 +36,15 @@ class SimpleRenderer extends Renderer
         $name  = $_name;
       }
       
-      if ( empty($fieldset['label']) ){
+      if ( !isset($fieldset['label']) ){
         $fieldset['label'] = '';
         $fieldset['label'] = FormHelper::getFieldsetLabel($fieldset['label'], $this->form->getComponent(), trim($group.'_'.$name, '_'));
       }
       
-      if ( empty($fieldset['description']) ){
+      if ( !isset($fieldset['description']) ){
         $fieldset['description'] = '';
         $fieldset['description'] = FormHelper::getFieldsetDescription($fieldset['description'], $this->form->getComponent(), trim($group.'_'.$name, '_'));
       }
-      
-      // $fieldset['label']       = FormHelper::getFieldsetLabel($fieldset['label'], $this->form->getComponent(), trim($group.'_'.$name, '_'));
-      // $fieldset['description'] = FormHelper::getFieldsetDescription($fieldset['description'], $this->form->getComponent(), trim($group.'_'.$name, '_'));
     }
     
     return parent::render(array_merge($data, [

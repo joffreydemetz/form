@@ -30,7 +30,7 @@ abstract class ContainerField extends Field
     $this->content = (string) $this->element['content'];
   }
   
-  protected function renderField(array $attrs=[])
+  protected function renderField(array $attrs=[]): array
   {
     return array_merge(parent::renderField($attrs), [
       'type'    => 'container',
@@ -41,7 +41,7 @@ abstract class ContainerField extends Field
     ]);
   }
   
-  protected function getContainerContent()
+  protected function getContainerContent(): string
   {
     return $this->content;
   }

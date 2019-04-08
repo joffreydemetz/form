@@ -40,7 +40,6 @@ class XmlGenerator
     }
     
     $xmlStr = $this->toString();
-    // debugMe($xmlStr);
     try {
       $xml = XmlObject::populateXml($xmlStr, true);
     }
@@ -150,11 +149,12 @@ class XmlGenerator
           throw new RuntimeException('Missing field name in ' . get_called_class());
         }
         
+        $type = '';
         if ( isset($field['type']) ){
           $type = $field['type'];
           unset($field['type']);
         }
-        else {
+        if ( '' === $type ){
           $type = 'text';
         }
         
@@ -197,8 +197,6 @@ class XmlGenerator
     }
     
     $content[] = '</form>';
-    
-    // debugMe($content);
     return implode("\n", $content);
   }
   
@@ -207,10 +205,20 @@ class XmlGenerator
     return [];
   }
 
-  protected function cleanXmlAttr(string $str): string
+  protected function cleanXmlAttr($str): string
   {
+    if ( 'true' === $str || true === $str ){
+      $str = 'true';
+    }
+    
+    if ( 'false' === $str || false === $str ){
+      $str = 'false';
+    }
+    
     $str = html_entity_decode($str);
     $str = str_replace(['&','<','>','"'], ['&amp;','&lt;','&gt;','&quot;'], $str);
+    $str = (string)$str;
+    
     return $str;
   }
 }

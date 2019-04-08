@@ -83,6 +83,13 @@ class Form implements FormInterface
   protected $orientation = 'vertical';
   
   /**
+   * Multipart form
+   * 
+   * @var    bool
+   */
+  protected $multipart = false;
+  
+  /**
    * Form XML definition
    * 
    * @var    SimpleXMLElement 
@@ -170,15 +177,21 @@ class Form implements FormInterface
     return $this;
   }
   
-  public function setI18nNamespace($i18nNamespace)
+  /* public function setI18nNamespace($i18nNamespace)
   {
     $this->i18nNamespace = $i18nNamespace;
     return $this;
-  }
+  } */
   
   public function setOrientation($orientation)
   {
     $this->orientation = $orientation;
+    return $this;
+  }
+  
+  public function setMultipart(bool $multipart=true)
+  {
+    $this->multipart = $multipart;
     return $this;
   }
   
@@ -244,18 +257,9 @@ class Form implements FormInterface
   
   public function setFieldAttributes($name, $attributes, $group=null)
   {
-    $element = $this->findField($name, $group);
-    
-    if ( !($element instanceof SimpleXMLElement) ){
-      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement : $element'); 
-    }
-    
     foreach($attributes as $attribute => $value){
-      $element[$attribute] = $value;
+      $this->setFieldAttribute($name, $attribute, $value, $group);
     }
-    
-    $this->syncPaths();
-    
     return $this;
   }
   
@@ -334,6 +338,11 @@ class Form implements FormInterface
   public function getComponent()
   {
     return $this->component;
+  }
+  
+  public function isMultipart(): bool
+  {
+    return true === $this->multipart;
   }
   
   public function getI18nNamespace()
@@ -606,7 +615,7 @@ class Form implements FormInterface
       $key = ($group===''?'':$group.'.').$name;
       
       $field = $this->getField($element, $group, $input->get($key, ''));
-      $element = $field->get('element');
+      $element = $field->getElement();
       $filter  = (string) $element['filter'];
       $default = (string) $element['default'];
       
@@ -775,7 +784,7 @@ class Form implements FormInterface
    */
   protected function filterField(FieldInterface $field, $value)
   {
-    $filter = (string)$field->get('filter');
+    $filter = $field->getFilter();
     
     $return = null;
 
@@ -832,7 +841,7 @@ class Form implements FormInterface
       case 'TEL':
         $value = trim($value);
         
-        if ( $pattern = $field->get('pattern') ){
+        if ( $pattern = $field->getPattern() ){
           if ( preg_match('/'.$pattern.'/', $value) !== false ){
             $result = $value;
           }

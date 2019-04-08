@@ -19,7 +19,7 @@ class FiltersRenderer extends Renderer
 {
   protected $type = 'filters';
   
-  public function render(array $data=[])
+  public function render(array $data=[]): array
   {
     $fieldsets = [];
     

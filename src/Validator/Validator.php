@@ -61,7 +61,7 @@ class Validator implements ValidatorInterface
       $key = ($group===''?'':$group.'.').$name;
       
       $field = $this->form->getField($element, $group, $data->get($key, ''));
-      $value = $data->get($key, '', $field->get('filter', 'raw'));
+      $value = $data->get($key, '', $field->getFilter());
       
       if ( !($result=$this->check($field, $group, $value, $data)) ){
         $return = false;
@@ -82,10 +82,10 @@ class Validator implements ValidatorInterface
    */
   protected function check(Field $field, $group=null, $value=null, $data=null)
   {
-    $element = $field->get('element');
+    $element = $field->getElement();
     $name    = (string)$element['name'];
     
-    if ( $required = $field->get('required') ){
+    if ( $required = $field->isRequired() ){
       if ( $field->isEmpty() ){
         $message = FormHelper::getRequiredError($field->get('message'), $this->form->getComponent(), $name);
         $this->form->setError( new RequiredException($message), $field );
