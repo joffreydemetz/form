@@ -13,12 +13,9 @@ use JDZ\Form\Field\FieldInterface;
 use JDZ\Form\Field\Field;
 use JDZ\Form\Exception\RequiredException;
 use JDZ\Form\Exception\InvalidException;
-use JDZ\Helpers\ArrayHelper;
 use JDZ\Form\FormData;
-use JDZ\Utilities\Date as DateObject;
-use SimpleXMLElement;
-use RuntimeException;
-use Exception;
+use JDZ\Utilities\ArrayHelper;
+use JDZ\Utilities\Date;
 
 /**
  * Form
@@ -38,7 +35,9 @@ class Form implements FormInterface
    * 
    * @var   string
    */
-  public static $ns = '\\Form';
+  public static $ns = [
+    '\\Form',
+  ];
   
   /**
    * The name of the form instance
@@ -92,7 +91,7 @@ class Form implements FormInterface
   /**
    * Form XML definition
    * 
-   * @var    SimpleXMLElement 
+   * @var    \SimpleXMLElement 
    */
   protected $xml;
   
@@ -142,10 +141,10 @@ class Form implements FormInterface
     $this->data   = new FormData();
   }
   
-  public function setXml(SimpleXMLElement $xml)
+  public function setXml(\SimpleXMLElement $xml)
   {
     if ( 'form' !== $xml->getName() ){
-      throw new RuntimeException('Invalid XML form ['.$xml->getName().']');
+      throw new \RuntimeException('Invalid XML form ['.$xml->getName().']');
     }
     
     $formAttributes = $xml->attributes();
@@ -205,12 +204,12 @@ class Form implements FormInterface
   {
     $Class = '\\JDZ\\Form\\Renderer\\'.ucfirst($name).'Renderer';
     if ( !class_exists($Class) ){
-      throw new RuntimeException('Form renderer '.$name.' not found');
+      throw new \RuntimeException('Form renderer '.$name.' not found');
     }
     
     $this->renderer = new $Class();
     $this->renderer->setForm($this);
-    $this->renderer->addHiddenField(CrsfToken(), '1');
+    $this->renderer->addHiddenField(Kernel()->application->getToken(), '1');
     
     return $this;
   }
@@ -222,7 +221,7 @@ class Form implements FormInterface
     return $this;
   }
   
-  public function setError(Exception $e, FieldInterface $field)
+  public function setError(\Exception $e, FieldInterface $field)
   {
     $error = [];
     $error['type']    = 'error';
@@ -244,8 +243,8 @@ class Form implements FormInterface
   {
     $element = $this->findField($name, $group);
     
-    if ( !($element instanceof SimpleXMLElement) ){
-      throw new RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement for '.$name); 
+    if ( !($element instanceof \SimpleXMLElement) ){
+      throw new \RuntimeException(__CLASS__ .'->'. __METHOD__ . ' Invalid SimpleXMLElement for '.$name); 
     }
     
     $element[$attribute] = $value;
@@ -475,7 +474,7 @@ class Form implements FormInterface
     return $fields;
   }
 
-  public function getField(SimpleXMLElement $element, $group=null, $value=null)
+  public function getField(\SimpleXMLElement $element, $group=null, $value=null)
   {
     if ( !$element ){
       return false;
@@ -509,7 +508,7 @@ class Form implements FormInterface
   {
     $element = $this->findField($name, $group);
     
-    if ( ($element instanceof SimpleXMLElement) && ((string) $element[$attribute]) ){
+    if ( ($element instanceof \SimpleXMLElement) && ((string) $element[$attribute]) ){
       return (string) $element[$attribute];
     }
 
@@ -557,7 +556,7 @@ class Form implements FormInterface
       $error = $this->errors[$i];
     }
     
-    if ( $error instanceof Exception ){
+    if ( $error instanceof \Exception ){
       return $error->getMessage();
     }
     
@@ -568,7 +567,7 @@ class Form implements FormInterface
   {
     $element = $this->findField($name, $group);
     
-    if ( $element instanceof SimpleXMLElement ){
+    if ( $element instanceof \SimpleXMLElement ){
       $dom = dom_import_simplexml($element);
       $dom->parentNode->removeChild($dom);
     }
@@ -599,36 +598,44 @@ class Form implements FormInterface
   public function filter(array $data, $group=null)
   {
     $fields = $this->findFieldsByGroup($group);
-    if ( !$fields ){
-      throw new RuntimeException('No fields found for '.$group);
+    
+    try {
+      if ( !$fields ){
+        throw new \RuntimeException('No fields found for '.$group);
+      }
+      
+      $input  = new FormData($data);
+      $output = new FormData();
+    
+      foreach($fields as $element){
+        $attrs   = $element->xpath('ancestor::fields[@name]/@name');
+        $groups  = array_map('strval', $attrs ? $attrs : []);
+        $group   = implode('.', $groups);
+        $name    = (string) $element['name'];
+        
+        $key = ($group===''?'':$group.'.').$name;
+        
+        $field = $this->getField($element, $group, $input->get($key, ''));
+        $element = $field->getElement();
+        
+        $filter  = (string) $element['filter'];
+        $default = (string) $element['default'];
+        
+        if ( empty($filter) ){
+          $filter = 'string';
+        }
+        /* elseif ( is_callable($filter) ){
+          $filter = 'raw';
+        } */
+        
+        if ( $input->has($key) ){
+          $output->set($key, $this->filterField($field, $input->get($key, $default, $filter)));
+        }
+        // Kernel()->application->jsonResponse([ 'form' => $key ]);
+      }
     }
-    
-    $input  = new FormData($data);
-    $output = new FormData();
-    
-    foreach($fields as $element){
-      $attrs   = $element->xpath('ancestor::fields[@name]/@name');
-      $groups  = array_map('strval', $attrs ? $attrs : []);
-      $group   = implode('.', $groups);
-      $name    = (string) $element['name'];
-      
-      $key = ($group===''?'':$group.'.').$name;
-      
-      $field = $this->getField($element, $group, $input->get($key, ''));
-      $element = $field->getElement();
-      $filter  = (string) $element['filter'];
-      $default = (string) $element['default'];
-      
-      if ( empty($filter) ){
-        $filter = 'string';
-      }
-      /* elseif ( is_callable($filter) ){
-        $filter = 'raw';
-      } */
-      
-      if ( $input->has($key) ){
-        $output->set($key, $this->filterField($field, $input->get($key, $default, $filter)));
-      }
+    catch(\Exception $e){
+      $this->setError($e);
     }
     
     return $output;
@@ -777,10 +784,10 @@ class Form implements FormInterface
   /**
    * Apply an input filter to a value based on field data.
    * 
-   * @param   SimpleXMLElement   $element  The XML element object representation of the form field.
-   * @param   mixed               $value    The value to filter for the field.
-   * @return   mixed   The filtered value.
-   * @todo     Extract this to stringHelper
+   * @param  \SimpleXMLElement   $element  The XML element object representation of the form field.
+   * @param  mixed               $value    The value to filter for the field.
+   * @return mixed   The filtered value.
+   * @todo   Extract this to stringHelper
    */
   protected function filterField(FieldInterface $field, $value)
   {
@@ -814,7 +821,7 @@ class Form implements FormInterface
       
       case 'SERVER_UTC':
         if ( intval($value) > 0 ){
-          $return = DateObject::getInstance($value)->toSql();
+          $return = Date::create($value)->toSql();
         }
         else {
           $return = '';
@@ -888,9 +895,9 @@ class Form implements FormInterface
   /**
    * Get a form field group represented as an XML element object.
    * 
-   * @param   string    $group      The dot-separated form group path on which to find the group.
-   * @return   mixed     An array of XML element objects for the group or boolean false on error.
-   * @throws   Exception
+   * @param  string    $group      The dot-separated form group path on which to find the group.
+   * @return mixed     An array of XML element objects for the group or boolean false on error.
+   * @throws \Exception
    */
   protected function &findGroup($group)
   {
@@ -928,7 +935,7 @@ class Form implements FormInterface
       }
       
       foreach($tmp as $element){
-        if ( $element instanceof SimpleXMLElement ){
+        if ( $element instanceof \SimpleXMLElement ){
           $groups[] = $element;
         }
       }
@@ -944,6 +951,6 @@ class Form implements FormInterface
    */
   protected function syncPaths()
   {
-    return ( ($this->xml instanceof SimpleXMLElement) );
+    return ( ($this->xml instanceof \SimpleXMLElement) );
   }
 }

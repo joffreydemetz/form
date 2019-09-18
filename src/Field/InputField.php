@@ -9,7 +9,6 @@ namespace JDZ\Form\Field;
 
 use JDZ\Form\Form;
 use JDZ\Form\FormHelper;
-use JDZ\Helpers\AttributesHelper;
 
 /**
  * Abstract Input field
@@ -158,6 +157,10 @@ abstract class InputField extends Field
   
   protected function renderField(array $attrs=[]): array
   {
+    if ( true === $this->readonly ){
+      $this->required = false;
+    }
+    
     return array_merge(parent::renderField($attrs), [
       'type' => 'input',
       'attrs' => $this->getFieldAttributes($attrs),

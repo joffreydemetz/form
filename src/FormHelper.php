@@ -33,14 +33,25 @@ abstract class FormHelper
   ];
   
   /**
-   * Set the translations
+   * Set the form namespaces
    *
    * @param   string  $namespace  The form namespace (fields and rules)
    * @return  void
    */
   public static function setNamespace($namespace)
   {
-    Form::$ns = $namespace;
+    Form::$ns = [ $namespace ];
+  }
+  
+  /**
+   * Add a form namespace
+   *
+   * @param   string  $namespace  The form namespace (fields and rules)
+   * @return  void
+   */
+  public static function addNamespace($namespace)
+  {
+    array_unshift(Form::$ns, $namespace);
   }
   
   /**
@@ -71,29 +82,6 @@ abstract class FormHelper
   }  
   
   /**
-   * Get form XML generator instance
-   * 
-   * @param  string  $formName  The form file name
-   * @return XmlGenerator 
-   * @throws RuntimeException 
-   */
-  /* public static function loadXmlGenerator($formName)
-  {
-    $Class = Form::$ns.'\\'.ucfirst(Callisto()->getName()).'Bundle\\Form\\'.ucfirst($formName).'XmlGenerator';
-    
-    if ( !class_exists($Class) ){
-      $Class = Form::$ns.'\\Form\\'.ucfirst($formName).'XmlGenerator';
-      
-      if ( !class_exists($Class) ){
-        $Class = 'JDZ\\Form\\XmlGenerator';
-        // throw new RuntimeException('Error loading form file for '.$formName);
-      }
-    }
-    
-    return new $Class();
-  } */
-  
-  /**
    * Format a select/option
    * 
    * @return   object
@@ -119,9 +107,6 @@ abstract class FormHelper
     }
     
     $value = (string)$value;
-    
-    // $value = strip_tags($value);
-    // $value = preg_replace("/\s+/", " ", $value);
     return trim($value);
   }  
   

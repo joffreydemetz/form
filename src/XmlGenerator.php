@@ -8,8 +8,6 @@
 namespace JDZ\Form;
 
 use JDZ\Utilities\Xml as XmlObject;
-use Exception;
-use RuntimeException;
 
 /**
  * Generate Xml Form
@@ -36,7 +34,7 @@ class XmlGenerator
   public function getXml()
   {
     if ( $this->subForm ){
-      throw new RuntimeException('Cannot get XML for a subform in '.get_called_class());
+      throw new \Exception('Cannot get XML for a subform in '.get_called_class());
     }
     
     $xmlStr = $this->toString();
@@ -44,7 +42,7 @@ class XmlGenerator
       $xml = XmlObject::populateXml($xmlStr, true);
     }
     catch(Exception $e){
-      throw new RuntimeException('Invalid Form XML content'.$e->getMessage());
+      throw new \Exception('Invalid Form XML content'.$e->getMessage());
     }
     
     return $xml;
@@ -53,7 +51,7 @@ class XmlGenerator
   public function merge($data)
   {
     if ( $this->subForm ){
-      throw new RuntimeException('Cannot merge to subform in '.get_called_class());
+      throw new \Exception('Cannot merge to subform in '.get_called_class());
     }
     
     foreach($data as $fieldset => $fields){
@@ -106,6 +104,26 @@ class XmlGenerator
     $this->fieldsets[$fieldset]['fields'][] = $data;
   }
   
+  /* public function addFieldOption($fieldName, $option, $fieldset='main')
+  {
+    $this->addFieldset($fieldset, []);
+    
+    foreach($this->fieldsets as $fieldsetName => &$fieldsetData){
+      foreach($fieldsetData['fields'] as $i => &$field){
+        if ( $field['name'] === $fieldName ){
+          if ( !$field['options'] ){
+            $field['options'] = [];
+          }
+          $field['options'][] = $option;
+          debugMe($field['options']);
+          return;
+        }
+      }
+    }
+    
+    return false;
+  } */
+  
   public function removeField($name)
   {
     foreach($this->fieldsets as $fieldsetName => $fieldset){
@@ -146,7 +164,7 @@ class XmlGenerator
           unset($field['name']);
         }
         else {
-          throw new RuntimeException('Missing field name in ' . get_called_class());
+          throw new \Exception('Missing field name in ' . get_called_class());
         }
         
         $type = '';

@@ -76,6 +76,10 @@ abstract class TextareaField extends Field
       $attrs['placeholder'] = $this->placeholder;
     }
     
+    if ( true === $this->readonly ){
+      $attrs['readonly'] = true;
+    }
+    
     return $attrs;
   }
   
@@ -93,13 +97,13 @@ abstract class TextareaField extends Field
   
   protected function initDefinition()
   {
-    parent::initDefinition();
-    
-    $this->defAttribute('filter', '\JDZ\Helpers\StringHelper::cleanTextarea');
+    $this->defAttribute('filter', '\JDZ\Utilities\StringHelper::cleanTextarea');
     $this->defAttribute('size', '0');
     $this->defAttribute('maxlength', '0');
     $this->defAttribute('cols', '0');
     $this->defAttribute('rows', '0');
+    
+    parent::initDefinition();
     
     $this->setAttribute('spanBefore', '');
     $this->setAttribute('spanAfter', '');
@@ -120,6 +124,13 @@ abstract class TextareaField extends Field
   
   protected function renderField(array $attrs=[]): array
   {
+    if ( true === $this->readonly ){
+      return [
+        'type' => 'html',
+        'html' => $this->getValue(),
+      ];
+    }
+    
     return array_merge(parent::renderField($attrs), [
       'type' => 'textarea',
       'attrs' => $this->getFieldAttributes($attrs),

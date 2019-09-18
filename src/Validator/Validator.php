@@ -30,18 +30,12 @@ class Validator implements ValidatorInterface
    */
   protected $form;
   
-  /**
-   * {@inheritDoc}
-   */
   public function setForm(Form $form)
   {
     $this->form = $form;
     return $this;
   }
   
-  /**
-   * {@inheritDoc}
-   */
   public function execute(FormData $data, $group=null)
   {
     $fields = $this->form->findFieldsByGroup($group);
@@ -95,12 +89,21 @@ class Validator implements ValidatorInterface
     
     if ( $validate = $field->get('validate') ){
       foreach($validate as $type){
-        $Class = $this->form->getNs().'\\Rule\\'.ucfirst($type);
+        // debugMe($type);
+        // debugMe($this->form->getNs());
+        foreach($this->form->getNs() as $ns){
+          $Class = $ns.'\\Rule\\'.ucfirst($type);
+          if ( class_exists($Class) ){
+            break;
+          }
+        }
+        // $Class = $this->form->getNs().'\\Rule\\'.ucfirst($type);
         
         if ( !class_exists($Class) ){
           throw new RuntimeException('Unrecognized rule type :: '.$type);
         }
         
+        // debugMe($Class);
         $rule = new $Class();
         $rule
           ->setForm($this->form)

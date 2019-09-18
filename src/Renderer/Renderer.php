@@ -10,7 +10,6 @@ namespace JDZ\Form\Renderer;
 use JDZ\Form\Form;
 use JDZ\Form\FormHelper;
 use JDZ\Form\Field\Field;
-use JDZ\Helpers\AttributesHelper;
 
 /**
  * Form Renderer
@@ -346,24 +345,30 @@ class Renderer
     
     if ( !$field->isHidden() && !$field->isLabelHidden() ){
       $element   = $field->getElement();
-      $classes   = $field->getLabelClasses();
+      $classes   = [];
       $labelText = $field->getLabelText();
       
-      array_unshift($classes, 'control-label');
+      // array_unshift($classes, 'control-label');
+      // $classes[] = 'control-label';
+      
+      if ( $field->isLabelSrOnly() ){
+        $classes[] = 'sr-only';
+      }
+      elseif ( $this->form->isHorizontal() ){
+        $_classes = $this->bootstrapLabelClass ? explode(' ', $this->bootstrapLabelClass) : [];
+        $classes = array_merge($classes, $_classes);
+      }
+      $classes[] = 'control-label';
+      
+      if ( $_classes = $field->getLabelClasses() ){
+        $classes = array_merge($classes, $_classes);
+      }
+      
+      // array_unshift($classes, 'control-label');
+      $classes = array_unique($classes);
       
       $labelData['attrs'] = [];
       $labelData['attrs']['for']   = $field->getId();
-      $labelData['attrs']['class'] = implode(' ', $classes);
-      
-      if ( $field->isLabelSrOnly() ){
-        array_unshift($classes, 'sr-only');
-      }
-      elseif ( $this->form->isHorizontal() ){
-        $_classes = explode(' ', $this->bootstrapLabelClass);
-        $_classes[] = 'control-label';
-        $classes = array_merge($_classes, $classes);
-      }
-      
       $labelData['attrs']['class'] = implode(' ', $classes);
       
       $fieldName = (string) $element['name'];

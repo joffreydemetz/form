@@ -348,7 +348,13 @@ abstract class Field implements FieldInterface
     
     $type = str_replace('-', '', $type);
     
-    $Class = Form::$ns.'\\Field\\'.ucfirst($type);
+    foreach(Form::$ns as $ns){
+      $Class = $ns.'\\Field\\'.ucfirst($type);
+      if ( class_exists($Class) ){
+        break;
+      }
+    }
+    
     if ( !class_exists($Class) ){
       throw new RuntimeException('Unrecognized field type :: '.$type);
     }
@@ -757,6 +763,7 @@ abstract class Field implements FieldInterface
       if ( $this->labelClass !== '' ){
         $_classes = explode(' ', $this->labelClass);
         $classes = array_merge($classes, $_classes);
+        $classes = array_unique($classes);
       }
       
       if ( true === $this->required ){
@@ -877,6 +884,10 @@ abstract class Field implements FieldInterface
   
   public function cleanForRender()
   {
+    if ( true === $this->readonly ){
+      $this->required = false;
+    }
+    
     $this->checkValue();
     $this->checkValidate();
     $this->checkState();
