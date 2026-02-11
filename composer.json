@@ -1,0 +1,44 @@
+{
+    "name": "jdz/form",
+    "type": "library",
+    "description": "Framework-agnostic form building, filtering and validation library",
+    "keywords": [
+        "JDZ",
+        "form",
+        "validation",
+        "filtering"
+    ],
+    "homepage": "https://jdz.joffreydemetz.com/form/",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Joffrey Demetz",
+            "email": "joffrey.demetz@gmail.com",
+            "homepage": "https://joffreydemetz.com",
+            "role": "Lead"
+        }
+    ],
+    "require": {
+        "php": ">=8.2",
+        "jdz/htmlrenderer": "^1.0",
+        "jdz/data": "^2.0",
+        "nesbot/carbon": "^2.0 || ^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "JDZ\\Form\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "JDZ\\Form\\Tests\\": "tests"
+        }
+    },
+    "scripts": {
+        "test": "phpunit --colors=always --testdox",
+        "test-coverage": "phpunit --coverage-html coverage"
+    }
+}
