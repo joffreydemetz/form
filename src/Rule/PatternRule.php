@@ -7,6 +7,7 @@ namespace JDZ\Form\Rule;
 use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Form\FormData;
+use JDZ\Form\FormError;
 use JDZ\Form\Rule;
 
 /**
@@ -16,6 +17,7 @@ class PatternRule extends Rule
 {
     public string $name = 'pattern';
     public string $pattern;
+    public ?FormError $errorCode = FormError::PATTERN_MISMATCH;
 
     public function setPattern(string $pattern)
     {
@@ -29,7 +31,7 @@ class PatternRule extends Rule
             $value = $data->get($field->getName());
 
             if (!preg_match("/" . $this->pattern . "/", $value)) {
-                throw new InvalidException($this->message);
+                throw new InvalidException($this->message, $this->errorCode);
             }
         }
     }

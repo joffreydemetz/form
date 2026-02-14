@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form;
@@ -6,20 +7,12 @@ namespace JDZ\Form;
 use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\Contract\FormFieldsetInterface;
 use JDZ\Form\Contract\FormRowInterface;
-use JDZ\Form\Exception\RuleException;
 use JDZ\Renderer\Element;
 
 class FormRow extends Element implements FormRowInterface
 {
-    protected string $renderer = 'form.field';
-
     public string $uid = '';
     public string $prefix = '';
-
-    public function getRenderer(): string
-    {
-        return $this->renderer;
-    }
     public string $labelText = '';
     public string $tip = '';
     public string $fieldContainerClass = 'form-field';
@@ -36,9 +29,16 @@ class FormRow extends Element implements FormRowInterface
     public ?FormFieldsetInterface $fieldset = null;
     public ?FieldInterface $field = null;
 
+    protected string $renderer = 'form.field';
+
     public function __construct(string $name)
     {
         $this->setName($name);
+    }
+
+    public function getRenderer(): string
+    {
+        return $this->renderer;
     }
 
     public function setFieldset(FormFieldsetInterface $fieldset)
@@ -173,8 +173,16 @@ class FormRow extends Element implements FormRowInterface
             $this->bubbleFieldConfig();
 
             if (false === $this->field->validate($data)) {
+                $label = $this->labelText ? '<strong>' . $this->labelText . '</strong>: ' : '';
                 foreach ($this->field->errors as $error) {
-                    $this->errors[] = ($this->labelText ? '<strong>' . $this->labelText . '</strong>: ' : '') . $error;
+                    if ($error instanceof FormValidationError) {
+                        $this->errors[] = new FormValidationError(
+                            $error->code,
+                            $label . $error->message
+                        );
+                    } else {
+                        $this->errors[] = $label . $error;
+                    }
                 }
                 return false;
             }

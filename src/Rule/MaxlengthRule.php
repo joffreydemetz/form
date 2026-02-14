@@ -6,6 +6,7 @@ namespace JDZ\Form\Rule;
 
 use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\FormData;
+use JDZ\Form\FormError;
 use JDZ\Form\Rule;
 
 /**
@@ -15,6 +16,7 @@ class MaxlengthRule extends Rule
 {
     public string $name = 'maxlength';
     public string $message = 'Too many characters';
+    public ?FormError $errorCode = FormError::TOO_MANY_CHARS;
 
     public function execute(FieldInterface $field, FormData $data): void
     {

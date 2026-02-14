@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form;
@@ -7,6 +8,7 @@ use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\Filter\StringFilter;
 use JDZ\Form\Rule\RequiredRule;
 use JDZ\Form\Exception\RuleException;
+use JDZ\Form\FormValidationError;
 use JDZ\Renderer\Element;
 use JDZ\Utils\Data as jData;
 
@@ -245,7 +247,10 @@ abstract class Field extends Element implements FieldInterface
             try {
                 $rule->execute($this, $data);
             } catch (RuleException $e) {
-                $this->errors[] = $e->getMessage();
+                $this->errors[] = new FormValidationError(
+                    $e->errorCode ?? $rule->errorCode ?? FormError::CUSTOM,
+                    $e->getMessage()
+                );
             }
         }
 
@@ -318,5 +323,11 @@ abstract class Field extends Element implements FieldInterface
         }
 
         return $attrs;
+    }
+
+    public function setPosition(int|string $position)
+    {
+        $this->position = $position;
+        return $this;
     }
 }

@@ -11,6 +11,7 @@ interface FieldInterface
     public function isEmpty(): bool;
 
     public function setValue($value);
-
     public function getValue();
+
+    public function getPosition(): int|string;
 }

@@ -7,6 +7,7 @@ namespace JDZ\Form\Rule;
 use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Form\FormData;
+use JDZ\Form\FormError;
 use Carbon\Carbon;
 
 /**
@@ -16,6 +17,7 @@ class DateLtRule extends CompareRule
 {
     public string $name = 'dateLt';
     public string $message = 'Field date value >= Control date value';
+    public ?FormError $errorCode = FormError::DATE_NOT_LT;
 
     public function execute(FieldInterface $field, FormData $data): void
     {
@@ -28,7 +30,7 @@ class DateLtRule extends CompareRule
                 $date2 = new Carbon($value2);
 
                 if ($date1 >= $date2) {
-                    throw new InvalidException($this->message);
+                    throw new InvalidException($this->message, $this->errorCode);
                 }
             }
         }
