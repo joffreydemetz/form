@@ -17,6 +17,7 @@ interface FormRowInterface
     public function setFieldset(FormFieldsetInterface $fieldset): static;
 
     public function setLabelText(string $labelText): static;
+    public function withLabel(bool $label = true): static;
 
     public function setPrefix(string $prefix): static;
 
