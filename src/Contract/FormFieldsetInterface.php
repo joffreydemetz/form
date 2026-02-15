@@ -11,6 +11,7 @@ interface FormFieldsetInterface
     public function getField(string $fieldName): ?FormRowInterface;
     public function addField(FormRowInterface $field): FormRowInterface;
     public function hasField(string $key): bool;
+    public function removeField(string $key): static;
 
     public function setFieldPosition(string $fieldName, int|string $position, string $direction = 'before');
 }

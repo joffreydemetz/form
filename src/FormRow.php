@@ -59,7 +59,7 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function setTip(string $tip = '')
+    public function setTip(string $tip = ''): static
     {
         $this->tip = $tip;
         return $this;
@@ -71,7 +71,7 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function setValue($value)
+    public function setValue($value): static
     {
         if ($this->field) {
             $this->field->setValue($value);
@@ -85,65 +85,71 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function setFieldPosition(int|string $position, string $direction = 'before')
+    public function setFieldPosition(int|string $position, string $direction = 'before'): static
     {
         $this->fieldset->setFieldPosition($this->getName(), $position, $direction);
         return $this;
     }
 
-    public function setFieldPositionAfter(string $offsetFieldName)
+    public function setFieldPositionAfter(string $offsetFieldName): static
     {
-        return $this->fieldset && $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition() + 1, 'after');
+        if ($this->fieldset) {
+            $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition() + 1, 'after');
+        }
+        return $this;
     }
 
-    public function setFieldPositionBefore(string $offsetFieldName)
+    public function setFieldPositionBefore(string $offsetFieldName): static
     {
-        return $this->fieldset && $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition(), 'before');
+        if ($this->fieldset) {
+            $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition(), 'before');
+        }
+        return $this;
     }
 
-    public function withOffset(bool $offset = true)
+    public function withOffset(bool $offset = true): static
     {
         $this->offset = $offset;
         return $this;
     }
 
-    public function withLabel(bool $label = true)
+    public function withLabel(bool $label = true): static
     {
         $this->label = $label;
         return $this;
     }
 
-    public function withLabelOnTop(bool $labelOnTop = true)
+    public function withLabelOnTop(bool $labelOnTop = true): static
     {
         $this->labelOnTop = $labelOnTop;
         return $this;
     }
 
-    public function withTipOnTop(bool $tipOnTop = true)
+    public function withTipOnTop(bool $tipOnTop = true): static
     {
         $this->tipOnTop = $tipOnTop;
         return $this;
     }
 
-    public function withRequired(bool $required = true)
+    public function withRequired(bool $required = true): static
     {
         $this->required = $required;
         return $this;
     }
 
-    public function withDisabled(bool $disabled = true)
+    public function withDisabled(bool $disabled = true): static
     {
         $this->disabled = $disabled;
         return $this;
     }
 
-    public function withReadonly(bool $readonly = true)
+    public function withReadonly(bool $readonly = true): static
     {
         $this->readonly = $readonly;
         return $this;
     }
 
-    public function withArrayName(bool $arrayName = true)
+    public function withArrayName(bool $arrayName = true): static
     {
         $this->arrayName = $arrayName;
         return $this;
@@ -162,7 +168,7 @@ class FormRow extends Element implements FormRowInterface
         return true;
     }
 
-    public function filter(FormData $data)
+    public function filter(FormData $data): static
     {
         if ($this->field) {
             $this->bubbleFieldConfig();
@@ -173,7 +179,7 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if ($this->field) {
             $this->bubbleFieldConfig();

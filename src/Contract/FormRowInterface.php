@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace JDZ\Form\Contract;
 
+use JDZ\Form\FormData;
+
 interface FormRowInterface
 {
     public function getName(): string;
@@ -19,4 +21,7 @@ interface FormRowInterface
     public function setPrefix(string $prefix): static;
 
     public function setPosition(int $position): static;
+    public function getPosition(): int;
+
+    public function onFillValues(FormData $data): void;
 }

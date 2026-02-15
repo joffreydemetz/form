@@ -23,25 +23,25 @@ class Checkboxes extends FormRow
     public array $list = [];
     public array $checkedList = [];
 
-    public function setNbCols(int $nbCols = 1)
+    public function setNbCols(int $nbCols = 1): static
     {
         $this->nbCols = $nbCols;
         return $this;
     }
 
-    public function setList(array $list = [])
+    public function setList(array $list = []): static
     {
         $this->list = $list;
         return $this;
     }
 
-    public function setMaxSelection(int $maxSelection = 0)
+    public function setMaxSelection(int $maxSelection = 0): static
     {
         $this->maxSelection = $maxSelection;
         return $this;
     }
 
-    public function areDisabled(array $list = [])
+    public function areDisabled(array $list = []): static
     {
         foreach ($this->list as $item) {
             $item->withDisabled(in_array($item->value, $list));
@@ -49,19 +49,19 @@ class Checkboxes extends FormRow
         return $this;
     }
 
-    public function withDisabledAtTheEnd(bool $disabledAtTheEnd = true)
+    public function withDisabledAtTheEnd(bool $disabledAtTheEnd = true): static
     {
         $this->disabledAtTheEnd = $disabledAtTheEnd;
         return $this;
     }
 
-    public function withVertical(bool $vertical = true)
+    public function withVertical(bool $vertical = true): static
     {
         $this->vertical = $vertical;
         return $this;
     }
 
-    public function addItem(Checkbox $item)
+    public function addItem(Checkbox $item): static
     {
         $item
             ->setPrefix($this->prefix)
@@ -92,7 +92,7 @@ class Checkboxes extends FormRow
         }
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (true === $this->required && !$this->checkedList) {
             $label = $this->labelText ? '<strong>' . $this->labelText . '</strong>: ' : '';

@@ -69,12 +69,12 @@ abstract class Field extends Element implements FieldInterface
         );
     }
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value;
     }
 
-    public function setValue($value)
+    public function setValue($value): static
     {
         if (false === $this->immutable) {
             $this->value = $value;
@@ -82,38 +82,40 @@ abstract class Field extends Element implements FieldInterface
         return $this;
     }
 
-    public function setDefault($default)
+    public function setDefault($default): static
     {
         $this->default = $default;
         return $this;
     }
 
-    public function setErrorMessage(string $errorMessage)
+    public function setErrorMessage(string $errorMessage): static
     {
         $this->errorMessage = $errorMessage;
         return $this;
     }
 
-    public function setPrefix($prefix)
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;
     }
 
-    public function setAutocomplete(string $autocomplete)
+    public function setAutocomplete(string $autocomplete): static
     {
         $this->autocomplete = $autocomplete;
         return $this;
     }
 
-    public function setFilters(array $filters)
+    public function setFilters(array $filters): static
     {
         foreach ($filters as $filter) {
             $this->addFilter($filter);
         }
+
+        return $this;
     }
 
-    public function addFilter(Filter $filter)
+    public function addFilter(Filter $filter): static
     {
         if (!isset($this->filters[$filter->name])) {
             $this->filters[$filter->name] = $filter;
@@ -129,7 +131,7 @@ abstract class Field extends Element implements FieldInterface
         return null;
     }
 
-    public function removeFilter(string $name)
+    public function removeFilter(string $name): static
     {
         if (isset($this->filters[$name])) {
             unset($this->filters[$name]);
@@ -137,13 +139,13 @@ abstract class Field extends Element implements FieldInterface
         return $this;
     }
 
-    public function setRules(array $rules)
+    public function setRules(array $rules): static
     {
         $this->rules = $rules;
         return $this;
     }
 
-    public function addRule(Rule $rule, bool $replace = false)
+    public function addRule(Rule $rule, bool $replace = false): static
     {
         if (false === $replace && isset($this->rules[$rule->name])) {
             throw new \RuntimeException('Rule already set for ' . $rule->name);
@@ -153,7 +155,7 @@ abstract class Field extends Element implements FieldInterface
         return $this;
     }
 
-    public function removeRule(string $name)
+    public function removeRule(string $name): static
     {
         if (isset($this->rules[$name])) {
             unset($this->rules[$name]);
@@ -161,43 +163,43 @@ abstract class Field extends Element implements FieldInterface
         return $this;
     }
 
-    public function noRules()
+    public function noRules(): static
     {
         $this->rules = [];
         return $this;
     }
 
-    public function withRequired(bool $required = true)
+    public function withRequired(bool $required = true): static
     {
         $this->required = $required;
         return $this;
     }
 
-    public function withDisabled(bool $disabled = true)
+    public function withDisabled(bool $disabled = true): static
     {
         $this->disabled = $disabled;
         return $this;
     }
 
-    public function withReadonly(bool $readonly = true)
+    public function withReadonly(bool $readonly = true): static
     {
         $this->readonly = $readonly;
         return $this;
     }
 
-    public function withImmutable(bool $immutable = true)
+    public function withImmutable(bool $immutable = true): static
     {
         $this->immutable = $immutable;
         return $this;
     }
 
-    public function withArrayName(bool $arrayName = true)
+    public function withArrayName(bool $arrayName = true): static
     {
         $this->arrayName = $arrayName;
         return $this;
     }
 
-    public function withNoCheck(bool $noCheck = true)
+    public function withNoCheck(bool $noCheck = true): static
     {
         $this->noCheck = $noCheck;
         return $this;
@@ -213,7 +215,7 @@ abstract class Field extends Element implements FieldInterface
         return '' === $this->value;
     }
 
-    public function filter(FormData $data)
+    public function filter(FormData $data): static
     {
         if (empty($this->filters)) {
             $this->addFilter(new StringFilter());
@@ -230,7 +232,7 @@ abstract class Field extends Element implements FieldInterface
         return $this;
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (true === $this->disabled) {
             $data->erase($this->name);
@@ -257,7 +259,7 @@ abstract class Field extends Element implements FieldInterface
         return empty($this->errors);
     }
 
-    public function onFillValues(FormData $data)
+    public function onFillValues(FormData $data): void
     {
         if (false === $data->has($this->name)) {
             $value = $this->default;
@@ -325,7 +327,7 @@ abstract class Field extends Element implements FieldInterface
         return $attrs;
     }
 
-    public function setPosition(int|string $position)
+    public function setPosition(int|string $position): static
     {
         $this->position = $position;
         return $this;

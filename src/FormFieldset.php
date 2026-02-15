@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form;
@@ -23,13 +24,13 @@ class FormFieldset extends Element implements FormFieldsetInterface
         $this->setName($name);
     }
 
-    public function setLabel(string $label)
+    public function setLabel(string $label): static
     {
         $this->label = $label;
         return $this;
     }
 
-    public function setDescription(string $description)
+    public function setDescription(string $description): static
     {
         $this->description = $description;
         return $this;
@@ -61,7 +62,7 @@ class FormFieldset extends Element implements FormFieldsetInterface
         return isset($this->fields[$name]);
     }
 
-    public function removeField(string $name)
+    public function removeField(string $name): static
     {
         if (isset($this->fields[$name])) {
             unset($this->fields[$name]);

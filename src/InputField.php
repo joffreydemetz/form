@@ -30,25 +30,25 @@ abstract class InputField extends Field
         $this->default = '';
     }
 
-    public function setPlaceholder(string $placeholder)
+    public function setPlaceholder(string $placeholder): static
     {
         $this->placeholder = $placeholder;
         return $this;
     }
 
-    public function setPattern(string $pattern)
+    public function setPattern(string $pattern): static
     {
         $this->pattern = $pattern;
         return $this;
     }
 
-    public function setMaxlength(int $maxlength)
+    public function setMaxlength(int $maxlength): static
     {
         $this->maxlength = $maxlength;
         return $this;
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if ($this->maxlength > 0 && !isset($this->rules['maxlength'])) {
             \array_unshift($this->rules, new MaxlengthRule('This field exceeds the allowed length'));

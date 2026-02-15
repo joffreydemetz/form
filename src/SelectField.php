@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form;
@@ -38,7 +39,7 @@ abstract class SelectField extends Field
         $this->niceSearchPlaceholder = '';
     }
 
-    public function setValue($value)
+    public function setValue($value): static
     {
         $list = [];
 
@@ -55,37 +56,37 @@ abstract class SelectField extends Field
         return parent::setValue($value);
     }
 
-    public function setSize(int $size)
+    public function setSize(int $size): static
     {
         $this->size = $size;
         return $this;
     }
 
-    public function setNicePlaceholder(string $nicePlaceholder)
+    public function setNicePlaceholder(string $nicePlaceholder): static
     {
         $this->nicePlaceholder = $nicePlaceholder;
         return $this;
     }
 
-    public function setNiceSearchPlaceholder(string $niceSearchPlaceholder)
+    public function setNiceSearchPlaceholder(string $niceSearchPlaceholder): static
     {
         $this->niceSearchPlaceholder = $niceSearchPlaceholder;
         return $this;
     }
 
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): static
     {
         $this->options = $options;
         return $this;
     }
 
-    public function addOption($item)
+    public function addOption($item): static
     {
         $this->options[] = $item;
         return $this;
     }
 
-    public function hasOptions()
+    public function hasOptions(): bool
     {
         // ignore if only empty option
         if (1 === count($this->options) && 0 === intval($this->options[0]->value)) {
@@ -95,19 +96,19 @@ abstract class SelectField extends Field
         return count($this->options) > 0;
     }
 
-    public function withMultiple(bool $multiple = true)
+    public function withMultiple(bool $multiple = true): static
     {
         $this->multiple = $multiple;
         return $this;
     }
 
-    public function withDisabledAtTheEnd(bool $disabledAtTheEnd = true)
+    public function withDisabledAtTheEnd(bool $disabledAtTheEnd = true): static
     {
         $this->disabledAtTheEnd = $disabledAtTheEnd;
         return $this;
     }
 
-    public function withNice(bool $niceSearch = false, string $nicePlaceholder = 'Choose', string $niceSearchPlaceholder = 'Search')
+    public function withNice(bool $niceSearch = false, string $nicePlaceholder = 'Choose', string $niceSearchPlaceholder = 'Search'): static
     {
         $this->nice = true;
         $this->niceSearch = $niceSearch;
@@ -116,7 +117,7 @@ abstract class SelectField extends Field
         return $this;
     }
 
-    public function areDisabled(array $list)
+    public function areDisabled(array $list): static
     {
         foreach ($this->options as $item) {
             $item->withDisabled(in_array($item->value, $list));
@@ -144,7 +145,7 @@ abstract class SelectField extends Field
         return $this->readableValue();
     }
 
-    public function onFillValues(FormData $data)
+    public function onFillValues(FormData $data): void
     {
         parent::onFillValues($data);
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form;
@@ -37,15 +38,13 @@ class Form extends Element implements FormInterface
         return $this->captcha;
     }
 
-    public function withCaptcha(bool $captcha = true)
+    public function withCaptcha(bool $captcha = true): static
     {
         $this->captcha = $captcha;
         return $this;
     }
 
-    protected function onBeforeInit(FormData $data): void
-    {
-    }
+    protected function onBeforeInit(FormData $data): void {}
 
     public function init(FormData $data): void
     {
@@ -105,49 +104,49 @@ class Form extends Element implements FormInterface
         }
     }
 
-    public function setData(FormData $data)
+    public function setData(FormData $data): static
     {
         $this->data = $data;
         return $this;
     }
 
-    public function setPrefix(string $prefix)
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;
     }
 
-    public function setAction(string $action)
+    public function setAction(string $action): static
     {
         $this->action = $action;
         return $this;
     }
 
-    public function setMethod(string $method = FormInterface::METHOD_POST)
+    public function setMethod(string $method = FormInterface::METHOD_POST): static
     {
         $this->method = $method;
         return $this;
     }
 
-    public function withCsrf(bool $csrf = true)
+    public function withCsrf(bool $csrf = true): static
     {
         $this->csrf = $csrf;
         return $this;
     }
 
-    public function withMultipart(bool $multipart = true)
+    public function withMultipart(bool $multipart = true): static
     {
         $this->multipart = $multipart;
         return $this;
     }
 
-    public function withVertical(bool $vertical = true)
+    public function withVertical(bool $vertical = true): static
     {
         $this->vertical = $vertical;
         return $this;
     }
 
-    public function withWide(bool $wide = true)
+    public function withWide(bool $wide = true): static
     {
         $this->wide = $wide;
         return $this;
@@ -198,7 +197,7 @@ class Form extends Element implements FormInterface
         return isset($this->fieldsets[$name]);
     }
 
-    public function removeFieldset(string $name)
+    public function removeFieldset(string $name): static
     {
         if (isset($this->fieldsets[$name])) {
             unset($this->fieldsets[$name]);
@@ -268,7 +267,7 @@ class Form extends Element implements FormInterface
         return isset($this->fieldrows[$name]);
     }
 
-    public function removeField(string $name, string $fieldsetName = '')
+    public function removeField(string $name, string $fieldsetName = ''): static
     {
         if ('' !== $fieldsetName) {
             $fieldset = $this->getFieldset($fieldsetName);
@@ -314,7 +313,7 @@ class Form extends Element implements FormInterface
         return isset($this->buttons[$name]);
     }
 
-    public function removeButton(string $name)
+    public function removeButton(string $name): static
     {
         if (isset($this->buttons[$name])) {
             unset($this->buttons[$name]);
@@ -323,7 +322,7 @@ class Form extends Element implements FormInterface
         return $this;
     }
 
-    public function getValue(string $fieldName)
+    public function getValue(string $fieldName): mixed
     {
         return $this->getField($fieldName)->value;
     }
@@ -345,7 +344,7 @@ class Form extends Element implements FormInterface
         return $names;
     }
 
-    public function setFieldsetsOrder(array $names = [])
+    public function setFieldsetsOrder(array $names = []): static
     {
         array_unshift($names, 'main');
         $names[] = 'captcha';
@@ -393,9 +392,7 @@ class Form extends Element implements FormInterface
         $this->addFieldset($this->makeFormFieldset('main'));
     }
 
-    protected function onAfterPopulate(): void
-    {
-    }
+    protected function onAfterPopulate(): void {}
 
     protected function onFillValues(): void
     {
