@@ -41,19 +41,19 @@ class FormRow extends Element implements FormRowInterface
         return $this->renderer;
     }
 
-    public function setFieldset(FormFieldsetInterface $fieldset)
+    public function setFieldset(FormFieldsetInterface $fieldset): static
     {
         $this->fieldset = $fieldset;
         return $this;
     }
 
-    public function setLabelText(string $labelText)
+    public function setLabelText(string $labelText): static
     {
         $this->labelText = $labelText;
         return $this;
     }
 
-    public function setPrefix(string $prefix)
+    public function setPrefix(string $prefix): static
     {
         $this->prefix = $prefix;
         return $this;
@@ -65,7 +65,7 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function setField(?FieldInterface $field = null)
+    public function setField(?FieldInterface $field = null): static
     {
         $this->field = $field;
         return $this;
@@ -76,6 +76,12 @@ class FormRow extends Element implements FormRowInterface
         if ($this->field) {
             $this->field->setValue($value);
         }
+        return $this;
+    }
+
+    public function setPosition(int $position): static
+    {
+        parent::setPosition($position);
         return $this;
     }
 
