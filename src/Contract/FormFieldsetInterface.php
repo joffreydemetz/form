@@ -13,5 +13,5 @@ interface FormFieldsetInterface
     public function hasField(string $key): bool;
     public function removeField(string $key): static;
 
-    public function setFieldPosition(string $fieldName, int|string $position, string $direction = 'before');
+    public function setFieldPosition(string $fieldName, int|string $position, string $direction = 'before'): static;
 }

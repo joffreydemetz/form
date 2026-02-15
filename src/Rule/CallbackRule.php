@@ -19,7 +19,7 @@ class CallbackRule extends Rule
     public ?FormError $errorCode = FormError::CALLBACK_FAILED;
     public $callback;
 
-    public function setCallback(callable $callback)
+    public function setCallback(callable $callback): static
     {
         $this->callback = $callback;
         return $this;

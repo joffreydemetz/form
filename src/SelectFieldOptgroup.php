@@ -18,13 +18,13 @@ class SelectFieldOptgroup extends Renderable
         $this->disabled = $disabled;
     }
 
-    public function setOptions(array $options = [])
+    public function setOptions(array $options = []): static
     {
         $this->options = $options;
         return $this;
     }
 
-    public function withDisabled(bool $disabled = true)
+    public function withDisabled(bool $disabled = true): static
     {
         $this->disabled = $disabled;
         return $this;

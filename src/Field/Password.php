@@ -24,7 +24,7 @@ class Password extends InputField
         'special' => 1,
     ];
 
-    public function setPw(array $config)
+    public function setPw(array $config): static
     {
         $this->pw = array_merge($this->pw, $config);
 
@@ -38,7 +38,7 @@ class Password extends InputField
         return $this;
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (false === $this->noCheck && !isset($this->rules['password'])) {
             $rule = new \JDZ\Form\Rule\PasswordRule($this->errorMessage);
@@ -49,7 +49,7 @@ class Password extends InputField
         return parent::validate($data);
     }
 
-    protected function buildPattern()
+    protected function buildPattern(): string
     {
         $pattern = '^';
 

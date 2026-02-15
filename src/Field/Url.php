@@ -15,7 +15,7 @@ class Url extends InputField
     public string $autocomplete = 'url';
     public string $errorMessage = 'Invalid url';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

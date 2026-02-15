@@ -13,7 +13,7 @@ class DateFilter extends Filter
 {
     // public string $type = 'date';
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         if (!$value) {
             return '';

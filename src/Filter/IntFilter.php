@@ -22,19 +22,19 @@ class IntFilter extends Filter
         parent::__construct($config);
     }
 
-    public function withUnsigned(bool $unsigned = true)
+    public function withUnsigned(bool $unsigned = true): static
     {
         $this->config->set('unsigned', $unsigned);
         return $this;
     }
 
-    public function withFloat(bool $float = true)
+    public function withFloat(bool $float = true): static
     {
         $this->config->set('float', $float);
         return $this;
     }
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         $value = parent::clean($value);
 

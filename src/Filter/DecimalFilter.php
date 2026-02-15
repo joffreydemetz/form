@@ -22,7 +22,7 @@ class DecimalFilter extends IntFilter
         parent::__construct($config);
     }
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         $value = parent::clean($value);
 

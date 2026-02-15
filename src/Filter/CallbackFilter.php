@@ -21,7 +21,7 @@ class CallbackFilter extends StringFilter
         $callback($field, $data);
     }
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         $value = parent::clean($value);
 

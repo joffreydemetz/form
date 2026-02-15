@@ -17,7 +17,7 @@ class Tel extends InputField
     public string $errorMessage = 'Invalid phone number';
     public int $maxlength = 15;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -28,7 +28,7 @@ class Tel extends InputField
         /* @TODO LOAD pattern with i18nPhone */
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (!isset($this->rules['tel'])) {
             $rule = new \JDZ\Form\Rule\TelRule($this->errorMessage);

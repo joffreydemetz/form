@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form\Field;
@@ -15,7 +16,7 @@ class Time extends InputField
     public string $min = '';
     public string $max = '';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 

@@ -12,7 +12,7 @@ class TimeFilter extends Filter
 {
     // public string $type = 'time';
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         $hours = '00';
         $minutes = '00';

@@ -22,13 +22,13 @@ abstract class Rule
         }
     }
 
-    public function setMessage(string $message)
+    public function setMessage(string $message): static
     {
         $this->message = $message;
         return $this;
     }
 
-    public function setErrorCode(FormError $errorCode)
+    public function setErrorCode(FormError $errorCode): static
     {
         $this->errorCode = $errorCode;
         return $this;

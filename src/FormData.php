@@ -14,7 +14,7 @@ class FormData extends Data
         }
     }
 
-    public function getProperties(bool $object = true)
+    public function getProperties(bool $object = true): object|array
     {
         $data = $this->all();
         if (true === $object) {

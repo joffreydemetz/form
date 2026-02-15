@@ -22,7 +22,7 @@ class StringFilter extends Filter
         parent::__construct($config);
     }
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         $value = parent::clean($value);
 

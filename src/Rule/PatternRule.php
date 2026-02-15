@@ -19,7 +19,7 @@ class PatternRule extends Rule
     public string $pattern;
     public ?FormError $errorCode = FormError::PATTERN_MISMATCH;
 
-    public function setPattern(string $pattern)
+    public function setPattern(string $pattern): static
     {
         $this->pattern = $pattern;
         return $this;

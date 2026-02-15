@@ -12,7 +12,7 @@ class BoolFilter extends Filter
 {
     public string $name = 'bool';
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         $value = parent::clean($value);
 

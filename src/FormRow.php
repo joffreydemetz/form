@@ -324,7 +324,7 @@ class FormRow extends Element implements FormRowInterface
         return $attrs;
     }
 
-    protected function renderField()
+    protected function renderField(): ?array
     {
         return $this->field ? $this->field->toData() : null;
     }

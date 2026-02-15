@@ -17,7 +17,7 @@ abstract class CompareRule extends Rule
     public ?FormError $errorCode = FormError::COMPARE_FAILED;
     public $compareTo;
 
-    public function setCompareTo(string $compareTo)
+    public function setCompareTo(string $compareTo): static
     {
         $this->compareTo = $compareTo;
         return $this;

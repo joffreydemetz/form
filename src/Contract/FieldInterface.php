@@ -28,7 +28,7 @@ interface FieldInterface
     public function withDisabled(bool $disabled = true): static;
     public function withReadonly(bool $readonly = true): static;
 
-    public function addAriaAttr(string $key, mixed $value);
+    public function addAriaAttr(string $key, mixed $value): static;
 
     public function toStatic(): string;
     public function toData(): array;

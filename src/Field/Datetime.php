@@ -17,7 +17,7 @@ class Datetime extends Date
     protected string $formatOutput = 'Y-m-d\TH:i';
     protected string $formatReadable = 'd/m/Y H:i';
 
-    protected function sanitizeInputValueDate(?string $value)
+    protected function sanitizeInputValueDate(?string $value): ?string
     {
         if ($value) {
             $value = preg_replace("/^(\d{4}-\d{2}-\d{2})T(\d{2}):(\d{2}):(\d{2})$/", "$1 $2:$3:$4", $value);

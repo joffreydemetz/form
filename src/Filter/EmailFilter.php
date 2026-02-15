@@ -12,7 +12,7 @@ class EmailFilter extends StringFilter
 {
     // public string $type = 'email';
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         $value = parent::clean($value);
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form\Field;
@@ -22,7 +23,16 @@ class Date extends InputField
     protected string $formatOutput = 'Y-m-d';
     protected string $formatReadable = 'd/m/Y';
 
-    public function init()
+    public function __construct(string $name, array $config = [])
+    {
+        if (!empty($config['tz'])) {
+            $this->setTimezone($config['tz']);
+        }
+
+        parent::__construct($name, $config);
+    }
+
+    public function init(): void
     {
         parent::init();
 
@@ -33,30 +43,30 @@ class Date extends InputField
         );
     }
 
-    public function setTimezone(string $tz)
+    public function setTimezone(string $tz): static
     {
         $this->tz = $tz;
         return $this;
     }
 
-    public function setMin(string $min)
+    public function setMin(string $min): static
     {
         $this->min = $this->sanitizeInputValueDate($min);
         return $this;
     }
 
-    public function setMax(string $max)
+    public function setMax(string $max): static
     {
         $this->max = $this->sanitizeInputValueDate($max);
         return $this;
     }
 
-    public function setValue($value)
+    public function setValue(mixed $value): static
     {
         return parent::setValue($this->sanitizeInputValueDate($value));
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if ('time' === $this->type) {
             if (!isset($this->rules['time'])) {
@@ -95,7 +105,7 @@ class Date extends InputField
         return $attrs;
     }
 
-    protected function sanitizeInputValueDate(?string $value)
+    protected function sanitizeInputValueDate(?string $value): ?string
     {
         if ($value) {
             if (preg_match("/^(0000-00-00|1000-01-01).*$/", $value)) {
@@ -112,7 +122,7 @@ class Date extends InputField
         return $value;
     }
 
-    protected function sanitizeOutputValueDate(?string $value)
+    protected function sanitizeOutputValueDate(?string $value): ?string
     {
         if ($value) {
             if (preg_match("/^(0000-00-00|1000-01-01).*$/", $value)) {

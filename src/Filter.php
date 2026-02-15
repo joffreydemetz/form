@@ -36,13 +36,13 @@ class Filter
         $data->set($field->getName(), $value);
     }
 
-    public function setName(string $name)
+    public function setName(string $name): static
     {
         $this->name = $name;
         return $this;
     }
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         if ($value) {
             if (is_array($value)) {

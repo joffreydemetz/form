@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace JDZ\Form\Field;
@@ -15,7 +16,7 @@ class Color extends InputField
     public string $pattern = '^#[A-Fa-f0-9]{6}$';
     public string $errorMessage = 'Invalid HEX color';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -24,12 +25,12 @@ class Color extends InputField
         );
     }
 
-    public function setValue($value)
+    public function setValue($value): static
     {
         return parent::setValue($this->sanitizeInputValueColor($value));
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (!isset($this->rules['color'])) {
             $this->addRule(
@@ -40,7 +41,7 @@ class Color extends InputField
         return parent::validate($data);
     }
 
-    protected function sanitizeInputValueColor(?string $value)
+    protected function sanitizeInputValueColor(?string $value): string
     {
         if ($value) {
             if (!preg_match("/" . $this->pattern . "/", $value)) {

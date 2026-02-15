@@ -21,7 +21,7 @@ class Number extends InputField
     protected bool $decimal = false;
     protected int $decimals = 0;
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -41,7 +41,7 @@ class Number extends InputField
         }
     }
 
-    public function withUnsigned(bool $unsigned = true)
+    public function withUnsigned(bool $unsigned = true): static
     {
         $this->unsigned = $unsigned;
 
@@ -56,7 +56,7 @@ class Number extends InputField
         return $this;
     }
 
-    public function withFloat(bool $float = true)
+    public function withFloat(bool $float = true): static
     {
         $this->float = $float;
 
@@ -67,25 +67,25 @@ class Number extends InputField
         return $this;
     }
 
-    public function setMin(?int $min)
+    public function setMin(?int $min): static
     {
         $this->min = $min;
         return $this;
     }
 
-    public function setMax(?int $max)
+    public function setMax(?int $max): static
     {
         $this->max = $max;
         return $this;
     }
 
-    public function setStep(int|string|null $step)
+    public function setStep(int|string|null $step): static
     {
         $this->step = $step;
         return $this;
     }
 
-    public function setValue($value)
+    public function setValue($value): static
     {
         if (true === $this->float) {
             $value = (float)$value;
@@ -108,7 +108,7 @@ class Number extends InputField
         return parent::setValue($value);
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (null !== $this->min && $data->get($this->name) < $this->min) {
             $data->set($this->name, $this->min);

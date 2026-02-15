@@ -17,8 +17,6 @@ use JDZ\Utils\Data as jData;
  */
 abstract class Field extends Element implements FieldInterface
 {
-    public jData $config;
-
     public string $uid = '';
     public string $prefix = '';
     public string $autocomplete = '';
@@ -39,30 +37,9 @@ abstract class Field extends Element implements FieldInterface
     public function __construct(string $name, array $config = [])
     {
         $this->setName($name);
-
-        $this->config = new jData();
-        if ($config) {
-            $this->config->sets($config);
-        }
     }
 
-    public function __clone()
-    {
-        parent::__clone();
-
-        $this->filters = [];
-        $this->rules = [];
-        $this->required = false;
-        $this->readonly = false;
-        $this->arrayName = false;
-        $this->noCheck = false;
-        $this->immutable = false;
-        $this->position = 0;
-        $this->value = null;
-        $this->default = '';
-    }
-
-    public function init()
+    public function init(): void
     {
         $this->addFilter(
             new StringFilter()

@@ -18,30 +18,30 @@ class Checkbox extends InputField
     public bool $immutable = true;
     protected string $renderer = 'checkbox';
 
-    public function getValue()
+    public function getValue(): mixed
     {
         return $this->value ?? ($this->checked ? 'on' : null);
     }
 
-    public function setCheckboxValue(string $value)
+    public function setCheckboxValue(string $value): static
     {
         $this->value = $value;
         return $this;
     }
 
-    public function setCheckboxLabel(string $label)
+    public function setCheckboxLabel(string $label): static
     {
         $this->label = $label;
         return $this;
     }
 
-    public function setCheckboxTip(string $tip)
+    public function setCheckboxTip(string $tip): static
     {
         $this->tip = $tip;
         return $this;
     }
 
-    public function withChecked(bool $checked = true)
+    public function withChecked(bool $checked = true): static
     {
         $this->checked = $checked;
         return $this;

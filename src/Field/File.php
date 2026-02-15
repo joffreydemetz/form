@@ -15,13 +15,13 @@ class File extends InputField
     protected string $accept = '';
     protected bool $multiple = false;
 
-    public function withMultiple(bool $multiple = true)
+    public function withMultiple(bool $multiple = true): static
     {
         $this->multiple = $multiple;
         return $this;
     }
 
-    public function setAccept(string $accept)
+    public function setAccept(string $accept): static
     {
         $this->accept = $accept;
         return $this;

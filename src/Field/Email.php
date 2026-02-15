@@ -16,7 +16,7 @@ class Email extends InputField
     public string $placeholder = '';
     public string $errorMessage = 'Invalid email address';
 
-    public function init()
+    public function init(): void
     {
         parent::init();
 
@@ -25,7 +25,7 @@ class Email extends InputField
         );
     }
 
-    public function validate(FormData $data)
+    public function validate(FormData $data): bool
     {
         if (false === $this->noCheck && !isset($this->rules['email'])) {
             $rule = new \JDZ\Form\Rule\EmailRule($this->errorMessage);

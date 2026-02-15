@@ -44,7 +44,7 @@ class Checkboxes extends FormRow
     public function areDisabled(array $list = []): static
     {
         foreach ($this->list as $item) {
-            $item->withDisabled(in_array($item->value, $list));
+            $item->withDisabled(in_array($item->getValue(), $list));
         }
         return $this;
     }
@@ -88,7 +88,7 @@ class Checkboxes extends FormRow
         }
 
         foreach ($this->list as $item) {
-            $item->withChecked(in_array($item->value, $this->checkedList));
+            $item->withChecked(in_array($item->getValue(), $this->checkedList));
         }
     }
 
@@ -171,7 +171,7 @@ class Checkboxes extends FormRow
         $readable = [];
 
         foreach ($this->list as $item) {
-            if (in_array($item->value, $this->checkedList)) {
+            if (in_array($item->getValue(), $this->checkedList)) {
                 $readable[] = $item->label;
             }
         }

@@ -12,7 +12,7 @@ class UrlFilter extends Filter
 {
     // public string $type = 'url';
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         $value = parent::clean($value);
 

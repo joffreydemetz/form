@@ -12,7 +12,7 @@ class ArrayFilter extends StringFilter
 {
     public string $name = 'array';
 
-    protected function clean($value)
+    protected function clean($value): mixed
     {
         if (!is_array($value)) {
             $value = explode(',', $value);

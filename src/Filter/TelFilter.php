@@ -12,7 +12,7 @@ class TelFilter extends Filter
 {
     // public string $type = 'tel';
 
-    public function clean($value)
+    public function clean($value): mixed
     {
         $value = parent::clean($value);
 

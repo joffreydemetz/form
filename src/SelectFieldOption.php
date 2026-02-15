@@ -22,31 +22,31 @@ class SelectFieldOption extends Renderable
         $this->disabled = $disabled;
     }
 
-    public function setValue(string $value)
+    public function setValue(string $value): static
     {
         $this->value = $value;
         return $this;
     }
 
-    public function withSelected(bool $selected = true)
+    public function withSelected(bool $selected = true): static
     {
         $this->selected = $selected;
         return $this;
     }
 
-    public function withDisabled(bool $disabled = true)
+    public function withDisabled(bool $disabled = true): static
     {
         $this->disabled = $disabled;
         return $this;
     }
 
-    public function setText(string $text)
+    public function setText(string $text): static
     {
         $this->text = $text;
         return $this;
     }
 
-    public function setSearchable(string $searchable)
+    public function setSearchable(string $searchable): static
     {
         $this->searchable = $searchable;
         return $this;
