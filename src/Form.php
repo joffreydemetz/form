@@ -387,7 +387,7 @@ class Form extends Element implements FormInterface
 
     protected function populate(): void
     {
-        $this->addFieldset(new FormFieldset('main'));
+        $this->makeFormFieldset('main');
     }
 
     protected function onAfterPopulate(): void {}
