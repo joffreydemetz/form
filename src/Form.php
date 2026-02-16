@@ -152,6 +152,15 @@ class Form extends Element implements FormInterface
         return $this;
     }
 
+    public function makeFormFieldset(string $name): FormFieldsetInterface
+    {
+        if ( $this->hasFieldset($name) ) {
+            return $this->getFieldset($name);
+        }
+
+        return $this->addFieldset(new FormFieldset($name));
+    }
+
     public function getFieldset(string $name): FormFieldsetInterface
     {
         if (!isset($this->fieldsets[$name])) {
@@ -185,14 +194,14 @@ class Form extends Element implements FormInterface
         return $this;
     }
 
-    public function makeFormRow(string $name, string $type = ''): FormRowInterface
+    public function makeFormRow(string $name, string $fieldsetName = ''): FormRowInterface
     {
         try {
             return $this->getFormRow($name);
         } catch (\Exception $e) {
         }
 
-        return new FormRow($name);
+        return $this->addFormRow(new FormRow($name), $fieldsetName);
     }
 
     public function getFormRow(string $name, string $fieldsetName = ''): FormRowInterface
