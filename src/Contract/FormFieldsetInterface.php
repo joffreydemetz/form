@@ -8,6 +8,8 @@ interface FormFieldsetInterface
 {
     public function getName(): string;
 
+    public function setLabel(string $label): static;
+
     public function getFormRow(string $fieldName): ?FormRowInterface;
     public function addFormRow(FormRowInterface $field): FormRowInterface;
     public function hasFormRow(string $key): bool;
