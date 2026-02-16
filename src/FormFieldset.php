@@ -16,7 +16,7 @@ class FormFieldset extends Element implements FormFieldsetInterface
     public string $uid = '';
     public string $label = '';
     public string $description = '';
-    public array $fields = [];
+    public array $formRows = [];
     protected int $currentFieldPosition = 0;
 
     public function __construct(string $name)
@@ -36,49 +36,49 @@ class FormFieldset extends Element implements FormFieldsetInterface
         return $this;
     }
 
-    public function getField(string $name): FormRowInterface
+    public function getFormRow(string $name): FormRowInterface
     {
-        if (!isset($this->fields[$name])) {
+        if (!isset($this->formRows[$name])) {
             throw new FormException('Field ' . $this->getName() . '.' . $name . ' not found in Fieldset ' . $this->getName());
         }
 
-        return $this->fields[$name];
+        return $this->formRows[$name];
     }
 
-    public function addField(FormRowInterface $field): FormRowInterface
+    public function addFormRow(FormRowInterface $field): FormRowInterface
     {
         $name = $field->getName();
-        if (!isset($this->fields[$name])) {
+        if (!isset($this->formRows[$name])) {
             $field->setFieldset($this);
             $field->setPosition(++$this->currentFieldPosition);
-            $this->fields[$name] = $field;
+            $this->formRows[$name] = $field;
         }
 
-        return $this->fields[$name];
+        return $this->formRows[$name];
     }
 
-    public function hasField(string $name): bool
+    public function hasFormRow(string $name): bool
     {
-        return isset($this->fields[$name]);
+        return isset($this->formRows[$name]);
     }
 
-    public function removeField(string $name): static
+    public function removeFormRow(string $name): static
     {
-        if (isset($this->fields[$name])) {
-            unset($this->fields[$name]);
+        if (isset($this->formRows[$name])) {
+            unset($this->formRows[$name]);
         }
         return $this;
     }
 
     public function onPrepare(): bool
     {
-        foreach ($this->fields as $field) {
+        foreach ($this->formRows as $field) {
             if (false === $field->onPrepare()) {
-                $this->removeField($field->getName());
+                $this->removeFormRow($field->getName());
             }
         }
 
-        return count($this->fields) > 0;
+        return count($this->formRows) > 0;
     }
 
     public function toData(): array
@@ -95,27 +95,27 @@ class FormFieldset extends Element implements FormFieldsetInterface
             $data['description'] = $this->description;
         }
 
-        if ($this->fields) {
+        if ($this->formRows) {
             $data['fields'] = $this->renderFields();
         }
 
         return $data;
     }
 
-    public function setFieldPositions(array $fieldNames): static
+    public function setFormRowPositions(array $fieldNames): static
     {
         $this->currentFieldPosition = 0;
         foreach ($fieldNames as $name) {
-            $this->getField($name)
+            $this->getFormRow($name)
                 ->setPosition(++$this->currentFieldPosition);
         }
         return $this;
     }
 
-    public function setFieldPosition(string $positionFieldName, int|string $position, string $direction = 'before'): static
+    public function setFormRowPosition(string $positionFieldName, int|string $position, string $direction = 'before'): static
     {
         $positionKeys = [];
-        foreach ($this->fields as $field) {
+        foreach ($this->formRows as $field) {
             $positionKeys[$field->getPosition()] = $field->getName();
         }
         ksort($positionKeys);
@@ -124,17 +124,17 @@ class FormFieldset extends Element implements FormFieldsetInterface
             $position = 1;
             $direction = 'before';
         } elseif ('last' === $position) {
-            $position = count($this->fields);
+            $position = count($this->formRows);
             $direction = 'after';
         } else {
             $position = (int)$position;
         }
 
-        $positionField = $this->getField($positionFieldName);
+        $positionField = $this->getFormRow($positionFieldName);
 
         $this->currentFieldPosition = 0;
         foreach ($positionKeys as $name) {
-            $field = $this->getField($name);
+            $field = $this->getFormRow($name);
 
             if ($field->getName() === $positionField->getName()) {
                 continue;
@@ -154,14 +154,14 @@ class FormFieldset extends Element implements FormFieldsetInterface
         return $this;
     }
 
-    public function setFieldPositionAfter(string $positionFieldName, string $offsetFieldName): static
+    public function setFormRowPositionAfter(string $positionFieldName, string $offsetFieldName): static
     {
-        return $this->setFieldPosition($positionFieldName, $this->getField($offsetFieldName)->getPosition(), 'after');
+        return $this->setFormRowPosition($positionFieldName, $this->getFormRow($offsetFieldName)->getPosition(), 'after');
     }
 
-    public function setFieldPositionBefore(string $positionFieldName, string $offsetFieldName): static
+    public function setFormRowPositionBefore(string $positionFieldName, string $offsetFieldName): static
     {
-        return $this->setFieldPosition($positionFieldName, $this->getField($offsetFieldName)->getPosition(), 'before');
+        return $this->setFormRowPosition($positionFieldName, $this->getFormRow($offsetFieldName)->getPosition(), 'before');
     }
 
     protected function renderAttrs(): array
@@ -179,7 +179,7 @@ class FormFieldset extends Element implements FormFieldsetInterface
     {
         $fields = [];
         $fieldsNotPositioned = [];
-        foreach ($this->fields as $field) {
+        foreach ($this->formRows as $field) {
             if (0 === $field->getPosition()) {
                 $fieldsNotPositioned[] = $field;
                 continue;

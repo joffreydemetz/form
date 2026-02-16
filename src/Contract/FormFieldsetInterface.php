@@ -8,10 +8,10 @@ interface FormFieldsetInterface
 {
     public function getName(): string;
 
-    public function getField(string $fieldName): ?FormRowInterface;
-    public function addField(FormRowInterface $field): FormRowInterface;
-    public function hasField(string $key): bool;
-    public function removeField(string $key): static;
+    public function getFormRow(string $fieldName): ?FormRowInterface;
+    public function addFormRow(FormRowInterface $field): FormRowInterface;
+    public function hasFormRow(string $key): bool;
+    public function removeFormRow(string $key): static;
 
-    public function setFieldPosition(string $fieldName, int|string $position, string $direction = 'before'): static;
+    public function setFormRowPosition(string $fieldName, int|string $position, string $direction = 'before'): static;
 }

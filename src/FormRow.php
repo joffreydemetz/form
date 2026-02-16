@@ -85,24 +85,24 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
-    public function setFieldPosition(int|string $position, string $direction = 'before'): static
+    public function setFormRowPosition(int|string $position, string $direction = 'before'): static
     {
-        $this->fieldset->setFieldPosition($this->getName(), $position, $direction);
+        $this->fieldset->setFormRowPosition($this->getName(), $position, $direction);
         return $this;
     }
 
-    public function setFieldPositionAfter(string $offsetFieldName): static
+    public function setFormRowPositionAfter(string $offsetFieldName): static
     {
         if ($this->fieldset) {
-            $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition() + 1, 'after');
+            $this->setFormRowPosition($this->fieldset->getFormRow($offsetFieldName)->getPosition() + 1, 'after');
         }
         return $this;
     }
 
-    public function setFieldPositionBefore(string $offsetFieldName): static
+    public function setFormRowPositionBefore(string $offsetFieldName): static
     {
         if ($this->fieldset) {
-            $this->setFieldPosition($this->fieldset->getField($offsetFieldName)->getPosition(), 'before');
+            $this->setFormRowPosition($this->fieldset->getFormRow($offsetFieldName)->getPosition(), 'before');
         }
         return $this;
     }

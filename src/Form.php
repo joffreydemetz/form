@@ -21,7 +21,7 @@ class Form extends Element implements FormInterface
     public bool $wide = false;
     public array $errors = [];
     public array $fieldsets = [];
-    public array $fieldrows = [];
+    public array $formRows = [];
     public array $buttons = [];
     public FormData $data;
 
@@ -77,12 +77,12 @@ class Form extends Element implements FormInterface
     public function filter(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->fields as $field) {
+            foreach ($fieldset->formRows as $field) {
                 $field->filter($this->data);
             }
         }
 
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             $field->filter($this->data);
         }
     }
@@ -90,14 +90,14 @@ class Form extends Element implements FormInterface
     public function validate(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->fields as $field) {
+            foreach ($fieldset->formRows as $field) {
                 if (false === $field->validate($this->data)) {
                     $this->errors = array_merge($this->errors, $field->errors);
                 }
             }
         }
 
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             if (false === $field->validate($this->data)) {
                 $this->errors = array_merge($this->errors, $field->errors);
             }
@@ -166,7 +166,7 @@ class Form extends Element implements FormInterface
     public function makeFormRow(string $name, string $type = ''): FormRowInterface
     {
         try {
-            return $this->getField($name);
+            return $this->getFormRow($name);
         } catch (\Exception $e) {
         }
 
@@ -206,29 +206,29 @@ class Form extends Element implements FormInterface
         return $this;
     }
 
-    public function getField(string $name, string $fieldsetName = ''): FormRowInterface
+    public function getFormRow(string $name, string $fieldsetName = ''): FormRowInterface
     {
         if ('' !== $fieldsetName) {
             $fieldset = $this->getFieldset($fieldsetName);
-            if ($fieldset->hasField($name)) {
-                return $fieldset->getField($name);
+            if ($fieldset->hasFormRow($name)) {
+                return $fieldset->getFormRow($name);
             }
         } else {
             foreach ($this->fieldsets as $fieldset) {
-                if ($fieldset->hasField($name)) {
-                    return $fieldset->getField($name);
+                if ($fieldset->hasFormRow($name)) {
+                    return $fieldset->getFormRow($name);
                 }
             }
         }
 
-        if (!isset($this->fieldrows[$name])) {
+        if (!isset($this->formRows[$name])) {
             throw new FormException('Field ' . $this->getName() . '.' . $name . ' not found');
         }
 
-        return $this->fieldrows[$name];
+        return $this->formRows[$name];
     }
 
-    public function addField(FormRowInterface $field, string $fieldsetName = ''): FormRowInterface
+    public function addFormRow(FormRowInterface $field, string $fieldsetName = ''): FormRowInterface
     {
         if ('' === $fieldsetName && 'form.hidden' !== $field->getRenderer()) {
             $fieldsetName = 'main';
@@ -236,54 +236,54 @@ class Form extends Element implements FormInterface
 
         if ('' !== $fieldsetName) {
             $fieldset = $this->getFieldset($fieldsetName);
-            return $fieldset->addField($field);
+            return $fieldset->addFormRow($field);
         }
 
         $name = $field->getName();
-        if (!isset($this->fieldrows[$name])) {
-            $this->fieldrows[$name] = $field;
+        if (!isset($this->formRows[$name])) {
+            $this->formRows[$name] = $field;
         }
 
         return $field;
     }
 
-    public function hasField(string $name, string $fieldsetName = ''): bool
+    public function hasFormRow(string $name, string $fieldsetName = ''): bool
     {
         if ('' !== $fieldsetName) {
             if ($this->hasFieldset($fieldsetName)) {
                 $fieldset = $this->getFieldset($fieldsetName);
-                return $fieldset->hasField($name);
+                return $fieldset->hasFormRow($name);
             }
 
             return false;
         }
 
         foreach ($this->fieldsets as $fieldset) {
-            if (true === $fieldset->hasField($name)) {
+            if (true === $fieldset->hasFormRow($name)) {
                 return true;
             }
         }
 
-        return isset($this->fieldrows[$name]);
+        return isset($this->formRows[$name]);
     }
 
-    public function removeField(string $name, string $fieldsetName = ''): static
+    public function removeFormRow(string $name, string $fieldsetName = ''): static
     {
         if ('' !== $fieldsetName) {
             $fieldset = $this->getFieldset($fieldsetName);
-            $fieldset->removeField($name);
+            $fieldset->removeFormRow($name);
             return $this;
         }
 
         foreach ($this->fieldsets as $fieldset) {
-            if ($fieldset->hasField($name)) {
-                $fieldset->removeField($name);
+            if ($fieldset->hasFormRow($name)) {
+                $fieldset->removeFormRow($name);
                 return $this;
             }
         }
 
-        if (isset($this->fieldrows[$name])) {
-            unset($this->fieldrows[$name]);
+        if (isset($this->formRows[$name])) {
+            unset($this->formRows[$name]);
         }
 
         return $this;
@@ -324,20 +324,20 @@ class Form extends Element implements FormInterface
 
     public function getValue(string $fieldName): mixed
     {
-        return $this->getField($fieldName)->value;
+        return $this->getFormRow($fieldName)->value;
     }
 
-    public function getFieldNames(): array
+    public function getFormRowNames(): array
     {
         $names = [];
 
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->fields as $field) {
+            foreach ($fieldset->formRows as $field) {
                 $names[] = $field->getName();
             }
         }
 
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             $names[] = $field->getName();
         }
 
@@ -376,7 +376,7 @@ class Form extends Element implements FormInterface
             $data['fieldsets'] = $this->renderFieldsets();
         }
 
-        if ($this->fieldrows) {
+        if ($this->formRows) {
             $data['fields'] = $this->renderFields();
         }
 
@@ -397,12 +397,12 @@ class Form extends Element implements FormInterface
     protected function onFillValues(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->fields as $field) {
+            foreach ($fieldset->formRows as $field) {
                 $field->onFillValues($this->data);
             }
         }
 
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             $field->onFillValues($this->data);
         }
     }
@@ -415,9 +415,9 @@ class Form extends Element implements FormInterface
             }
         }
 
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             if (false === $field->onPrepare()) {
-                $this->removeField($field->getName());
+                $this->removeFormRow($field->getName());
             }
         }
     }
@@ -473,7 +473,7 @@ class Form extends Element implements FormInterface
     protected function renderFields(): array
     {
         $fieldrows = [];
-        foreach ($this->fieldrows as $field) {
+        foreach ($this->formRows as $field) {
             $fieldrows[$field->getName()] = $field->toData();
         }
         return $fieldrows;

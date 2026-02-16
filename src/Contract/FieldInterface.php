@@ -22,7 +22,9 @@ interface FieldInterface
     public function validate(FormData $data): bool;
 
     public function setPrefix(string $prefix): static;
+    
     public function filter(FormData $data): static;
+    
     public function withArrayName(bool $withArrayName = true): static;
     public function withRequired(bool $required = true): static;
     public function withDisabled(bool $disabled = true): static;
