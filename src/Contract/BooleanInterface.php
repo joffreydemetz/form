@@ -6,7 +6,7 @@ namespace JDZ\Form\Contract;
 
 interface BooleanInterface extends CheckboxesInterface
 {
-    public function setTrueText(string $trueText): static;
+    public function setYesText(string $yesText): static;
 
-    public function setFalseText(string $falseText): static;
+    public function setNoText(string $noText): static;
 }
