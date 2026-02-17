@@ -7,8 +7,14 @@ namespace JDZ\Form\Contract;
 interface FormFieldsetInterface
 {
     public function getName(): string;
+    public function getUid(): string;
+    public function getLabel(): string;
+    public function getDescription(): string;
+    public function getFormRows(): array;
 
+    public function setUid(string $uid): static;
     public function setLabel(string $label): static;
+    public function setDescription(string $description): static;
 
     public function getFormRow(string $fieldName): ?FormRowInterface;
     public function addFormRow(FormRowInterface $field): FormRowInterface;

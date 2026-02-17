@@ -13,15 +13,41 @@ class FormFieldset extends Element implements FormFieldsetInterface
 {
     protected string $renderer = 'form.fieldset';
 
-    public string $uid = '';
-    public string $label = '';
-    public string $description = '';
-    public array $formRows = [];
+    protected string $uid = '';
+    protected string $label = '';
+    protected string $description = '';
+    protected array $formRows = [];
     protected int $currentFieldPosition = 0;
 
     public function __construct(string $name)
     {
         $this->setName($name);
+    }
+
+    public function getUid(): string
+    {
+        return $this->uid;
+    }
+
+    public function getLabel(): string
+    {
+        return $this->label;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function getFormRows(): array
+    {
+        return $this->formRows;
+    }
+
+    public function setUid(string $uid): static
+    {
+        $this->uid = $uid;
+        return $this;
     }
 
     public function setLabel(string $label): static

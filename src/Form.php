@@ -13,24 +13,84 @@ use JDZ\Renderer\Element;
 class Form extends Element implements FormInterface
 {
     protected string $renderer = 'form';
-    public string $prefix = '';
-    public string $action = '';
-    public string $method = FormInterface::METHOD_POST;
-    public bool $multipart = false;
-    public bool $vertical = true;
-    public bool $wide = false;
-    public array $errors = [];
-    public array $fieldsets = [];
-    public array $formRows = [];
-    public array $buttons = [];
-    public FormData $data;
+    protected string $prefix = '';
+    protected string $action = '';
+    protected string $method = FormInterface::METHOD_POST;
+    protected bool $multipart = false;
+    protected bool $vertical = true;
+    protected bool $wide = false;
+    protected array $errors = [];
+    protected array $fieldsets = [];
+    protected array $formRows = [];
+    protected array $buttons = [];
+    protected FormData $data;
 
-    public bool $csrf = false;
-    public bool $captcha = false;
+    protected bool $csrf = false;
+    protected bool $captcha = false;
 
     public function __construct(string $name)
     {
         $this->setName($name);
+    }
+
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+
+    public function getAction(): string
+    {
+        return $this->action;
+    }
+
+    public function getMethod(): string
+    {
+        return $this->method;
+    }
+
+    public function isMultipart(): bool
+    {
+        return $this->multipart;
+    }
+
+    public function isVertical(): bool
+    {
+        return $this->vertical;
+    }
+
+    public function isWide(): bool
+    {
+        return $this->wide;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    public function getFieldsets(): array
+    {
+        return $this->fieldsets;
+    }
+
+    public function getFormRows(): array
+    {
+        return $this->formRows;
+    }
+
+    public function getButtons(): array
+    {
+        return $this->buttons;
+    }
+
+    public function getData(): FormData
+    {
+        return $this->data;
+    }
+
+    public function usesCsrf(): bool
+    {
+        return $this->csrf;
     }
 
     public function usesCaptcha(): bool
@@ -77,7 +137,7 @@ class Form extends Element implements FormInterface
     public function filter(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->formRows as $field) {
+            foreach ($fieldset->getFormRows() as $field) {
                 $field->filter($this->data);
             }
         }
@@ -90,16 +150,16 @@ class Form extends Element implements FormInterface
     public function validate(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->formRows as $field) {
+            foreach ($fieldset->getFormRows() as $field) {
                 if (false === $field->validate($this->data)) {
-                    $this->errors = array_merge($this->errors, $field->errors);
+                    $this->errors = array_merge($this->errors, $field->getErrors());
                 }
             }
         }
 
         foreach ($this->formRows as $field) {
             if (false === $field->validate($this->data)) {
-                $this->errors = array_merge($this->errors, $field->errors);
+                $this->errors = array_merge($this->errors, $field->getErrors());
             }
         }
     }
@@ -330,7 +390,7 @@ class Form extends Element implements FormInterface
         $names = [];
 
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->formRows as $field) {
+            foreach ($fieldset->getFormRows() as $field) {
                 $names[] = $field->getName();
             }
         }
@@ -395,7 +455,7 @@ class Form extends Element implements FormInterface
     protected function onFillValues(): void
     {
         foreach ($this->fieldsets as $fieldset) {
-            foreach ($fieldset->formRows as $field) {
+            foreach ($fieldset->getFormRows() as $field) {
                 $field->onFillValues($this->data);
             }
         }

@@ -8,6 +8,7 @@ use JDZ\Form\Contract\FieldInterface;
 use JDZ\Form\Exception\InvalidException;
 use JDZ\Form\FormData;
 use JDZ\Form\FormError;
+use JDZ\Form\Rule\CompareRule;
 
 /**
  * @author Joffrey Demetz <joffrey.demetz@gmail.com>

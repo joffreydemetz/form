@@ -20,14 +20,14 @@ class FormRowTest extends TestCase
     {
         $row = new FormRow('name');
         $row->setLabelText('Full Name');
-        $this->assertSame('Full Name', $row->labelText);
+        $this->assertSame('Full Name', $row->getLabelText());
     }
 
     public function testSetTip(): void
     {
         $row = new FormRow('name');
         $row->setTip('Enter your full name');
-        $this->assertSame('Enter your full name', $row->tip);
+        $this->assertSame('Enter your full name', $row->getTip());
     }
 
     public function testSetField(): void
@@ -36,7 +36,7 @@ class FormRowTest extends TestCase
         $field = new Text('name');
         $row->setField($field);
 
-        $this->assertSame($field, $row->field);
+        $this->assertSame($field, $row->getField());
     }
 
     public function testSetValueDelegatesToField(): void
@@ -54,21 +54,21 @@ class FormRowTest extends TestCase
     {
         $row = new FormRow('name');
         $row->withRequired();
-        $this->assertTrue($row->required);
+        $this->assertTrue($row->isRequired());
     }
 
     public function testWithDisabled(): void
     {
         $row = new FormRow('name');
         $row->withDisabled();
-        $this->assertTrue($row->disabled);
+        $this->assertTrue($row->isDisabled());
     }
 
     public function testWithReadonly(): void
     {
         $row = new FormRow('name');
         $row->withReadonly();
-        $this->assertTrue($row->readonly);
+        $this->assertTrue($row->isReadonly());
     }
 
     public function testFilter(): void
@@ -110,7 +110,7 @@ class FormRowTest extends TestCase
 
         $result = $row->validate($data);
         $this->assertFalse($result);
-        $this->assertNotEmpty($row->errors);
+        $this->assertNotEmpty($row->getErrors());
     }
 
     public function testOnFillValues(): void

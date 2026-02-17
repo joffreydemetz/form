@@ -11,23 +11,23 @@ use JDZ\Renderer\Element;
 
 class FormRow extends Element implements FormRowInterface
 {
-    public string $uid = '';
-    public string $prefix = '';
-    public string $labelText = '';
-    public string $tip = '';
-    public string $fieldContainerClass = 'form-field';
-    public bool $label = true;
-    public bool $tipOnTop = false;
-    public bool $required = false;
-    public bool $disabled = false;
-    public bool $readonly = false;
-    public bool $static = false;
-    public bool $labelOnTop = false;
-    public bool $arrayName = false;
-    public bool $offset = false;
-    public array $errors = [];
-    public ?FormFieldsetInterface $fieldset = null;
-    public ?FieldInterface $field = null;
+    protected string $uid = '';
+    protected string $prefix = '';
+    protected string $labelText = '';
+    protected string $tip = '';
+    protected string $fieldContainerClass = 'form-field';
+    protected bool $label = true;
+    protected bool $tipOnTop = false;
+    protected bool $required = false;
+    protected bool $disabled = false;
+    protected bool $readonly = false;
+    protected bool $static = false;
+    protected bool $labelOnTop = false;
+    protected bool $arrayName = false;
+    protected bool $offset = false;
+    protected array $errors = [];
+    protected ?FormFieldsetInterface $fieldset = null;
+    protected ?FieldInterface $field = null;
 
     protected string $renderer = 'form.field';
 
@@ -39,6 +39,81 @@ class FormRow extends Element implements FormRowInterface
     public function getRenderer(): string
     {
         return $this->renderer;
+    }
+
+    public function getUid(): string
+    {
+        return $this->uid;
+    }
+
+    public function getPrefix(): string
+    {
+        return $this->prefix;
+    }
+
+    public function getLabelText(): string
+    {
+        return $this->labelText;
+    }
+
+    public function getTip(): string
+    {
+        return $this->tip;
+    }
+
+    public function hasLabel(): bool
+    {
+        return $this->label;
+    }
+
+    public function isRequired(): bool
+    {
+        return $this->required;
+    }
+
+    public function isDisabled(): bool
+    {
+        return $this->disabled;
+    }
+
+    public function isReadonly(): bool
+    {
+        return $this->readonly;
+    }
+
+    public function isStatic(): bool
+    {
+        return $this->static;
+    }
+
+    public function isLabelOnTop(): bool
+    {
+        return $this->labelOnTop;
+    }
+
+    public function hasArrayName(): bool
+    {
+        return $this->arrayName;
+    }
+
+    public function hasOffset(): bool
+    {
+        return $this->offset;
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    public function getFieldset(): ?FormFieldsetInterface
+    {
+        return $this->fieldset;
+    }
+
+    public function getField(): ?FieldInterface
+    {
+        return $this->field;
     }
 
     public function setFieldset(FormFieldsetInterface $fieldset): static

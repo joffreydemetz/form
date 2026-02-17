@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace JDZ\Form\FormRow;
 
+use JDZ\Form\Contract\CheckboxesInterface;
 use JDZ\Form\Field;
 use JDZ\Form\Field\Checkbox;
 use JDZ\Form\FormData;
@@ -11,17 +12,52 @@ use JDZ\Form\FormError;
 use JDZ\Form\FormRow;
 use JDZ\Form\FormValidationError;
 
-class Checkboxes extends FormRow
+class Checkboxes extends FormRow implements CheckboxesInterface
 {
     protected string $renderer = 'checkboxes';
-    public string $boxes = 'checkbox';
-    public bool $vertical = false;
-    public bool $arrayName = true;
-    public bool $disabledAtTheEnd = false;
-    public int $nbCols = 1;
-    public int $maxSelection = 0;
-    public array $list = [];
-    public array $checkedList = [];
+    protected string $boxes = 'checkbox';
+    protected bool $vertical = false;
+    protected bool $arrayName = true;
+    protected bool $disabledAtTheEnd = false;
+    protected int $nbCols = 1;
+    protected int $maxSelection = 0;
+    protected array $list = [];
+    protected array $checkedList = [];
+
+    public function getBoxes(): string
+    {
+        return $this->boxes;
+    }
+
+    public function isVertical(): bool
+    {
+        return $this->vertical;
+    }
+
+    public function getNbCols(): int
+    {
+        return $this->nbCols;
+    }
+
+    public function getMaxSelection(): int
+    {
+        return $this->maxSelection;
+    }
+
+    public function getList(): array
+    {
+        return $this->list;
+    }
+
+    public function getCheckedList(): array
+    {
+        return $this->checkedList;
+    }
+
+    public function isDisabledAtTheEnd(): bool
+    {
+        return $this->disabledAtTheEnd;
+    }
 
     public function setNbCols(int $nbCols = 1): static
     {

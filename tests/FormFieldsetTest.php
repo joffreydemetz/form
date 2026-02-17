@@ -21,14 +21,14 @@ class FormFieldsetTest extends TestCase
     {
         $fieldset = new FormFieldset('details');
         $fieldset->setLabel('Personal Details');
-        $this->assertSame('Personal Details', $fieldset->label);
+        $this->assertSame('Personal Details', $fieldset->getLabel());
     }
 
     public function testSetDescription(): void
     {
         $fieldset = new FormFieldset('details');
         $fieldset->setDescription('Enter your personal information');
-        $this->assertSame('Enter your personal information', $fieldset->description);
+        $this->assertSame('Enter your personal information', $fieldset->getDescription());
     }
 
     public function testAddAndGetField(): void
@@ -37,10 +37,10 @@ class FormFieldsetTest extends TestCase
         $row = new FormRow('name');
         $row->setField(new Text('name'));
 
-        $fieldset->addField($row);
+        $fieldset->addFormRow($row);
 
-        $this->assertTrue($fieldset->hasField('name'));
-        $this->assertSame($row, $fieldset->getField('name'));
+        $this->assertTrue($fieldset->hasFormRow('name'));
+        $this->assertSame($row, $fieldset->getFormRow('name'));
     }
 
     public function testRemoveField(): void
@@ -48,11 +48,11 @@ class FormFieldsetTest extends TestCase
         $fieldset = new FormFieldset('main');
         $row = new FormRow('name');
         $row->setField(new Text('name'));
-        $fieldset->addField($row);
+        $fieldset->addFormRow($row);
 
-        $fieldset->removeField('name');
+        $fieldset->removeFormRow('name');
 
-        $this->assertFalse($fieldset->hasField('name'));
+        $this->assertFalse($fieldset->hasFormRow('name'));
     }
 
     public function testGetFieldThrowsWhenNotFound(): void
@@ -60,7 +60,7 @@ class FormFieldsetTest extends TestCase
         $this->expectException(FormException::class);
 
         $fieldset = new FormFieldset('main');
-        $fieldset->getField('nonexistent');
+        $fieldset->getFormRow('nonexistent');
     }
 
     public function testFieldPositioning(): void
@@ -69,11 +69,11 @@ class FormFieldsetTest extends TestCase
 
         $row1 = new FormRow('first');
         $row1->setField(new Text('first'));
-        $fieldset->addField($row1);
+        $fieldset->addFormRow($row1);
 
         $row2 = new FormRow('second');
         $row2->setField(new Text('second'));
-        $fieldset->addField($row2);
+        $fieldset->addFormRow($row2);
 
         $this->assertSame(1, $row1->getPosition());
         $this->assertSame(2, $row2->getPosition());
@@ -85,13 +85,13 @@ class FormFieldsetTest extends TestCase
 
         $row1 = new FormRow('a');
         $row1->setField(new Text('a'));
-        $fieldset->addField($row1);
+        $fieldset->addFormRow($row1);
 
         $row2 = new FormRow('b');
         $row2->setField(new Text('b'));
-        $fieldset->addField($row2);
+        $fieldset->addFormRow($row2);
 
-        $fieldset->setFieldPositions(['b', 'a']);
+        $fieldset->setFormRowPositions(['b', 'a']);
 
         $this->assertSame(2, $row1->getPosition());
         $this->assertSame(1, $row2->getPosition());
@@ -111,7 +111,7 @@ class FormFieldsetTest extends TestCase
         $fieldset = new FormFieldset('main');
         $row = new FormRow('name');
         $row->setField(new Text('name'));
-        $fieldset->addField($row);
+        $fieldset->addFormRow($row);
 
         $result = $fieldset->onPrepare();
 

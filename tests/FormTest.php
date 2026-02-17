@@ -31,56 +31,56 @@ class FormTest extends TestCase
     public function testDefaultMethod(): void
     {
         $form = $this->createForm();
-        $this->assertSame(FormInterface::METHOD_POST, $form->method);
+        $this->assertSame(FormInterface::METHOD_POST, $form->getMethod());
     }
 
     public function testSetAction(): void
     {
         $form = $this->createForm();
         $form->setAction('/submit');
-        $this->assertSame('/submit', $form->action);
+        $this->assertSame('/submit', $form->getAction());
     }
 
     public function testSetMethod(): void
     {
         $form = $this->createForm();
         $form->setMethod(FormInterface::METHOD_GET);
-        $this->assertSame('GET', $form->method);
+        $this->assertSame('GET', $form->getMethod());
     }
 
     public function testSetPrefix(): void
     {
         $form = $this->createForm();
         $form->setPrefix('jform');
-        $this->assertSame('jform', $form->prefix);
+        $this->assertSame('jform', $form->getPrefix());
     }
 
     public function testWithMultipart(): void
     {
         $form = $this->createForm();
         $form->withMultipart();
-        $this->assertTrue($form->multipart);
+        $this->assertTrue($form->isMultipart());
     }
 
     public function testWithVertical(): void
     {
         $form = $this->createForm();
         $form->withVertical(false);
-        $this->assertFalse($form->vertical);
+        $this->assertFalse($form->isVertical());
     }
 
     public function testWithWide(): void
     {
         $form = $this->createForm();
         $form->withWide();
-        $this->assertTrue($form->wide);
+        $this->assertTrue($form->isWide());
     }
 
     public function testWithCsrf(): void
     {
         $form = $this->createForm();
         $form->withCsrf();
-        $this->assertTrue($form->csrf);
+        $this->assertTrue($form->usesCsrf());
     }
 
     public function testWithCaptcha(): void
@@ -131,9 +131,9 @@ class FormTest extends TestCase
 
         $row = new FormRow('name');
         $row->setField(new Text('name'));
-        $form->addField($row, 'main');
+        $form->addFormRow($row, 'main');
 
-        $this->assertTrue($form->hasField('name'));
+        $this->assertTrue($form->hasFormRow('name'));
     }
 
     public function testAddFieldDefaultsToMainFieldset(): void
@@ -143,9 +143,9 @@ class FormTest extends TestCase
 
         $row = new FormRow('name');
         $row->setField(new Text('name'));
-        $form->addField($row);
+        $form->addFormRow($row);
 
-        $this->assertTrue($form->hasField('name', 'main'));
+        $this->assertTrue($form->hasFormRow('name', 'main'));
     }
 
     public function testRemoveField(): void
@@ -155,11 +155,11 @@ class FormTest extends TestCase
 
         $row = new FormRow('name');
         $row->setField(new Text('name'));
-        $form->addField($row, 'main');
+        $form->addFormRow($row, 'main');
 
-        $form->removeField('name');
+        $form->removeFormRow('name');
 
-        $this->assertFalse($form->hasField('name'));
+        $this->assertFalse($form->hasFormRow('name'));
     }
 
     public function testGetFieldThrowsWhenNotFound(): void
@@ -167,7 +167,7 @@ class FormTest extends TestCase
         $this->expectException(FormException::class);
 
         $form = $this->createForm();
-        $form->getField('nonexistent');
+        $form->getFormRow('nonexistent');
     }
 
     public function testAddAndGetButton(): void
@@ -205,7 +205,7 @@ class FormTest extends TestCase
 
         $form->init($data);
 
-        $this->assertSame($data, $form->data);
+        $this->assertSame($data, $form->getData());
     }
 
     public function testFilterAndValidate(): void
@@ -216,7 +216,7 @@ class FormTest extends TestCase
         $row = new FormRow('name');
         $field = new Text('name');
         $row->setField($field);
-        $form->addField($row, 'main');
+        $form->addFormRow($row, 'main');
 
         $data = new FormData(['name' => '  John  ']);
         $form->setData($data);
@@ -235,14 +235,14 @@ class FormTest extends TestCase
         $field = new Text('name');
         $field->setValue('John');
         $row->setField($field);
-        $form->addField($row, 'main');
+        $form->addFormRow($row, 'main');
 
         $data = new FormData(['name' => 'John']);
         $form->setData($data);
 
         $result = $form->submit();
         $this->assertTrue($result);
-        $this->assertEmpty($form->errors);
+        $this->assertEmpty($form->getErrors());
     }
 
     public function testSubmitWithInvalidData(): void
@@ -255,14 +255,14 @@ class FormTest extends TestCase
         $field = new Text('name');
         $field->setValue('');
         $row->setField($field);
-        $form->addField($row, 'main');
+        $form->addFormRow($row, 'main');
 
         $data = new FormData(['name' => '']);
         $form->setData($data);
 
         $result = $form->submit();
         $this->assertFalse($result);
-        $this->assertNotEmpty($form->errors);
+        $this->assertNotEmpty($form->getErrors());
     }
 
     public function testGetFieldNames(): void
@@ -272,13 +272,13 @@ class FormTest extends TestCase
 
         $row1 = new FormRow('name');
         $row1->setField(new Text('name'));
-        $form->addField($row1, 'main');
+        $form->addFormRow($row1, 'main');
 
         $row2 = new FormRow('email');
         $row2->setField(new Email('email'));
-        $form->addField($row2, 'main');
+        $form->addFormRow($row2, 'main');
 
-        $names = $form->getFieldNames();
+        $names = $form->getFormRowNames();
         $this->assertContains('name', $names);
         $this->assertContains('email', $names);
     }
@@ -290,9 +290,9 @@ class FormTest extends TestCase
 
         $hiddenRow = new \JDZ\Form\FormRow\Hidden('id');
         $hiddenRow->setField(new Hidden('id'));
-        $form->addField($hiddenRow);
+        $form->addFormRow($hiddenRow);
 
-        $this->assertTrue($form->hasField('id'));
+        $this->assertTrue($form->hasFormRow('id'));
     }
 
     public function testFluentApi(): void
