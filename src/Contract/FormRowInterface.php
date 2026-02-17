@@ -25,4 +25,11 @@ interface FormRowInterface
     public function getPosition(): int;
 
     public function onFillValues(FormData $data): void;
+
+    public function withRequired(bool $required = true): static;
+    public function withDisabled(bool $disabled = true): static;
+    public function withReadonly(bool $readonly = true): static;
+    public function withLabelOnTop(bool $labelOnTop = true): static;
+    public function withArrayName(bool $arrayName = true): static;
+    public function withOffset(bool $offset = true): static;
 }

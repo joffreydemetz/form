@@ -149,6 +149,12 @@ class FormRow extends Element implements FormRowInterface
         return $this;
     }
 
+    public function withStatic(bool $static = true): static
+    {
+        $this->static = $static;
+        return $this;
+    }
+
     public function withArrayName(bool $arrayName = true): static
     {
         $this->arrayName = $arrayName;
