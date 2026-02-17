@@ -21,6 +21,8 @@ interface FormRowInterface
 
     public function setPrefix(string $prefix): static;
 
+    public function setTip(string $tip): static;
+
     public function setPosition(int $position): static;
     public function getPosition(): int;
 
