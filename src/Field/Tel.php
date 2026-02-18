@@ -16,7 +16,7 @@ class Tel extends InputField
     public string $pattern = '^[0-9\-\.]{7,15}?$';
     public string $errorMessage = 'Invalid phone number';
     public int $maxlength = 15;
-
+    
     public function init(): void
     {
         parent::init();
