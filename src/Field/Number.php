@@ -79,6 +79,13 @@ class Number extends InputField
         return $this;
     }
 
+    public function withDecimal(bool $decimal = true, int $decimals = 2): static
+    {
+        $this->decimal = $decimal;
+        $this->decimals = $decimals;
+        return $this;
+    }
+
     public function setStep(int|string|null $step): static
     {
         $this->step = $step;
