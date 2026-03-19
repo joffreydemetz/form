@@ -19,6 +19,8 @@ interface CheckboxesInterface extends FormRowInterface
     public function setNbCols(int $nbCols = 1): static;
     public function setList(array $list = []): static;
     public function setMaxSelection(int $maxSelection = 0): static;
+    public function setRequiredErrorMessage(string $message): static;
+    public function setBoxes(string $boxes): static;
 
     public function areDisabled(array $list = []): static;
     public function withDisabledAtTheEnd(bool $disabledAtTheEnd = true): static;

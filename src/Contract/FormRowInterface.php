@@ -33,6 +33,9 @@ interface FormRowInterface
     public function setTip(string $tip): static;
     public function setPosition(int $position): static;
     public function getPosition(): int;
+    public function setFormRowPosition(int|string $position, string $direction = 'before'): static;
+    public function setFormRowPositionAfter(string $offsetFieldName): static;
+    public function setFormRowPositionBefore(string $offsetFieldName): static;
 
     public function withLabel(bool $label = true): static;
     public function withRequired(bool $required = true): static;
@@ -42,5 +45,8 @@ interface FormRowInterface
     public function withArrayName(bool $arrayName = true): static;
     public function withOffset(bool $offset = true): static;
 
+    public function onPrepare(): bool;
     public function onFillValues(FormData $data): void;
+    public function filter(FormData $data): static;
+    public function validate(FormData $data): bool;
 }

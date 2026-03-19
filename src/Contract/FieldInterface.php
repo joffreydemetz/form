@@ -22,15 +22,16 @@ interface FieldInterface
     public function validate(FormData $data): bool;
 
     public function setPrefix(string $prefix): static;
-    
+
     public function filter(FormData $data): static;
-    
+
     public function withArrayName(bool $withArrayName = true): static;
     public function withRequired(bool $required = true): static;
     public function withDisabled(bool $disabled = true): static;
     public function withReadonly(bool $readonly = true): static;
 
     public function noRules(): static;
+    public function addAriaAttr(string $key, mixed $value): static;
 
     public function toStatic(): string;
     public function toData(): array;

@@ -10,7 +10,6 @@ use JDZ\Form\Rule\RequiredRule;
 use JDZ\Form\Exception\RuleException;
 use JDZ\Form\FormValidationError;
 use JDZ\Renderer\Element;
-use JDZ\Utils\Data as jData;
 
 /**
  * @author Joffrey Demetz <joffrey.demetz@gmail.com>
@@ -41,9 +40,7 @@ abstract class Field extends Element implements FieldInterface
 
     public function init(): void
     {
-        $this->addFilter(
-            new StringFilter()
-        );
+        $this->addFilter(new StringFilter());
     }
 
     public function getValue(): mixed

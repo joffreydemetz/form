@@ -23,10 +23,17 @@ class Checkboxes extends FormRow implements CheckboxesInterface
     protected int $maxSelection = 0;
     protected array $list = [];
     protected array $checkedList = [];
+    protected string $requiredErrorMessage = 'This field is required';
 
     public function getBoxes(): string
     {
         return $this->boxes;
+    }
+
+    public function setBoxes(string $boxes): static
+    {
+        $this->boxes = $boxes;
+        return $this;
     }
 
     public function isVertical(): bool
@@ -68,6 +75,12 @@ class Checkboxes extends FormRow implements CheckboxesInterface
     public function setList(array $list = []): static
     {
         $this->list = $list;
+        return $this;
+    }
+
+    public function setRequiredErrorMessage(string $message): static
+    {
+        $this->requiredErrorMessage = $message;
         return $this;
     }
 
@@ -174,7 +187,7 @@ class Checkboxes extends FormRow implements CheckboxesInterface
 
     protected function getRequiredErrorMessage(): string
     {
-        return 'This field is required';
+        return $this->requiredErrorMessage;
     }
 
     protected function toDataList(): array

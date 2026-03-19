@@ -8,13 +8,15 @@ use JDZ\Form\Contract\BooleanInterface;
 use JDZ\Form\Field\Radio;
 use JDZ\Form\FormData;
 
-class Boolean extends Radioboxes implements BooleanInterface
+class Boolean extends Checkboxes implements BooleanInterface
 {
     protected string $yesText = 'Yes';
     protected string $noText = 'No';
 
     public function __construct(string $name)
     {
+        $this->setBoxes('radio');
+        $this->withArrayName(false);
         $this->addStyle('boolean');
 
         parent::__construct($name);
