@@ -41,6 +41,8 @@ interface FormInterface
     public function withVertical(bool $vertical = true): static;
     public function withWide(bool $wide = true): static;
 
+    public function toData(): array;
+
     public function makeFormFieldset(string $name): FormFieldsetInterface;
     public function getFieldset(string $name): ?FormFieldsetInterface;
     public function addFieldset(FormFieldsetInterface $fieldset): FormFieldsetInterface;
