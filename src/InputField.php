@@ -70,7 +70,7 @@ abstract class InputField extends Field
         $attrs = parent::renderAttrs();
 
         $attrs['type'] = $this->type;
-        $attrs['value'] = $this->value ? \htmlspecialchars($this->value, \ENT_COMPAT, 'UTF-8') : '';
+        $attrs['value'] = $this->value ? \htmlspecialchars((string)$this->value, \ENT_COMPAT, 'UTF-8') : '';
 
         if ('' !== $this->placeholder) {
             $attrs['placeholder'] = $this->placeholder;
